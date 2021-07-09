@@ -1,0 +1,31 @@
+#pragma once
+
+template <typename T>
+class Singleton
+{
+public:
+	static std::unique_ptr<T> sInstance;
+protected:
+	Singleton()
+	{
+
+	}
+public:
+	Singleton(const Singleton&) = delete;
+	Singleton& operator=(const Singleton&) = delete;
+	static bool StaticInit()
+	{
+		sInstance.reset(new T());
+		
+		return sInstance->Initialize();
+	}
+	virtual ~Singleton()
+	{
+
+	}
+public:
+	// class 초기화
+	virtual bool Initialize() = 0;
+	// class 정리
+	virtual void Finalize() = 0;
+};
