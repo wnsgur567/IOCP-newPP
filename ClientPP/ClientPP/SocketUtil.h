@@ -22,9 +22,4 @@ public:
 	// select 된 소켓들 걸러내기
 	static void FillVectorFromSet(std::vector< TCPSocketPtr >* outSockets, const std::vector< TCPSocketPtr >* inSockets, const fd_set& inSet);
 #pragma endregion
-
-#pragma region completion model
-	static HandlePtr CreateIOCP(LPTHREAD_START_ROUTINE inWorkThreadPtr,std::vector<HandlePtr>& outWorkerThreads);
-	static HandlePtr LinkIOCPThread(ClientInfoPtr inInfo);
-#pragma endregion
 };

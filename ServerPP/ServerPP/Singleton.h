@@ -15,8 +15,7 @@ public:
 	Singleton& operator=(const Singleton&) = delete;
 	static bool StaticInit()
 	{
-		sInstance.reset(new T());
-		
+		sInstance.reset(new T());		
 		return sInstance->Initialize();
 	}
 	virtual ~Singleton()
