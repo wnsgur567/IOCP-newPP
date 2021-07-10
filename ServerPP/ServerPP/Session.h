@@ -10,14 +10,18 @@ enum class ESessionState
 class Session
 {
 	friend class IOCPSessionManager;
+public:
 	using psize_t = PacketManager::psize_t;
 	using id_t = IOCPSessionManager::clientid_t;
+	using pid_t = ::id_t;
 protected:
 	id_t m_id;
 	ESessionState m_state;
 	TCPSocketPtr m_pSock;
 	SocketAddress m_addr;
 
+	pid_t m_newSendID;
+	pid_t m_newRecvID;
 	RecvPacketPtr m_pRecvPacket;
 	SendPacketPtr m_pSendPacket;
 private:
@@ -39,12 +43,8 @@ public:
 
 class IOCPSession : public Session
 {
-public:
-	using pid_t = ::id_t;
-protected:
-	pid_t m_newSendID;
-	pid_t m_newRecvID;
 
+protected:
 	std::queue<SendPacketPtr> m_sendQueue;	
 public:
 	IOCPSession();

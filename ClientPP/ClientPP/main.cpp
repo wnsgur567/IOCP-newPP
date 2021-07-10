@@ -3,6 +3,9 @@
 
 int main()
 {
+	if (false == NetworkEngine::StaticInit())
+		return 1;
+
 	if (false == NetworkManagerClient::StaticInit())
 		return 1;
 

@@ -109,6 +109,7 @@ DWORD __stdcall IOCPNetworkManager::AcceptThread(LPVOID arg)
 
 			// post to iocp queue
 			AcceptPacketPtr pAcceptPacket = PacketManager::sInstance->GetAcceptPacketFromPool();
+			pAcceptPacket->m_pClientSock = pClientSock;
 			PostQueuedCompletionStatus(
 				*IOCPNetworkManager::sInstance->m_pHcp,
 				1,
@@ -238,29 +239,33 @@ DWORD __stdcall IOCPNetworkManager::WorkerThread(LPVOID arg)
 		retval = GetQueuedCompletionStatus(hcp, &cbTransferred,
 			(LPDWORD)&client_id, (LPOVERLAPPED*)&overlapped, INFINITE);
 
-		IOCPSessionPtr pSession = IOCPSessionManager::sInstance->GetSession(client_id);
+		IOCPSessionPtr pSession;
 		PacketBaseWeakPtr pPacket = overlapped->pPacket;
 
-		// 비동기 입출력 결과 확인
-		if (retval == 0 || cbTransferred == 0)
+		if (overlapped->type != E_OverlappedType::Accept)
 		{
-			if (retval == 0)
+			pSession = IOCPSessionManager::sInstance->GetSession(client_id);
+
+			// 비동기 입출력 결과 확인
+			if (retval == 0 || cbTransferred == 0)
 			{
-				DWORD temp1, temp2;
-				WSAGetOverlappedResult(pSession->GetSockPtr()->GetSock(),
-					&overlapped->overlapped,
-					&temp1, FALSE, &temp2);
-				SocketUtil::ReportError("WSAGetOverlappedResult()");
+				if (retval == 0)
+				{
+					DWORD temp1, temp2;
+					WSAGetOverlappedResult(pSession->GetSockPtr()->GetSock(),
+						&overlapped->overlapped,
+						&temp1, FALSE, &temp2);
+					SocketUtil::ReportError("WSAGetOverlappedResult()");
+				}
+
+				pSession->SetState(ESessionState::Disconnected);
 			}
 
-			pSession->SetState(ESessionState::Disconnected);
-		}
-
-		if (overlapped->type != E_OverlappedType::Accept &&
-			pSession->GetState() == ESessionState::Disconnected)
-		{
-			pSession->OnDisconnected();
-			continue;
+			if (pSession->GetState() == ESessionState::Disconnected)
+			{
+				pSession->OnDisconnected();
+				continue;
+			}
 		}
 
 		E_PacketState result;
@@ -271,8 +276,10 @@ DWORD __stdcall IOCPNetworkManager::WorkerThread(LPVOID arg)
 		{
 			// down casting
 			AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<AcceptPacket>(pPacket.lock());
-			pSession = IOCPSessionManager::sInstance->CreateSession();			
+			pSession = IOCPSessionManager::sInstance->CreateSession();
 			pSession->OnAccepted(pAcceptPacket->GetPSock(), pAcceptPacket->GetAddr());
+
+			PacketManager::sInstance->RetrieveAcceptPacket(pAcceptPacket);
 		}
 		break;
 
@@ -301,7 +308,7 @@ DWORD __stdcall IOCPNetworkManager::WorkerThread(LPVOID arg)
 			}
 
 			// complete recv process
-			pSession->OnCompleteRecv(pRecvPacket);			
+			pSession->OnCompleteRecv(pRecvPacket);
 
 			PacketManager::sInstance->RetrieveRecvPacket(pRecvPacket);
 

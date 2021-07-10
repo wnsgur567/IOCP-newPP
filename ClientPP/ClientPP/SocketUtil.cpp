@@ -50,39 +50,6 @@ TCPSocketPtr SocketUtil::CreateTCPSocket()
 	return std::make_shared<TCPSocket>(sock);
 }
 
-// 
-HandlePtr SocketUtil::CreateIOCP(LPTHREAD_START_ROUTINE inWorkThreadPtr, std::vector<HandlePtr>& outWorkerThreads)
-{
-	HandlePtr hcpPtr;
-	hcpPtr = std::make_shared<HANDLE>(
-		CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0));
-	if (*hcpPtr == nullptr)
-		return nullptr;
-
-	// CPU 개수 확인
-	SYSTEM_INFO si;
-	GetSystemInfo(&si);
-	// (CPU 개수 * 2)개의 작업자 스레드 생성
-	HANDLE hThread;
-	for (int i = 0; i < (int)si.dwNumberOfProcessors * 2; i++) {
-		hThread = CreateThread(NULL, 0, inWorkThreadPtr, *hcpPtr, 0, NULL);
-		if (hThread == NULL)
-			return nullptr;
-		outWorkerThreads.push_back(std::make_shared<HANDLE>(hThread));
-		CloseHandle(hThread);
-	}
-
-	return hcpPtr;
-}
-
-HandlePtr SocketUtil::LinkIOCPThread(ClientInfoPtr inInfo)
-{
-	return std::make_shared<HANDLE>(
-		CreateIoCompletionPort((HANDLE)inInfo->GetSockPtr()->GetSock(),
-			*IOCPNetworkManager::sInstance->GetHCPPtr(),
-			inInfo->GetID(),
-			0));
-}
 
 int SocketUtil::Select(
 	const std::vector< TCPSocketPtr >* inReadVec,	//	recv를 감시해야할 socket들

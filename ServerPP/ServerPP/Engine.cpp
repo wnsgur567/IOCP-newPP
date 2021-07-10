@@ -12,7 +12,7 @@ bool Engine::Initialize()
 
 	if (false == IOCPSessionManager::StaticInit())
 		return false;
-
+	IOCPSessionManager::sInstance->RegistCreationFunction(IOCPSession::CreateSession);
 
 	return true;
 }

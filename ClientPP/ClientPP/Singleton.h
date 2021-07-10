@@ -28,3 +28,5 @@ public:
 	// class Á¤¸®
 	virtual void Finalize() = 0;
 };
+
+#define Implementation_sInstance(className) std::unique_ptr<className> Singleton<className>::sInstance

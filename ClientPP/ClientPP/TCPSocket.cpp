@@ -67,7 +67,7 @@ bool TCPSocket::Connect(const SocketAddress& inServerAddr)
 	int retval = connect(m_socket, (const sockaddr*)&inServerAddr.GetSockAddr(), inServerAddr.GetAddrSize());
 	if (retval == SOCKET_ERROR)
 	{
-		SocketUtil::ReportError("TCPSocket::Connect");
+		SocketUtil::ReportError("TCPSocket::Connect()");
 		return false;
 	}
 	return true;

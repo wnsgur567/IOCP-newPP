@@ -15,10 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="CriticalSection.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MemoryStream.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SocketAddress.cpp">
@@ -30,18 +42,33 @@
     <ClCompile Include="TCPSocket.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="base.cpp">
+    <ClCompile Include="Session.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkManager.cpp">
+    <ClCompile Include="NetworkEngine.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="CriticalSection.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MemoryStream.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SocketAddress.h">
@@ -53,17 +80,11 @@
     <ClInclude Include="TCPSocket.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="base.h">
+    <ClInclude Include="Session.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="NetworkManager.h">
+    <ClInclude Include="NetworkEngine.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,7 +8,8 @@ void Session::SetID(id_t inID)
 
 Session::Session()
 	: m_id(0), m_state(ESessionState::None),
-	m_pSock(nullptr), m_pRecvPacket(nullptr), m_pSendPacket(nullptr)
+	m_pSock(nullptr), m_pRecvPacket(nullptr), m_pSendPacket(nullptr),
+	m_newSendID(0), m_newRecvID(0)
 {
 }
 
@@ -39,7 +40,7 @@ void Session::SetState(ESessionState inState)
 
 
 IOCPSession::IOCPSession()
-	: Session(), m_newSendID(0), m_newRecvID(0)
+	: Session()
 {
 }
 

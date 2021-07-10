@@ -2,15 +2,7 @@
 
 std::unique_ptr<NetworkManagerClient> Singleton<NetworkManagerClient>::sInstance;
 
-
-
-bool NetworkManagerClient::StaticInitialize()
-{
-	sInstance.reset(new NetworkManagerClient());
-	return true;
-}
-
-bool NetworkManagerClient::Init(u_short inPort, bool isInNonBlock)
+bool NetworkManagerClient::Init(const char* inIP, u_short inPort)
 {
 	//소켓 생성
 	m_sock = SocketUtil::CreateTCPSocket();
@@ -19,16 +11,21 @@ bool NetworkManagerClient::Init(u_short inPort, bool isInNonBlock)
 		return false;
 	}
 
-	// listen sock를 논블록으로
-	if (false == m_sock->SetNonBlockingMode(isInNonBlock))
+	sockaddr_in _addr;
+	int retval = inet_pton(AF_INET, inIP, &_addr.sin_addr);
+	if (retval == SOCKET_ERROR)
 		return false;
+
+	// set address
+	SocketAddress serverAddr(_addr.sin_addr.s_addr, inPort);
+	m_serveraddr = serverAddr;
 
 	// connect
 	if (false == m_sock->Connect(m_serveraddr))
 		return false;
 
 	// debug
-	m_serveraddr.Print("Connet to Server [IP] : %s / [Port] : %d");	
+	m_serveraddr.Print("Connet to Server [IP] : %s / [Port] : %d");
 
 	return true;
 }
@@ -44,7 +41,7 @@ bool NetworkManagerClient::Initialize()
 	if (false == SocketUtil::Init())
 		return false;
 
-	if (false == NetworkManagerClient::Init(SERVERPORT, false))
+	if (false == NetworkManagerClient::Init(SERVERIP, htons(SERVERPORT)))
 		return false;
 
 	return true;
@@ -62,4 +59,15 @@ bool NetworkManagerClient::DoFrame()
 TCPSocketPtr NetworkManagerClient::GetSockPtr() const
 {
 	return m_sock;
+}
+
+bool NetworkManagerClient::Recv(const TCPSocketPtr inpSock, RecvPacketPtr& outRecvPacket)
+{
+
+	return true;
+}
+
+bool NetworkManagerClient::Send(const TCPSocketPtr inpSock, SendPacketPtr inpPacket)
+{
+	return true;
 }
