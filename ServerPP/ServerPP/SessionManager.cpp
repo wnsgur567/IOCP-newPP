@@ -31,9 +31,9 @@ IOCPSessionPtr IOCPSessionManager::CreateSession()
 	return newSession;
 }
 
-void IOCPSessionManager::DestroySession()
+void IOCPSessionManager::DestroySession(IOCPSessionPtr inpSession)
 {
-	//....
+	m_idToSession_map.erase(inpSession->GetID());
 }
 
 bool IOCPSessionManager::Initialize()

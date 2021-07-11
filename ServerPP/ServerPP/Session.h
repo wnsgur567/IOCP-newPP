@@ -4,6 +4,8 @@ enum class ESessionState
 {
 	None,
 
+	Sign,
+
 	Disconnected
 };
 
@@ -41,20 +43,20 @@ public:
 	virtual bool Recv() = 0;
 };
 
-class IOCPSession : public Session
+class IOCPSession : public Session, public std::enable_shared_from_this<IOCPSession>
 {
 
 protected:
-	std::queue<SendPacketPtr> m_sendQueue;	
+	std::queue<SendPacketPtr> m_sendQueue;
 public:
 	IOCPSession();
-	
+
 	bool Recv() override;
 	bool Send() override;
 
 	static IOCPSessionPtr CreateSession();
 public:
-	virtual bool OnAccepted(TCPSocketPtr,SocketAddress);
+	virtual bool OnAccepted(TCPSocketPtr, SocketAddress);
 	virtual bool OnDisconnected();
 	virtual bool OnCompleteRecv(RecvPacketPtr);
 	virtual bool OnCompleteSend(SendPacketPtr);

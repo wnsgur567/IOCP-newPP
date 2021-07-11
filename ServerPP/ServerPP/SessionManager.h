@@ -16,7 +16,7 @@ public:
 	IOCPSessionPtr GetSession(const clientid_t inID);
 
 	virtual IOCPSessionPtr CreateSession();
-	virtual void DestroySession();
+	virtual void DestroySession(IOCPSessionPtr inpSession);
 public:
 	bool Initialize() override;
 	void Finalize() override;

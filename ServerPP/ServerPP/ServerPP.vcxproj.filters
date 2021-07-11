@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{00d82061-e394-4ad3-9f99-a8347f9e6f36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CriticalSection.cpp">
@@ -50,6 +53,12 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SignInfo.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="SignManager.cpp">
+      <Filter>App</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +99,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SessionManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SignManager.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="SignInfo.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="AppSingleton.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

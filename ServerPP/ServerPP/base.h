@@ -24,25 +24,32 @@ constexpr unsigned __int32	BUFSIZE = 512;
 constexpr unsigned __int32	STREAMPOOLCAPACITY = 128;
 #define SOCKET_END	0
 
+
+using HandlePtr = std::shared_ptr<HANDLE>;
+
 class TCPSocket;
+using TCPSocketPtr = std::shared_ptr<TCPSocket>;
+
 class InputMemoryStream;
 class OutputMemoryStream;
+using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
+using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
+
 class PacketBase;
 class AcceptPacket;
 class RecvPacket;
 class SendPacket;
-class IOCPSession;
-
-using HandlePtr = std::shared_ptr<HANDLE>;
-using TCPSocketPtr = std::shared_ptr<TCPSocket>;
-using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
-using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
 using PacketBaseWeakPtr = std::weak_ptr<PacketBase>;
 using PacketBasePtr = std::shared_ptr<PacketBase>;
 using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
 using RecvPacketPtr = std::shared_ptr<RecvPacket>;
 using SendPacketPtr = std::shared_ptr<SendPacket>;
+
+class IOCPSession;
 using IOCPSessionPtr = std::shared_ptr<IOCPSession>;
+
+class SignInfo;
+using SignInfoPtr = std::shared_ptr<SignInfo>;
 
 enum class E_PacketState
 {
@@ -63,6 +70,7 @@ enum class E_OverlappedType
 
 
 #include "Singleton.h"
+#include "AppSingleton.h"
 #include "CriticalSection.h"
 
 #include "MemoryStream.h"
@@ -77,3 +85,6 @@ enum class E_OverlappedType
 #include "SessionManager.h"
 #include "Session.h"
 #include "Engine.h"
+
+#include "SignManager.h"
+#include "SignInfo.h"

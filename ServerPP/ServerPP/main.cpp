@@ -7,5 +7,7 @@ int main()
 		if (false == Engine::sInstance->DoLoop())
 			return 1;
 	}
+
+	Engine::sInstance->Finalize();
 	return 0;
 }

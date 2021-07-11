@@ -76,21 +76,47 @@ IOCPSessionPtr IOCPSession::CreateSession()
 	return newSession;
 }
 
-bool IOCPSession::OnAccepted(TCPSocketPtr inpSock,SocketAddress inAddress)
+bool IOCPSession::OnAccepted(TCPSocketPtr inpSock, SocketAddress inAddress)
 {
 	m_pSock = inpSock;
 	m_addr = inAddress;
 	SocketUtil::LinkIOCPThread(inpSock, m_id);
+
+	m_state = ESessionState::Sign;
+
 	return true;
 }
 
 bool IOCPSession::OnDisconnected()
 {
+	m_state = ESessionState::Disconnected;
+
 	return true;
 }
 
-bool IOCPSession::OnCompleteRecv(RecvPacketPtr)
+bool IOCPSession::OnCompleteRecv(RecvPacketPtr inRecvPacket)
 {
+	InputMemoryStreamPtr pStream = inRecvPacket->GetStream();
+
+	switch (m_state)
+	{
+	case ESessionState::None:
+	{
+
+	}
+	break;
+	case ESessionState::Sign:
+	{
+		SignManager::sInstance->StreamProcess(shared_from_this(), pStream);
+	}
+	break;
+	case ESessionState::Disconnected:
+	{
+
+	}
+	break;
+	}
+
 	return true;
 }
 
