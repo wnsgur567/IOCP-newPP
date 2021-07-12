@@ -42,6 +42,7 @@ public:
 
 	virtual void Init(PacketBasePtr) = 0;
 	virtual void Clear() = 0;
+	Byte* GetBuf() { return m_buf; }
 protected:
 	PacketBase(E_OverlappedType inType, const psize_t inCapacity) :
 		m_id(0), m_state(E_PacketState::Idle),
@@ -94,7 +95,7 @@ public:
 class RecvPacket : public PacketBase
 {
 	friend class PacketManager;
-	friend class IOCPNetworkManager;
+	friend class NetworkManagerClient;
 public:
 	using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
@@ -128,7 +129,7 @@ public:
 class SendPacket : public PacketBase
 {
 	friend class PacketManager;
-	friend class IOCPNetworkManager;
+	friend class NetworkManagerClient;
 private:
 	OutputMemoryStreamPtr m_pStream; // session 에서 사용할 datastream
 

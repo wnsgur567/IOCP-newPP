@@ -42,6 +42,7 @@ public:
 
 	virtual void Init(PacketBasePtr) = 0;
 	virtual void Clear() = 0;
+	Byte* GetBuf() { return m_buf; }
 protected:
 	PacketBase(E_OverlappedType inType, const psize_t inCapacity) :
 		m_id(0), m_state(E_PacketState::Idle),

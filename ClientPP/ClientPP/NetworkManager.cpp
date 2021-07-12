@@ -63,11 +63,25 @@ TCPSocketPtr NetworkManagerClient::GetSockPtr() const
 
 bool NetworkManagerClient::Recv(const TCPSocketPtr inpSock, RecvPacketPtr& outRecvPacket)
 {
+	// 임시 제작
+	// 동기
+	int size = inpSock->Recv(&outRecvPacket->m_target_recvbytes, sizeof(RecvPacket::psize_t));
+	if (size == SOCKET_ERROR)
+		return false;
+
+	size = inpSock->Recv(outRecvPacket->m_buf, outRecvPacket->m_target_recvbytes);
+	if (size == SOCKET_ERROR)
+		return false;
+
 
 	return true;
 }
 
 bool NetworkManagerClient::Send(const TCPSocketPtr inpSock, SendPacketPtr inpPacket)
 {
+	int retval = inpSock->Send(inpPacket->m_buf, inpPacket->m_target_sendbytes);
+	if (retval == SOCKET_ERROR)
+		return false;
+
 	return true;
 }

@@ -107,7 +107,9 @@ bool IOCPSession::OnCompleteRecv(RecvPacketPtr inRecvPacket)
 	break;
 	case ESessionState::Sign:
 	{
-		SignManager::sInstance->StreamProcess(shared_from_this(), pStream);
+		SignManager::ProcessResult result = SignManager::sInstance->StreamProcess(shared_from_this(), pStream);
+		m_pSendPacket = std::make_shared<SendPacket>(result.pStream);
+		Send();
 	}
 	break;
 	case ESessionState::Disconnected:

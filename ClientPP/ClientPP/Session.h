@@ -6,6 +6,8 @@ enum class ESessionState
 
 	Conneted,
 
+	Test,
+
 	Disconneted,
 };
 

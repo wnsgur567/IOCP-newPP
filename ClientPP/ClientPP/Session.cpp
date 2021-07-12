@@ -28,7 +28,16 @@ void ClientSession::SetState(ESessionState inState)
 
 bool ClientSession::Recv()
 {
-	return NetworkManagerClient::Recv(m_pSock, m_pRecvPacket);
+	if (false == NetworkManagerClient::Recv(m_pSock, m_pRecvPacket))
+		return false;
+
+	InputMemoryStreamPtr pStream = m_pRecvPacket->GetStream();
+
+
+	//pStream->Read()
+
+
+	return true;
 }
 
 bool ClientSession::Send()

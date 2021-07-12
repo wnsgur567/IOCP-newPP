@@ -1,11 +1,18 @@
 #pragma once
 
-class SignManager : public AppSingleton<SignManager>
+class SignManager : public Singleton<SignManager>
 {
 	friend class Singleton;
 public:
 	static constexpr size_t MAX_IDSIZE = 30;
 	static constexpr size_t MAX_PWSIZE = 40;
+
+	const char* SignUpSuccessMsg = "회원가입 성공";
+	const char* SignInSuccessMsg = "로그인 성공";
+	const char* SignOutSuccessMsg = "로그아웃 성공";
+	const char* IDExistMsg = "이미 존재하는 아이디입니다";
+	const char* IDMismatchMsg = "일치하는 아이디가 없습니다";
+	const char* PWMismatchMsg = "일치하는 패스워드가 없습니다";
 
 	enum class EProtocol
 	{
@@ -23,7 +30,8 @@ public:
 		Fail,
 		Success,
 	};
-	enum class E_FailType
+
+	enum class EFailType
 	{
 		None,
 		ID_exist,
@@ -34,13 +42,15 @@ public:
 	struct ResultInfo
 	{
 		ESignResult result;
-		E_FailType failType;
-		ResultInfo() : result(ESignResult::None), failType(E_FailType::None) {}
+		EFailType failType;
+		ResultInfo() : result(ESignResult::None), failType(EFailType::None) {}
 	};
 
 	struct ProcessResult
 	{
-
+		// ...
+		OutputMemoryStreamPtr pStream;
+		ResultInfo resultInfo;
 	};
 
 protected:
@@ -54,10 +64,11 @@ private:
 	bool SaveInfo();	// 정보 변경사항을 저장
 	std::list<SignInfoPtr> m_info_list;
 public:
+	// process 관련
 	ResultInfo SignUpProcess(const SignInfo inInfo);
 	ResultInfo DeleteAccountProcess(const SignInfo inInfo);
 	ResultInfo SignInProcess(const SignInfo inInfo);
 	ResultInfo SignOutProcess(const SignInfo inInfo);
 
-	ProcessResult StreamProcess<ProcessResult>(IOCPSessionPtr inpSession, InputMemoryStreamPtr inpStream) override;
+	ProcessResult StreamProcess(IOCPSessionPtr inpSession, InputMemoryStreamPtr inpStream);
 };
