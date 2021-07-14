@@ -63,8 +63,9 @@ protected:
 
 class AcceptPacket : public PacketBase
 {
-	friend class PacketManager;
-	friend class IOCPNetworkManager;
+	friend class PacketManager;	
+	template <typename T>
+	friend class IOCPNetworkManagerBase;
 private:
 	TCPSocketPtr m_pClientSock;
 	SocketAddress m_sockAddr;
@@ -94,8 +95,9 @@ public:
 // using input stream
 class RecvPacket : public PacketBase
 {
-	friend class PacketManager;
-	friend class IOCPNetworkManager;
+	friend class PacketManager;	
+	template <typename T>
+	friend class IOCPNetworkManagerBase;
 public:
 	using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
@@ -129,7 +131,8 @@ public:
 class SendPacket : public PacketBase
 {
 	friend class PacketManager;
-	friend class IOCPNetworkManager;
+	template <typename T>
+	friend class IOCPNetworkManagerBase;
 private:
 	OutputMemoryStreamPtr m_pStream; // session 에서 사용할 datastream
 

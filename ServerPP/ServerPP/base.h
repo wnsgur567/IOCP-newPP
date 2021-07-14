@@ -68,9 +68,17 @@ enum class E_OverlappedType
 	Send,
 };
 
+enum class ESessionState
+{
+	None,
+
+	Sign,
+
+	Disconnected
+};
+
 
 #include "Singleton.h"
-#include "AppSingleton.h"
 #include "CriticalSection.h"
 
 #include "MemoryStream.h"
@@ -80,10 +88,13 @@ enum class E_OverlappedType
 #include "PacketManager.h"
 #include "Packet.h"
 
-#include "NetworkManager.h"
-
 #include "SessionManager.h"
 #include "Session.h"
+
+#include "NetworkManager.h"
+#include "IOCPNetworkManagerBase.h"
+#include "IOCPNetworkManager.h"
+
 #include "Engine.h"
 
 #include "SignManager.h"

@@ -1,55 +1,69 @@
 #pragma once
 
-class NetworkManagerServer
+template <typename T>
+class NetworkManagerServer : public Singleton<T>
 {
 protected:
 	TCPSocketPtr m_pListenSock;
+	u_short m_port;
 protected:
-	NetworkManagerServer() {}
-	virtual bool Init(u_short inPort, bool isInNonBlock);
+	NetworkManagerServer() : m_port(SERVERPORT) {}	
 public:
 	NetworkManagerServer(const NetworkManagerServer&) = delete;
 	NetworkManagerServer& operator=(const NetworkManagerServer&) = delete;
 	virtual ~NetworkManagerServer();
 public:
-	virtual bool DoFrame() = 0;
+	virtual void SetPortNumber(u_short) = 0;
+	virtual bool Initialize() override;
+	virtual void Finalize() override;	
 
 	TCPSocketPtr GetListenSockPtr() const;
 };
 
-class IOCPNetworkManager : public NetworkManagerServer
-{
-public:
-	static std::unique_ptr<IOCPNetworkManager> sInstance;
-	using psize_t = PacketManager::psize_t;
-protected:
-	HandlePtr	 m_pHcp;
-	std::vector<HandlePtr> m_hAcceptThreads;
-	std::vector<HandlePtr> m_hWorkerThreads;
-protected:
-	IOCPNetworkManager() {}
 
-	bool Init(u_short inPort, bool isInNonBlock) override;
-public:
-	static bool StaticInit(u_short inPort);
-	IOCPNetworkManager(const IOCPNetworkManager&) = delete;
-	IOCPNetworkManager& operator=(const IOCPNetworkManager&) = delete;
-	~IOCPNetworkManager();
-public:
-	virtual bool DoFrame();
-	HandlePtr GetHCPPtr() const;
-public:
-
-	static DWORD WINAPI AcceptThread(LPVOID arg);
-	static bool RecvAsync(const TCPSocketPtr inpSock, RecvPacketPtr& outRecvPacket);	// 비동기 recv
-	static bool SendAsync(const TCPSocketPtr inpSock, SendPacketPtr inSendPacket);	// 비동기 send	
-	static E_PacketState CompleteRecv(TCPSocketPtr inpSock, RecvPacketPtr& outpPacket, const psize_t inCompletebyte);
-	static E_PacketState CompleteSend(TCPSocketPtr inpSock, SendPacketPtr inpPacket, const psize_t inCompletebyte);
-	static DWORD WINAPI WorkerThread(LPVOID arg);
-};
-
-class SelectNetworkManager : public NetworkManagerServer
+template<typename T>
+NetworkManagerServer<T>::~NetworkManagerServer()
 {
 
-};
+}
 
+template<typename T>
+bool NetworkManagerServer<T>::Initialize()
+{
+	// wsa init
+	if (false == SocketUtil::Init())
+		return false;
+
+	// listen 소켓 생성
+	m_pListenSock = SocketUtil::CreateTCPSocket();
+	if (m_pListenSock == nullptr)
+	{
+		return false;
+	}
+
+	// binding
+	SocketAddress myAddress(htonl(INADDR_ANY), htons(m_port));
+	if (false == m_pListenSock->Bind(myAddress))
+		return false;
+
+	// debug
+	printf("Initializing NetworkManager at port %d", m_port);
+
+	// listening
+	if (false == m_pListenSock->Listen(SOMAXCONN))
+		return false;
+
+	return true;
+}
+
+template<typename T>
+void NetworkManagerServer<T>::Finalize()
+{
+	SocketUtil::CleanUp();
+}
+
+template<typename T>
+TCPSocketPtr NetworkManagerServer<T>::GetListenSockPtr() const
+{
+	return m_pListenSock;
+}

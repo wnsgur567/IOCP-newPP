@@ -1,13 +1,6 @@
 #pragma once
 
-enum class ESessionState
-{
-	None,
 
-	Sign,
-
-	Disconnected
-};
 
 class Session
 {
@@ -43,21 +36,30 @@ public:
 	virtual bool Recv() = 0;
 };
 
-class IOCPSession : public Session, public std::enable_shared_from_this<IOCPSession>
+class IOCPSessionBase : public Session
 {
-
 protected:
 	std::queue<SendPacketPtr> m_sendQueue;
 public:
-	IOCPSession();
-
+	IOCPSessionBase();
 	bool Recv() override;
 	bool Send() override;
 
+	virtual bool OnAccepted(TCPSocketPtr, SocketAddress) = 0;
+	virtual bool OnDisconnected() = 0;
+	virtual bool OnCompleteRecv(RecvPacketPtr) = 0;
+	virtual bool OnCompleteSend(SendPacketPtr) = 0;
+};
+
+class IOCPSession : public IOCPSessionBase, public std::enable_shared_from_this<IOCPSession>
+{
+public:
+	IOCPSession();
+
 	static IOCPSessionPtr CreateSession();
 public:
-	virtual bool OnAccepted(TCPSocketPtr, SocketAddress);
-	virtual bool OnDisconnected();
-	virtual bool OnCompleteRecv(RecvPacketPtr);
-	virtual bool OnCompleteSend(SendPacketPtr);
+	bool OnAccepted(TCPSocketPtr, SocketAddress) override;
+	bool OnDisconnected() override;
+	bool OnCompleteRecv(RecvPacketPtr) override;
+	bool OnCompleteSend(SendPacketPtr) override;
 };

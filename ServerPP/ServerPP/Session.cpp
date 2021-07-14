@@ -37,34 +37,40 @@ void Session::SetState(ESessionState inState)
 	m_state = inState;
 }
 
-
-
-IOCPSession::IOCPSession()
-	: Session()
+IOCPSessionBase::IOCPSessionBase()
 {
 }
 
-bool IOCPSession::Recv()
+bool IOCPSessionBase::Recv()
 {
-	if (false == IOCPNetworkManager::RecvAsync(m_pSock, m_pRecvPacket))
+	/*if (false == IOCPNetworkManager::RecvAsync(m_pSock, m_pRecvPacket))
 	{
 		return false;
 	}
+	return true;*/
+
 	return true;
 }
 
-bool IOCPSession::Send()
+bool IOCPSessionBase::Send()
 {
 	m_sendQueue.push(m_pSendPacket);
 
 	if (m_sendQueue.size() == 1)
 	{
-		if (false == IOCPNetworkManager::SendAsync(m_pSock, m_pSendPacket))
+		/*if (false == IOCPNetworkManager::SendAsync(m_pSock, m_pSendPacket))
 		{
 			return false;
-		}
+		}*/
 	}
 	return true;
+}
+
+
+
+IOCPSession::IOCPSession()
+	: IOCPSessionBase()
+{
 }
 
 IOCPSessionPtr IOCPSession::CreateSession()
@@ -80,7 +86,7 @@ bool IOCPSession::OnAccepted(TCPSocketPtr inpSock, SocketAddress inAddress)
 {
 	m_pSock = inpSock;
 	m_addr = inAddress;
-	SocketUtil::LinkIOCPThread(inpSock, m_id);
+	/*SocketUtil::LinkIOCPThread(inpSock, *m_pHcp , m_id);*/
 
 	m_state = ESessionState::Sign;
 
@@ -126,3 +132,4 @@ bool IOCPSession::OnCompleteSend(SendPacketPtr)
 {
 	return true;
 }
+

@@ -2,7 +2,8 @@
 
 class PacketManager
 {
-	friend class IOCPNetworkManager;
+	template <typename T>
+	friend class IOCPNetworkManagerBase;
 public:
 	static std::unique_ptr<PacketManager> sInstance;
 	using psize_t = unsigned __int32;

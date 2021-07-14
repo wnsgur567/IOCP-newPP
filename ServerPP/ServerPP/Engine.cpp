@@ -4,7 +4,7 @@ std::unique_ptr<Engine> Singleton<Engine>::sInstance;
 
 bool Engine::Initialize()
 {
-	if (false == IOCPNetworkManager::StaticInit(SERVERPORT))
+	if (false == IOCPNetworkManager::StaticInit())
 		return false;
 
 	if (false == PacketManager::StaticInit())
