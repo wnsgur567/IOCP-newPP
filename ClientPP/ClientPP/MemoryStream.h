@@ -61,7 +61,7 @@ public:
 public:
 	void Write(const void* inData, size_t inByteCount);
 	template<typename T> void Write(const T& inData);
-	void Wirte(const std::string& inString);
+	void Write(const std::string& inString);
 };
 
 // only primitive type

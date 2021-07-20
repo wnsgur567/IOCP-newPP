@@ -13,8 +13,7 @@ public:
 	NetworkManagerServer& operator=(const NetworkManagerServer&) = delete;
 	virtual ~NetworkManagerServer();
 public:
-	virtual void SetPortNumber(u_short) = 0;
-	virtual bool Initialize() override;
+	virtual bool Initialize(LPVOID) override;
 	virtual void Finalize() override;	
 
 	TCPSocketPtr GetListenSockPtr() const;
@@ -28,7 +27,7 @@ NetworkManagerServer<T>::~NetworkManagerServer()
 }
 
 template<typename T>
-bool NetworkManagerServer<T>::Initialize()
+bool NetworkManagerServer<T>::Initialize(LPVOID)
 {
 	// wsa init
 	if (false == SocketUtil::Init())

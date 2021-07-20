@@ -6,33 +6,29 @@ enum class ESessionState
 
 	Conneted,
 
-	Test,
+	Sign,
 
 	Disconneted,
 };
 
-class ClientSession
+
+class Session : public SessionBase
 {
+private:
+	friend class NetworkManagerClient;
 protected:
 	ESessionState m_state;
-	TCPSocketPtr m_pSock;
-	SocketAddress m_addr;
-
+	
+	bool IsSignedIn;
 	RecvPacketPtr m_pRecvPacket;
 	SendPacketPtr m_pSendPacket;
 public:
-	ClientSession();
-
-	virtual ~ClientSession();
-	ClientSession(const ClientSession&) = delete;
-	ClientSession& operator=(const ClientSession&) = delete;
-
-	ESessionState GetState();
-	TCPSocketPtr GetSockPtr();
-	void SetState(ESessionState inState);
-
-	bool Recv();
-	bool Send();
-	static ClientSessionPtr CreateSession();
-
+	Session();
+	virtual ~Session();
+	
+	ESessionState GetState();	
+	void SetState(ESessionState inState);	
+public:
+	bool Recv() override;
+	bool Send() override;
 };

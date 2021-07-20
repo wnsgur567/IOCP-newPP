@@ -1,85 +1,167 @@
 #include "base.h"
 
-std::unique_ptr<NetworkManagerClient> Singleton<NetworkManagerClient>::sInstance;
+Implementation_sInstance(NetworkManagerClient);
 
-bool NetworkManagerClient::Init(const char* inIP, u_short inPort)
+
+// 임시
+enum class EProtocol
 {
-	//소켓 생성
-	m_sock = SocketUtil::CreateTCPSocket();
-	if (m_sock == nullptr)
-	{
-		return false;
-	}
+	None,
 
-	sockaddr_in _addr;
-	int retval = inet_pton(AF_INET, inIP, &_addr.sin_addr);
-	if (retval == SOCKET_ERROR)
-		return false;
-
-	// set address
-	SocketAddress serverAddr(_addr.sin_addr.s_addr, inPort);
-	m_serveraddr = serverAddr;
-
-	// connect
-	if (false == m_sock->Connect(m_serveraddr))
-		return false;
-
-	// debug
-	m_serveraddr.Print("Connet to Server [IP] : %s / [Port] : %d");
-
-	return true;
-}
-
-NetworkManagerClient::~NetworkManagerClient()
-{
-	SocketUtil::CleanUp();
-}
-
-bool NetworkManagerClient::Initialize()
-{
-	// wsa init
-	if (false == SocketUtil::Init())
-		return false;
-
-	if (false == NetworkManagerClient::Init(SERVERIP, htons(SERVERPORT)))
-		return false;
-
-	return true;
-}
-
-void NetworkManagerClient::Finalize()
-{
-}
+	SignUp,
+	SignIn,
+	SignOut,
+	SignResult,
+};
 
 bool NetworkManagerClient::DoFrame()
 {
+	SessionPtr pSession = std::static_pointer_cast<Session>(pSessionBase);
+
+	ESessionState state = pSession->GetState();
+
+	switch (state)
+	{
+	case ESessionState::None:
+		break;
+	case ESessionState::Conneted:
+		break;
+	case ESessionState::Sign:
+	{
+		printf("1.sign in\n2.sign up\n3.exit\n");
+		int input;
+		scanf("%d", &input);
+
+		switch (input)
+		{
+		case 1:
+		{
+			char id[30];
+			char pw[30];
+			ZeroMemory(id, 30);
+			ZeroMemory(pw, 30);
+			printf("id : ");
+			scanf("%s", id);
+			printf("pw : ");
+			scanf("%s", pw);
+
+			SendPacketPtr pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
+			OutputMemoryStreamPtr pStream = std::make_shared<OutputMemoryStream>(BUFSIZE);
+
+			EProtocol protocol = EProtocol::SignIn;
+			pStream->Write(&protocol, sizeof(EProtocol));
+			size_t length = strlen(id);
+			pStream->Write(&length, sizeof(size_t));
+			pStream->Write(id, length);
+			length = strlen(pw);
+			pStream->Write(&length, sizeof(size_t));
+			pStream->Write(pw, length);
+
+			pSendPacket->SetStream(pStream);
+
+			if (false == Send(pSendPacket))
+			{
+				// ...
+			}
+
+			RecvPacketPtr pRecvPacket;
+			if (false == Recv(pRecvPacket))
+			{
+				// ...
+			}
+
+
+		}
+		break;
+		case 2:
+		{
+			char id[30];
+			char pw[30];
+			printf("id : ");
+			scanf("%s", id);
+			printf("pw : ");
+			scanf("%s", pw);
+
+			SendPacketPtr pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
+			OutputMemoryStreamPtr pStream = std::make_shared<OutputMemoryStream>(BUFSIZE);
+
+			EProtocol protocol = EProtocol::SignIn;
+			pStream->Write(&protocol, sizeof(EProtocol));
+			size_t length = strlen(id);
+			pStream->Write(&length, sizeof(size_t));
+			pStream->Write(id, length);
+			length = strlen(pw);
+			pStream->Write(&length, sizeof(size_t));
+			pStream->Write(pw, length);
+
+			pSendPacket->SetStream(pStream);
+
+			if (false == Send(pSendPacket))
+			{
+				// ...
+			}
+
+			RecvPacketPtr pRecvPacket;
+			if (false == Recv(pRecvPacket))
+			{
+				// ...
+			}
+
+		}
+		break;
+		case 3:
+			break;
+		}
+
+
+
+
+
+	}
+	break;
+	case ESessionState::Disconneted:
+		break;
+	default:
+		break;
+	}
+
 	return true;
 }
 
-TCPSocketPtr NetworkManagerClient::GetSockPtr() const
-{
-	return m_sock;
-}
 
-bool NetworkManagerClient::Recv(const TCPSocketPtr inpSock, RecvPacketPtr& outRecvPacket)
+bool NetworkManagerClient::Recv(RecvPacketPtr& outRecvPacket)
 {
-	// 임시 제작
-	// 동기
-	int size = inpSock->Recv(&outRecvPacket->m_target_recvbytes, sizeof(RecvPacket::psize_t));
+	TCPSocketPtr pSock = pSessionBase->GetSockPtr();
+
+	auto pPacket = PacketManager::sInstance->GetRecvPacketFromPool();
+
+	int size = pSock->Recv(&pPacket->m_target_recvbytes, sizeof(RecvPacket::psize_t));
 	if (size == SOCKET_ERROR)
 		return false;
 
-	size = inpSock->Recv(outRecvPacket->m_buf, outRecvPacket->m_target_recvbytes);
+	size = pSock->Recv(pPacket->m_buf, pPacket->m_target_recvbytes);
 	if (size == SOCKET_ERROR)
 		return false;
 
+	// 중복 패킷인 경우
+	if (pSessionBase->IsDuplicatedPacket(pPacket->GetId()))
+		return Recv(outRecvPacket);
+
+	// 정상 처리
+	outRecvPacket = pPacket;
 
 	return true;
 }
 
-bool NetworkManagerClient::Send(const TCPSocketPtr inpSock, SendPacketPtr inpPacket)
+bool NetworkManagerClient::Send(SendPacketPtr inpPacket)
 {
-	int retval = inpSock->Send(inpPacket->m_buf, inpPacket->m_target_sendbytes);
+	TCPSocketPtr pSock = pSessionBase->GetSockPtr();
+
+	auto packet_id = pSessionBase->CountingSendID();
+	// 패킷 처리....
+	inpPacket->GetReady(packet_id);
+
+	int retval = pSock->Send(inpPacket->m_buf, inpPacket->m_target_sendbytes);
 	if (retval == SOCKET_ERROR)
 		return false;
 

@@ -5,11 +5,11 @@ struct OverlappedEx
 	WSAOVERLAPPED overlapped;
 	E_OverlappedType type;
 	PacketBaseWeakPtr pPacket;
-	void* ptr;
+	std::shared_ptr<void> pointer;
 
 	OverlappedEx(E_OverlappedType inType)
 		: overlapped(), type(inType)
-		, ptr(nullptr)
+		, pointer(nullptr)
 	{
 
 	}
@@ -42,6 +42,7 @@ public:
 
 	virtual void Init(PacketBasePtr) = 0;
 	virtual void Clear() = 0;
+	OverlappedEx& GetOverlappedRef() { return m_overlappedEx; }
 	Byte* GetBuf() { return m_buf; }
 protected:
 	PacketBase(E_OverlappedType inType, const psize_t inCapacity) :
@@ -66,7 +67,7 @@ class AcceptPacket : public PacketBase
 	friend class PacketManager;	
 	template <typename T>
 	friend class IOCPNetworkManagerBase;
-private:
+protected:
 	TCPSocketPtr m_pClientSock;
 	SocketAddress m_sockAddr;
 
@@ -86,6 +87,7 @@ public:
 	void Init(PacketBasePtr inpPacket) override;
 	void GetReady();
 
+	void Set(TCPSocketPtr inpSock,SocketAddress inAddr);
 	TCPSocketPtr GetPSock();
 	SocketAddress GetAddr();
 	void Clear() override;
@@ -115,7 +117,6 @@ public:
 	~RecvPacket();
 
 	void Init(PacketBasePtr inpThis);
-	// packet을 get 하여 처음 사용하기 시작할때 호출 됨
 	void Clear() override;
 
 	// recv 전 overlapped 및 wsabuf 초기화
@@ -125,6 +126,7 @@ public:
 	// 패킷 recv 가 완료된 시간을 기록
 	void RecordRecvTime();
 	time_point_t GetRecvTime() const;
+	void UnPacking();
 };
 
 // using output stream
@@ -146,6 +148,7 @@ public:
 	// packet을 get 하여 처음 사용하기 시작할때 호출 됨
 	void Clear() override;
 
-	// recv 전 overlapped 및 wsabuf 초기화
+	// recv 전 overlapped 및 wsabuf 초기화 && packgin
 	void GetReady(const id_t inPacketID);
+	void SetStream(OutputMemoryStreamPtr pStream);
 };

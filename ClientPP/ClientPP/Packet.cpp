@@ -115,6 +115,16 @@ void SendPacket::GetReady(const id_t inPacketID)
 	m_wsabuf.len = m_target_sendbytes - m_sendbytes;
 }
 
+OutputMemoryStreamPtr SendPacket::GetStream()
+{
+	return m_pStream;
+}
+
+void SendPacket::SetStream(OutputMemoryStreamPtr pStream)
+{
+	m_pStream = pStream;
+}
+
 void SendPacket::Init(PacketBasePtr inpThis)
 {
 	m_overlappedEx.Init(inpThis);

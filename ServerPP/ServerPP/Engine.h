@@ -1,14 +1,10 @@
 #pragma once
 
-class Engine : public Singleton<Engine>
+class Engine : public EngineBase<Engine, IOCPNetworkManager, IOCPSessionManager, IOCPSession>
 {
 	friend class Singleton;
 protected:
 	Engine() {}
 public:
-	bool Initialize() override;
-	void Finalize() override;
-
-	bool DoFrame();
-	bool DoLoop();
+	bool DoFrame() override;	
 };

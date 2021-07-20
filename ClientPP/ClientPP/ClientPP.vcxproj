@@ -147,6 +147,8 @@
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="Session.cpp" />
+    <ClCompile Include="SessionBase.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
     <ClCompile Include="SocketAddress.cpp" />
     <ClCompile Include="SocketUtil.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
@@ -156,10 +158,17 @@
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="NetworkEngine.h" />
+    <ClInclude Include="NetworkEngineBase.h" />
     <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="NetworkManagerClientBase.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="SessionBase.h" />
+    <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="SessionManagerBase.h" />
+    <ClInclude Include="SignInfo.h" />
+    <ClInclude Include="SignMaanger.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SocketAddress.h" />
     <ClInclude Include="SocketUtil.h" />

@@ -145,4 +145,6 @@ public:
 
 	// recv 전 overlapped 및 wsabuf 초기화
 	void GetReady(const id_t inPacketID);
+	OutputMemoryStreamPtr GetStream();
+	void SetStream(OutputMemoryStreamPtr pStream);
 };

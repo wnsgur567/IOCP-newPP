@@ -1,21 +1,19 @@
 #include "base.h"
 
 
+
 int main()
 {
 	if (false == NetworkEngine::StaticInit())
 		return 1;
 
-	if (false == NetworkManagerClient::StaticInit())
+	if (false == NetworkEngine::sInstance->Initialize(nullptr))
 		return 1;
 
-	while (true)
-	{
-		if (false == NetworkManagerClient::sInstance->DoFrame())
-			return false;
-	}
+	if (false == NetworkEngine::sInstance->DoLoop())
+		return 1;
 
-	NetworkManagerClient::sInstance->Finalize();
+	NetworkEngine::sInstance->Finalize();
 
 	return 0;
 }

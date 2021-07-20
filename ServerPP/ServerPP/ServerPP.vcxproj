@@ -141,12 +141,14 @@
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="IOCPNetworkManager.cpp" />
+    <ClCompile Include="IOCPSessionBase.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Session.cpp" />
+    <ClCompile Include="IOCPSession.cpp" />
     <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="MemoryStream.cpp" />
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="PacketManager.cpp" />
+    <ClCompile Include="SessionBase.cpp" />
     <ClCompile Include="SessionManager.cpp" />
     <ClCompile Include="SignInfo.cpp" />
     <ClCompile Include="SignManager.cpp" />
@@ -157,15 +159,19 @@
   <ItemGroup>
     <ClInclude Include="base.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="EngineBase.h" />
     <ClInclude Include="IOCPNetworkManager.h" />
     <ClInclude Include="IOCPNetworkManagerBase.h" />
-    <ClInclude Include="Session.h" />
+    <ClInclude Include="IOCPSessionBase.h" />
+    <ClInclude Include="IOCPSession.h" />
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketManager.h" />
+    <ClInclude Include="SessionBase.h" />
     <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="SessionManagerBase.h" />
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
     <ClInclude Include="Singleton.h" />

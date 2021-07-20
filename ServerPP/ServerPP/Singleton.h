@@ -16,7 +16,7 @@ public:
 	static bool StaticInit()
 	{
 		sInstance.reset(new T());		
-		return sInstance->Initialize();
+		return true;
 	}
 	virtual ~Singleton()
 	{
@@ -24,7 +24,7 @@ public:
 	}
 public:
 	// class 초기화
-	virtual bool Initialize() = 0;
+	virtual bool Initialize(LPVOID) = 0;
 	// class 정리
 	virtual void Finalize() = 0;
 };

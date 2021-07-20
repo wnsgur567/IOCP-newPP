@@ -45,6 +45,8 @@ using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
 using RecvPacketPtr = std::shared_ptr<RecvPacket>;
 using SendPacketPtr = std::shared_ptr<SendPacket>;
 
+class IOCPSessionBase;
+using IOCPSessionBasePtr = std::shared_ptr<IOCPSessionBase>;
 class IOCPSession;
 using IOCPSessionPtr = std::shared_ptr<IOCPSession>;
 
@@ -53,8 +55,9 @@ using SignInfoPtr = std::shared_ptr<SignInfo>;
 
 enum class E_PacketState
 {
-	Error = -2,		// 비정상 종료
-	End = -1,		// 정상 종료
+	Error = -3,			// 비정상 종료
+	End = -2,			// 정상 종료
+	Duplicated = -1,	// 중복 패킷
 
 	Idle = 0,
 	InComplete,		// 미완성, 데이터 받는(전송) 중
@@ -88,13 +91,18 @@ enum class ESessionState
 #include "PacketManager.h"
 #include "Packet.h"
 
+#include "SessionBase.h"
+#include "SessionManagerBase.h"
+
+#include "IOCPSessionBase.h"
 #include "SessionManager.h"
-#include "Session.h"
+#include "IOCPSession.h"
 
 #include "NetworkManager.h"
 #include "IOCPNetworkManagerBase.h"
 #include "IOCPNetworkManager.h"
 
+#include "EngineBase.h"
 #include "Engine.h"
 
 #include "SignManager.h"

@@ -1,10 +1,10 @@
 #include "base.h"
 
-std::unique_ptr<PacketManager> PacketManager::sInstance;
+Implementation_sInstance(PacketManager);
 
-bool PacketManager::Init(psize_t inStreamPoolingCapacity)
+bool PacketManager::Initialize(LPVOID)
 {
-	for (psize_t i = 0; i < inStreamPoolingCapacity; i++)
+	for (psize_t i = 0; i < m_capacity; i++)
 	{
 		// acceptpacket
 		AcceptPacketPtr a_ptr = std::make_shared<AcceptPacket>();
@@ -25,13 +25,10 @@ bool PacketManager::Init(psize_t inStreamPoolingCapacity)
 	return true;
 }
 
-bool PacketManager::StaticInit()
+void PacketManager::Finalize()
 {
-	sInstance.reset(new PacketManager());
-
-	// stream 을 capacity 만큼 생성 및 풀링
-	return PacketManager::sInstance->Init(STREAMPOOLCAPACITY);
 }
+
 
 PacketManager::~PacketManager()
 {
@@ -61,6 +58,7 @@ RecvPacketPtr PacketManager::GetRecvPacketFromPool()
 
 void PacketManager::RetrieveRecvPacket(RecvPacketPtr inpPacket)
 {
+	inpPacket->Clear();
 	m_recvpacket_pool.push(inpPacket);
 }
 
@@ -74,4 +72,6 @@ SendPacketPtr PacketManager::GetSendPacketFromPool()
 
 void PacketManager::RetrieveSendPacket(SendPacketPtr inpPacket)
 {
+	inpPacket->Clear();
+	m_sendpacket_pool.push(inpPacket);
 }

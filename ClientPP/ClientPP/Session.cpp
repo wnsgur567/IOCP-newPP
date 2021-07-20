@@ -1,51 +1,37 @@
 #include "base.h"
 
-ClientSession::ClientSession()
-	: m_state(ESessionState::None), m_pSock(nullptr), m_addr(),
+Session::Session()
+	: m_state(ESessionState::Sign),
 	m_pRecvPacket(nullptr), m_pSendPacket(nullptr)
 {
-	m_pRecvPacket = PacketManager::sInstance->GetRecvPacketFromPool();
 }
 
-ClientSession::~ClientSession()
+Session::~Session()
 {
 }
 
-ESessionState ClientSession::GetState()
+ESessionState Session::GetState()
 {
 	return m_state;
 }
 
-TCPSocketPtr ClientSession::GetSockPtr()
-{
-	return m_pSock;
-}
 
-void ClientSession::SetState(ESessionState inState)
+void Session::SetState(ESessionState inState)
 {
 	m_state = inState;
 }
 
-bool ClientSession::Recv()
+
+bool Session::Recv()
 {
-	if (false == NetworkManagerClient::Recv(m_pSock, m_pRecvPacket))
-		return false;
-
-	InputMemoryStreamPtr pStream = m_pRecvPacket->GetStream();
-
-
-	//pStream->Read()
-
 
 	return true;
 }
 
-bool ClientSession::Send()
+bool Session::Send()
 {
-	return NetworkManagerClient::Send(m_pSock, m_pSendPacket);
+	return true;
 }
 
-ClientSessionPtr ClientSession::CreateSession()
-{
-	return std::make_shared<ClientSession>();
-}
+
+

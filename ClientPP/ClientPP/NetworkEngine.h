@@ -1,10 +1,7 @@
 #pragma once
 
-class NetworkEngine : public Singleton<NetworkEngine>
+class NetworkEngine : public NetworkEngineBase<NetworkEngine, NetworkManagerClient, SessionManager, Session>
 {
-	friend class Singleton;
-protected:
 public:
-	bool Initialize() override;
-	void Finalize() override;
+	bool DoFrame() override;
 };

@@ -17,6 +17,8 @@
 
 #undef max
 using Byte = char;
+using id_t = unsigned __int32;
+
 #define						SERVERIP "127.0.0.1"
 constexpr u_short			SERVERPORT = 9000;
 constexpr unsigned __int32	BUFSIZE = 512;
@@ -31,7 +33,7 @@ class PacketBase;
 class AcceptPacket;
 class RecvPacket;
 class SendPacket;
-class ClientSession;
+class Session;
 
 using HandlePtr = std::shared_ptr<HANDLE>;
 using TCPSocketPtr = std::shared_ptr<TCPSocket>;
@@ -42,7 +44,7 @@ using PacketBasePtr = std::shared_ptr<PacketBase>;
 using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
 using RecvPacketPtr = std::shared_ptr<RecvPacket>;
 using SendPacketPtr = std::shared_ptr<SendPacket>;
-using ClientSessionPtr = std::shared_ptr<ClientSession>;
+using SessionPtr = std::shared_ptr<Session>;
 
 enum class E_PacketState
 {
@@ -71,7 +73,19 @@ enum class E_OverlappedType
 #include "PacketManager.h"
 #include "Packet.h"
 
-#include "NetworkManager.h"
-#include "Session.h"
 
+
+#include "SessionBase.h"
+#include "SessionManagerBase.h"
+#include "NetworkManagerClientBase.h"
+#include "NetworkEngineBase.h"
+
+
+
+
+
+
+#include "Session.h"
+#include "SessionManager.h"
+#include "NetworkManager.h"
 #include "NetworkEngine.h"

@@ -56,7 +56,7 @@ public:
 protected:
 	SignManager() {}
 public:
-	bool Initialize() override;
+	bool Initialize(LPVOID) override;
 	void Finalize() override;
 	~SignManager();
 private:
@@ -70,5 +70,5 @@ public:
 	ResultInfo SignInProcess(const SignInfo inInfo);
 	ResultInfo SignOutProcess(const SignInfo inInfo);
 
-	ProcessResult StreamProcess(IOCPSessionPtr inpSession, InputMemoryStreamPtr inpStream);
+	ProcessResult StreamProcess(InputMemoryStreamPtr inpStream, bool IsSignedIn);
 };

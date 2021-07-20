@@ -2,7 +2,7 @@
 
 Implementation_sInstance(SignManager);
 
-bool SignManager::Initialize()
+bool SignManager::Initialize(LPVOID)
 {
 	if (false == LoadInfo())
 		return false;
@@ -21,9 +21,11 @@ SignManager::~SignManager()
 bool SignManager::LoadInfo()
 {
 	// 임시 값 셋팅
+	std::string s = "abcd";
 	for (size_t i = 0; i < 4; i++)
 	{
-		SignInfoPtr newInfo = std::make_shared<SignInfo>("abcd" + ('e' + i), "1234");
+		std::string ss = s + (char)('e' + i);
+		SignInfoPtr newInfo = std::make_shared<SignInfo>(ss.c_str(), "1234");
 		m_info_list.push_back(newInfo);
 	}
 
@@ -119,7 +121,7 @@ SignManager::ResultInfo SignManager::SignOutProcess(const SignInfo inInfo)
 	return retData;
 }
 
-SignManager::ProcessResult SignManager::StreamProcess(IOCPSessionPtr inpSession, InputMemoryStreamPtr inpStream)
+SignManager::ProcessResult SignManager::StreamProcess(InputMemoryStreamPtr inpStream, bool IsSignedIn)
 {
 	ProcessResult result;
 
@@ -146,7 +148,7 @@ SignManager::ProcessResult SignManager::StreamProcess(IOCPSessionPtr inpSession,
 		case ESignResult::Success:
 		{	// success			
 			// stream = protocol + sign result + msg len + msg
-			protocol = EProtocol::SignResult;			
+			protocol = EProtocol::SignResult;
 			size_t msg_len = strlen(SignUpSuccessMsg);
 
 			result.pStream->Write(&protocol, sizeof(EProtocol));
@@ -187,7 +189,7 @@ SignManager::ProcessResult SignManager::StreamProcess(IOCPSessionPtr inpSession,
 			}
 		}
 		break;
-		}		
+		}
 	}
 	break;
 	case SignManager::EProtocol::SignIn:

@@ -22,30 +22,24 @@
     <Filter Include="Base">
       <UniqueIdentifier>{5608dda5-d868-49b9-9543-6fec32bc7787}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NetBase">
+      <UniqueIdentifier>{b23e86d8-c4ec-4932-b363-3a9274bb851f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\header">
+      <UniqueIdentifier>{d7bd36c2-fb37-4d56-b02a-29fd892ac7e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\source">
+      <UniqueIdentifier>{390627ef-04a4-4d4a-99de-2106fb65a4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetBase\source">
+      <UniqueIdentifier>{88b8fe81-3336-4b5a-ad9d-f0a15939797e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetBase\header">
+      <UniqueIdentifier>{84ea678f-6183-47c6-a2d4-76fded9f162a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Packet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketAddress.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketUtil.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPSocket.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Session.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SignInfo.cpp">
@@ -54,42 +48,48 @@
     <ClCompile Include="SignManager.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="CriticalSection.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryStream.cpp">
-      <Filter>Base</Filter>
     </ClCompile>
     <ClCompile Include="IOCPNetworkManager.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="CriticalSection.cpp">
+      <Filter>Base\source</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryStream.cpp">
+      <Filter>Base\source</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPSessionBase.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionBase.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManager.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketAddress.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPSocket.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPSession.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketUtil.cpp">
+      <Filter>NetBase\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Packet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketAddress.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TCPSocket.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="base.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SignManager.h">
@@ -98,25 +98,58 @@
     <ClInclude Include="SignInfo.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="IOCPNetworkManagerBase.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="NetworkManager.h">
       <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="CriticalSection.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryStream.h">
-      <Filter>Base</Filter>
-    </ClInclude>
     <ClInclude Include="IOCPNetworkManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="CriticalSection.h">
+      <Filter>Base\header</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryStream.h">
+      <Filter>Base\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Base\header</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBase.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPNetworkManagerBase.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPSessionBase.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManager.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionBase.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketAddress.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManagerBase.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="SocketUtil.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPSocket.h">
+      <Filter>NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPSession.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SessionManager.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>

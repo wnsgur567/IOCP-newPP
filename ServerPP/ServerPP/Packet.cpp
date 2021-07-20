@@ -34,7 +34,7 @@ void RecvPacket::GetReady()
 
 
 	// wsabuf 초기화
-	m_wsabuf.buf = m_pStream->m_buffer + m_recvbytes;
+	m_wsabuf.buf = m_buf + m_recvbytes;
 	if (m_sizeflag)
 	{
 		m_wsabuf.len = sizeof(psize_t) - m_recvbytes;
@@ -60,6 +60,16 @@ RecvPacket::time_point_t RecvPacket::GetRecvTime() const
 	return m_recv_time;
 }
 
+void RecvPacket::UnPacking()
+{
+	Byte* ptr = m_buf;	
+	
+	memcpy(&m_id, ptr, sizeof(m_id));
+	ptr += sizeof(m_id);
+
+	memcpy(m_pStream->m_buffer, ptr, m_target_recvbytes);	
+}
+
 void RecvPacket::Init(PacketBasePtr inpThis)
 {
 	m_overlappedEx.pPacket = inpThis;
@@ -75,6 +85,8 @@ void RecvPacket::Clear()
 	m_sizeflag = true;
 	m_recvbytes = 0;
 	m_target_recvbytes = 0;
+
+	m_overlappedEx.flush();
 }
 
 
@@ -115,6 +127,11 @@ void SendPacket::GetReady(const id_t inPacketID)
 	m_wsabuf.len = m_target_sendbytes - m_sendbytes;
 }
 
+void SendPacket::SetStream(OutputMemoryStreamPtr pStream)
+{
+	m_pStream = pStream;
+}
+
 void SendPacket::Init(PacketBasePtr inpThis)
 {
 	m_overlappedEx.Init(inpThis);
@@ -125,6 +142,7 @@ void SendPacket::Clear()
 	m_state = E_PacketState::Idle;
 	m_sendbytes = 0;
 	m_target_sendbytes = 0;
+	m_overlappedEx.pointer = nullptr;
 }
 
 void AcceptPacket::Init(PacketBasePtr inpPacket)
@@ -135,6 +153,12 @@ void AcceptPacket::Init(PacketBasePtr inpPacket)
 void AcceptPacket::GetReady()
 {
 	// ... 없음
+}
+
+void AcceptPacket::Set(TCPSocketPtr inpSock, SocketAddress inAddr)
+{
+	m_pClientSock = inpSock;
+	m_sockAddr = inAddr;
 }
 
 TCPSocketPtr AcceptPacket::GetPSock()
@@ -151,4 +175,5 @@ void AcceptPacket::Clear()
 {
 	m_pClientSock = nullptr;
 	ZeroMemory(&m_sockAddr, sizeof(m_sockAddr));
+	m_overlappedEx.flush();
 }
