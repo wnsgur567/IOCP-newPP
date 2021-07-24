@@ -36,17 +36,3 @@ void SessionBase::SetState(ESessionState inState)
 {
 	m_state = inState;
 }
-
-SessionBase::pid_t SessionBase::CountingRecvID()
-{
-	pid_t id = m_newRecvID;
-	++m_newRecvID;
-	return id;
-}
-
-SessionBase::pid_t SessionBase::CountingSendID()
-{
-	pid_t id = m_newSendID;
-	++m_newSendID;
-	return id;
-}

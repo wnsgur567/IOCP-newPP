@@ -77,7 +77,7 @@ void IOCPNetworkManager::OnCompleteRecv(IOCPSessionBasePtr inpSession, RecvPacke
 		auto result = SignManager::sInstance->StreamProcess(pStream, pSession->IsSigned());
 
 		SendPacketPtr pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
-		pSendPacket->SetStream(result.pStream);
+		//pSendPacket->SetStream(result.pStream);
 
 		if (false == SendAsync(pSession, pSendPacket))
 		{

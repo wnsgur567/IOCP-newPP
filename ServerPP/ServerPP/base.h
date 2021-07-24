@@ -17,7 +17,8 @@
 
 #undef max
 using Byte = char;
-using id_t = unsigned __int32;
+using gid_t = size_t;
+using gsize_t = size_t;
 
 constexpr u_short			SERVERPORT = 9000;
 constexpr unsigned __int32	BUFSIZE = 512;
@@ -27,49 +28,6 @@ constexpr unsigned __int32	STREAMPOOLCAPACITY = 128;
 
 using HandlePtr = std::shared_ptr<HANDLE>;
 
-class TCPSocket;
-using TCPSocketPtr = std::shared_ptr<TCPSocket>;
-
-class InputMemoryStream;
-class OutputMemoryStream;
-using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
-using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
-
-class PacketBase;
-class AcceptPacket;
-class RecvPacket;
-class SendPacket;
-using PacketBaseWeakPtr = std::weak_ptr<PacketBase>;
-using PacketBasePtr = std::shared_ptr<PacketBase>;
-using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
-using RecvPacketPtr = std::shared_ptr<RecvPacket>;
-using SendPacketPtr = std::shared_ptr<SendPacket>;
-
-class IOCPSessionBase;
-using IOCPSessionBasePtr = std::shared_ptr<IOCPSessionBase>;
-class IOCPSession;
-using IOCPSessionPtr = std::shared_ptr<IOCPSession>;
-
-class SignInfo;
-using SignInfoPtr = std::shared_ptr<SignInfo>;
-
-enum class E_PacketState
-{
-	Error = -3,			// 비정상 종료
-	End = -2,			// 정상 종료
-	Duplicated = -1,	// 중복 패킷
-
-	Idle = 0,
-	InComplete,		// 미완성, 데이터 받는(전송) 중
-	Completed,		// 완성
-};
-
-enum class E_OverlappedType
-{
-	Accept,
-	Recv,
-	Send,
-};
 
 enum class ESessionState
 {
@@ -81,29 +39,40 @@ enum class ESessionState
 };
 
 
+
+// base
 #include "Singleton.h"
 #include "CriticalSection.h"
 
+// net base
 #include "MemoryStream.h"
-#include "SocketUtil.h"
 #include "SocketAddress.h"
 #include "TCPSocket.h"
-#include "PacketManager.h"
+#include "SocketUtil.h"
+
+
+// IOCP packet and stream
+#include "IOCPMemoryStream.h"
 #include "Packet.h"
+#include "PacketManager.h"
 
 #include "SessionBase.h"
 #include "SessionManagerBase.h"
 
 #include "IOCPSessionBase.h"
-#include "SessionManager.h"
-#include "IOCPSession.h"
 
-#include "NetworkManager.h"
+#include "NetworkManagerServer.h"
 #include "IOCPNetworkManagerBase.h"
-#include "IOCPNetworkManager.h"
 
 #include "EngineBase.h"
+
+
+// network
+#include "SessionManager.h"
+#include "IOCPSession.h"
+#include "IOCPNetworkManager.h"
 #include "Engine.h"
 
-#include "SignManager.h"
+// app
 #include "SignInfo.h"
+#include "SignManager.h"

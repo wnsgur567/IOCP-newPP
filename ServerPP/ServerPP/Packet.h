@@ -1,19 +1,30 @@
 #pragma once
 
+class PacketBase;
+using PacketBasePtr = std::shared_ptr<PacketBase>;
+using PacketBaseWeakPtr = std::weak_ptr<PacketBase>;
+
 struct OverlappedEx
 {
-	WSAOVERLAPPED overlapped;
-	E_OverlappedType type;
-	PacketBaseWeakPtr pPacket;
-	std::shared_ptr<void> pointer;
+	enum class EOverlappedType
+	{
+		Accept,
+		Recv,
+		Send,
+	};
 
-	OverlappedEx(E_OverlappedType inType)
+	WSAOVERLAPPED overlapped;
+	EOverlappedType type;
+	PacketBaseWeakPtr pPacket;
+	std::shared_ptr<void> pointer;	// 임의의 포인터를 담을 포인터
+
+	OverlappedEx(EOverlappedType inType)
 		: overlapped(), type(inType)
 		, pointer(nullptr)
 	{
 
 	}
-	void Init(PacketBasePtr inpPacket)
+	void Initialize(PacketBasePtr inpPacket)
 	{
 		pPacket = inpPacket;
 	}
@@ -26,45 +37,50 @@ struct OverlappedEx
 class PacketBase
 {
 public:
-	using psize_t = PacketManager::psize_t;
-	using id_t = PacketManager::id_t;
-protected:
-	id_t m_id;
-	E_PacketState m_state;
+	using packetSize_t = ::gsize_t;
+	using packetId_t = ::gid_t;
 
-	OverlappedEx m_overlappedEx;
-	WSABUF		 m_wsabuf;
-	psize_t		 m_capacity;
-	Byte* m_buf;
+	enum class EPacketState
+	{
+		Error = -3,			// 비정상 종료
+		End = -2,			// 정상 종료
+		Duplicated = -1,	// 중복 패킷
+
+		Idle = 0,
+		InComplete,		// 미완성, 데이터 받는(전송) 중
+		Completed,		// 완성
+	};
+
+protected:
+	packetId_t		m_id;
+	EPacketState	m_state;
+	OverlappedEx	m_overlappedEx;
 public:
 	unsigned __int32 GetId() const { return m_id; }
 	void SetId(unsigned __int32 inId) { m_id = inId; }
 
-	virtual void Init(PacketBasePtr) = 0;
+	virtual void Initialize(PacketBasePtr) = 0;
 	virtual void Clear() = 0;
 	OverlappedEx& GetOverlappedRef() { return m_overlappedEx; }
-	Byte* GetBuf() { return m_buf; }
 protected:
-	PacketBase(E_OverlappedType inType, const psize_t inCapacity) :
-		m_id(0), m_state(E_PacketState::Idle),
-		m_overlappedEx(inType),
-		m_wsabuf(),
-		m_capacity(inCapacity),
-		m_buf(nullptr)
+	PacketBase(OverlappedEx::EOverlappedType inType) :
+		m_id(0), m_state(EPacketState::Idle),
+		m_overlappedEx(inType)
 	{
-		if (m_capacity > 0)
-			m_buf = new Byte[m_capacity];
+
 	}
 	virtual ~PacketBase()
 	{
-		if (m_buf != nullptr)
-			delete[] m_buf;
+
 	}
 };
 
+class AcceptPacket;
+using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
+
 class AcceptPacket : public PacketBase
 {
-	friend class PacketManager;	
+	friend class PacketManager;
 	template <typename T>
 	friend class IOCPNetworkManagerBase;
 protected:
@@ -73,62 +89,59 @@ protected:
 
 public:
 	AcceptPacket()
-		:PacketBase(E_OverlappedType::Accept, 0)
-	{
-
-	}
-	AcceptPacket(TCPSocketPtr inSock, SocketAddress inAddr)
-		:PacketBase(E_OverlappedType::Accept, 0),
-		m_pClientSock(inSock), m_sockAddr(inAddr)
+		:PacketBase(OverlappedEx::EOverlappedType::Accept)
 	{
 
 	}
 
-	void Init(PacketBasePtr inpPacket) override;
+	void Initialize(PacketBasePtr inpPacket) override;
 	void GetReady();
 
-	void Set(TCPSocketPtr inpSock,SocketAddress inAddr);
+	void Set(TCPSocketPtr inpSock, SocketAddress inAddr);
 	TCPSocketPtr GetPSock();
 	SocketAddress GetAddr();
 	void Clear() override;
 };
 
-
+class RecvPacket;
+using RecvPacketPtr = std::shared_ptr<RecvPacket>;
 // using input stream
 class RecvPacket : public PacketBase
 {
-	friend class PacketManager;	
+	friend class PacketManager;
 	template <typename T>
 	friend class IOCPNetworkManagerBase;
 public:
 	using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
 private:
-	InputMemoryStreamPtr m_pStream;	// session 에서 사용할 datastream
+	IOCPInputMemoryStreamPtr m_pStream;	// session 에서 사용할 datastream
 
-	bool		m_sizeflag;
-	psize_t		m_recvbytes;
-	psize_t		m_target_recvbytes;
+	WSABUF			m_wsabuf;
+	bool			m_sizeflag;
+	packetSize_t	m_recvbytes;
+	packetSize_t	m_target_recvbytes;
 
 	time_point_t m_recv_time;	// 패킷 수신이 완료된 시간 complete recv
 public:
-	RecvPacket(psize_t inStreamCapacity);
-	RecvPacket(InputMemoryStreamPtr inStreamPtr);
+	RecvPacket(packetSize_t inStreamCapacity);
 	~RecvPacket();
 
-	void Init(PacketBasePtr inpThis);
+	void Initialize(PacketBasePtr inpThis);
 	void Clear() override;
 
 	// recv 전 overlapped 및 wsabuf 초기화
 	void GetReady();
-	InputMemoryStreamPtr GetStream();
+	IOCPInputMemoryStreamPtr GetStream();
+	Byte* GetBuffer() const;
 
 	// 패킷 recv 가 완료된 시간을 기록
 	void RecordRecvTime();
 	time_point_t GetRecvTime() const;
-	void UnPacking();
 };
 
+class SendPacket;
+using SendPacketPtr = std::shared_ptr<SendPacket>;
 // using output stream
 class SendPacket : public PacketBase
 {
@@ -136,19 +149,20 @@ class SendPacket : public PacketBase
 	template <typename T>
 	friend class IOCPNetworkManagerBase;
 private:
-	OutputMemoryStreamPtr m_pStream; // session 에서 사용할 datastream
+	IOCPOutputMemoryStreamPtr m_pStream; // session 에서 사용할 datastream
 
-	psize_t		m_sendbytes;				// 현재 send 수치
-	psize_t		m_target_sendbytes;			// 목표 send 수치
+	WSABUF				m_wsabuf;
+	packetSize_t		m_sendbytes;				// 현재 send 수치
+	packetSize_t		m_target_sendbytes;			// 목표 send 수치
 public:
-	SendPacket(psize_t inStreamCapacity);
-	SendPacket(OutputMemoryStreamPtr inStreamPtr);
+	SendPacket(packetSize_t inStreamCapacity);
 
-	void Init(PacketBasePtr inpThis) override;
+	void Initialize(PacketBasePtr inpThis) override;
 	// packet을 get 하여 처음 사용하기 시작할때 호출 됨
 	void Clear() override;
 
 	// recv 전 overlapped 및 wsabuf 초기화 && packgin
-	void GetReady(const id_t inPacketID);
-	void SetStream(OutputMemoryStreamPtr pStream);
+	void GetReady(const packetId_t inPacketID);
+	IOCPOutputMemoryStreamPtr GetStream();
+	Byte* GetBuffer() const;
 };

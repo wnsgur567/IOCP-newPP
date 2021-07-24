@@ -4,7 +4,7 @@ template <typename T>
 class SessionManagerBase : public Singleton<T>
 {
 public:
-	using sessionid_t = ::id_t;
+	using sessionid_t = ::gid_t;
 	using SessionCreationFunc = SessionBasePtr(*)();
 protected:
 	sessionid_t m_newID;

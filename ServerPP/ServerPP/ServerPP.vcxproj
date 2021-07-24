@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="IOCPMemoryStream.cpp" />
     <ClCompile Include="IOCPNetworkManager.cpp" />
     <ClCompile Include="IOCPSessionBase.cpp" />
     <ClCompile Include="main.cpp" />
@@ -160,13 +161,14 @@
     <ClInclude Include="base.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineBase.h" />
+    <ClInclude Include="IOCPMemoryStream.h" />
     <ClInclude Include="IOCPNetworkManager.h" />
     <ClInclude Include="IOCPNetworkManagerBase.h" />
     <ClInclude Include="IOCPSessionBase.h" />
     <ClInclude Include="IOCPSession.h" />
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="MemoryStream.h" />
-    <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="NetworkManagerServer.h" />
     <ClInclude Include="Packet.h" />
     <ClInclude Include="PacketManager.h" />
     <ClInclude Include="SessionBase.h" />

@@ -4,8 +4,8 @@ class SignManager : public Singleton<SignManager>
 {
 	friend class Singleton;
 public:
-	static constexpr size_t MAX_IDSIZE = 30;
-	static constexpr size_t MAX_PWSIZE = 40;
+	static constexpr size_t MAX_IDSIZE = SignInfo::MAX_IDSIZE;
+	static constexpr size_t MAX_PWSIZE = SignInfo::MAX_PWSIZE;
 
 	const char* SignUpSuccessMsg = "회원가입 성공";
 	const char* SignInSuccessMsg = "로그인 성공";

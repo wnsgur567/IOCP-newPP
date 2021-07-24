@@ -2,23 +2,28 @@
 
 Implementation_sInstance(PacketManager);
 
-bool PacketManager::Initialize(LPVOID)
+bool PacketManager::Initialize(LPVOID inArgs)
 {
-	for (psize_t i = 0; i < m_capacity; i++)
-	{
-		// acceptpacket
+	InitializeArgs* pArgs = (InitializeArgs*)inArgs;
+	
+	for (size_t i = 0; i < pArgs->numberOfAcptPacket; i++)
+	{	// acceptpacket
 		AcceptPacketPtr a_ptr = std::make_shared<AcceptPacket>();
-		a_ptr->Init(a_ptr);
+		a_ptr->Initialize(a_ptr);
 		m_acceptpacket_pool.push(a_ptr);
 		m_acceptpacket_container.push_back(a_ptr);
-		// recvpacket
-		RecvPacketPtr r_ptr = std::make_shared<RecvPacket>(BUFSIZE);
-		r_ptr->Init(r_ptr);
+	}
+	for (size_t i = 0; i < pArgs->numberOfRecvPacket; i++)
+	{	// recvpacket
+		RecvPacketPtr r_ptr = std::make_shared<RecvPacket>(pArgs->capacityOfRecvBuffer);
+		r_ptr->Initialize(r_ptr);
 		m_recvpacket_pool.push(r_ptr);
 		m_recvpacket_container.push_back(r_ptr);
-		// sendpacket
-		SendPacketPtr s_ptr = std::make_shared<SendPacket>(BUFSIZE);
-		s_ptr->Init(s_ptr);
+	}
+	for (size_t i = 0; i < pArgs->numberOfSendPacket; i++)
+	{	// sendpacket
+		SendPacketPtr s_ptr = std::make_shared<SendPacket>(pArgs->capacityOfSendBuffer);
+		s_ptr->Initialize(s_ptr);
 		m_sendpacket_pool.push(s_ptr);
 		m_sendpacket_container.push_back(s_ptr);
 	}
@@ -27,6 +32,24 @@ bool PacketManager::Initialize(LPVOID)
 
 void PacketManager::Finalize()
 {
+	m_acceptpacket_container.clear();
+	while (false == m_acceptpacket_pool.empty())
+	{
+		m_acceptpacket_pool.pop();
+	}
+
+	m_recvpacket_container.clear();
+	while (false == m_recvpacket_pool.empty())
+	{
+		m_recvpacket_pool.pop();
+	}
+
+	m_sendpacket_container.clear();
+	while (false == m_sendpacket_pool.empty())
+	{
+		m_sendpacket_pool.pop();
+	}
+	
 }
 
 

@@ -1,10 +1,12 @@
 #pragma once
 
+class InputMemoryStream;
+using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
+
 // recv buffer 용
 class InputMemoryStream
 {
-	friend class RecvPacket;	// iocp 용
-private:
+protected:
 	char* m_buffer;				// 버퍼
 	bool  m_isBufferOwner;		// 버퍼의 소유권이 있을 경우에만 해제하도록								
 
@@ -39,11 +41,13 @@ inline void InputMemoryStream::Read(T& outData)
 }
 
 
+class OutputMemoryStream;
+using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
+
 // send buffer 용
 class OutputMemoryStream
 {
-	friend class SendPacket;	// iocp 용
-private:
+protected:
 	char* m_buffer;				// 버퍼
 	size_t m_head;				// 쓰기 시작할 현제 head의 위치
 	size_t m_capacity;			// 최대 용량

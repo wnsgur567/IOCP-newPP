@@ -2,6 +2,11 @@
 
 
 
+void IOCPSession::Initialze()
+{
+	m_recvPacket = PacketManager::sInstance->GetRecvPacketFromPool();
+}
+
 IOCPSession::IOCPSession()
 	: IOCPSessionBase(), m_isSigned(false)
 {
