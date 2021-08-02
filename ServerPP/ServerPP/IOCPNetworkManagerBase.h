@@ -26,6 +26,10 @@ public:
 	static DWORD WINAPI WorkerThread(LPVOID arg);
 protected:
 	virtual bool DoFrame() = 0;
+
+	virtual bool OnRecved(IOCPSessionBasePtr, RecvPacketPtr, DWORD) = 0;
+	virtual bool OnSended(IOCPSessionBasePtr, SendPacketPtr, DWORD) = 0;
+
 	virtual void OnAccepted(TCPSocketPtr inpSock, SocketAddress inSock) = 0;
 	virtual void OnDisconnected(IOCPSessionBasePtr inpSession) = 0;
 	virtual void OnCompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpPacket) = 0;
@@ -118,7 +122,7 @@ bool IOCPNetworkManagerBase<T>::SendAsync(IOCPSessionBasePtr inpSession, SendPac
 template<typename T>
 PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpRecvPacket, const packetSize_t inCompletebyte)
 {
-	Byte* ptr = inpRecvPacket->GetBuffer();
+	BYTE* ptr = inpRecvPacket->m_pStream->m_buffer;
 
 	if (inpRecvPacket->m_sizeflag)
 	{
@@ -222,8 +226,6 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 			}*/
 		}
 
-		PacketBase::EPacketState result;
-
 		switch (overlapped->type)
 		{
 		case OverlappedEx::EOverlappedType::Accept:
@@ -241,29 +243,11 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 			// down casting
 			RecvPacketPtr pRecvPacket = std::static_pointer_cast<RecvPacket>(pPacket.lock());
 
-			// recv 완료 확인
-			result = IOCPNetworkManagerBase<T>::sInstance->CompleteRecv(
-				pIOCPSession,
-				pRecvPacket,
-				cbTransferred);
-			switch (result)
-			{
-			case PacketBase::EPacketState::Error:
+			if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(pIOCPSession, pRecvPacket, cbTransferred))
 				continue;
-			case PacketBase::EPacketState::End:
-				continue;
-			case PacketBase::EPacketState::InComplete:
-				continue;
-			case PacketBase::EPacketState::Completed:
-				// 완료된 경우 시간을 기록
-				pRecvPacket->RecordRecvTime();
-				break;
-			}
 
 			// complete recv process
 			IOCPNetworkManagerBase<T>::sInstance->OnCompleteRecv(pIOCPSession, pRecvPacket);
-
-			PacketManager::sInstance->RetrieveRecvPacket(pRecvPacket);
 
 			// recv 날려놓기
 			RecvPacketPtr pNewRecvPacket = PacketManager::sInstance->GetRecvPacketFromPool();
@@ -279,28 +263,11 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 			// down casting
 			SendPacketPtr pSendPacket = std::static_pointer_cast<SendPacket>(pPacket.lock());
 
-			result = IOCPNetworkManagerBase<T>::sInstance->CompleteSend(
-				pIOCPSession,
-				std::static_pointer_cast<SendPacket>(pPacket.lock()),
-				cbTransferred);
-
-			switch (result)
-			{
-			case PacketBase::EPacketState::Error:
+			if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(pIOCPSession, pSendPacket, cbTransferred))
 				continue;
-			case PacketBase::EPacketState::End:
-				continue;
-			case PacketBase::EPacketState::InComplete:
-				continue;
-			case PacketBase::EPacketState::Completed:
-				break;
-			}
 
 			// complete send process;
 			IOCPNetworkManagerBase<T>::sInstance->OnCompleteSend(pIOCPSession, pSendPacket);
-
-			// TODO : Retrieve packet
-			PacketManager::sInstance->RetrieveSendPacket(pSendPacket);
 		}
 		break;
 		}

@@ -47,7 +47,4 @@ public:
 	void RetrieveRecvPacket(RecvPacketPtr inpPacket);
 	SendPacketPtr GetSendPacketFromPool();
 	void RetrieveSendPacket(SendPacketPtr inpPacket);
-
-	void Packing(SendPacketPtr inpPacket);
-	void UnPacking(RecvPacketPtr inpPacket);
 };

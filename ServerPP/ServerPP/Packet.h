@@ -127,13 +127,14 @@ public:
 	RecvPacket(packetSize_t inStreamCapacity);
 	~RecvPacket();
 
+	// packet을 새로 할당 시 정보 초기화용
 	void Initialize(PacketBasePtr inpThis);
+	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
 
 	// recv 전 overlapped 및 wsabuf 초기화
 	void GetReady();
-	IOCPInputMemoryStreamPtr GetStream();
-	Byte* GetBuffer() const;
+	IOCPInputMemoryStreamPtr GetStream();		
 
 	// 패킷 recv 가 완료된 시간을 기록
 	void RecordRecvTime();
@@ -157,12 +158,11 @@ private:
 public:
 	SendPacket(packetSize_t inStreamCapacity);
 
+	// packet을 새로 할당 시 정보 초기화용
 	void Initialize(PacketBasePtr inpThis) override;
-	// packet을 get 하여 처음 사용하기 시작할때 호출 됨
+	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
 
-	// recv 전 overlapped 및 wsabuf 초기화 && packgin
-	void GetReady(const packetId_t inPacketID);
-	IOCPOutputMemoryStreamPtr GetStream();
-	Byte* GetBuffer() const;
+	// send 전 overlapped 및 wsabuf 초기화 && packgin
+	void GetReady(const packetId_t inPacketID);	
 };

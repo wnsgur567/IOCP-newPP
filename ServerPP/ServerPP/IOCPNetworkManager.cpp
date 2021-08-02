@@ -1,4 +1,5 @@
 #include "base.h"
+#include "IOCPNetworkManager.h"
 
 Implementation_sInstance(IOCPNetworkManager);
 
@@ -35,6 +36,58 @@ bool IOCPNetworkManager::DoFrame()
 		1,
 		(ULONG_PTR)&pAcceptPacket,
 		&pAcceptPacket->GetOverlappedRef().overlapped);
+
+	return true;
+}
+
+bool IOCPNetworkManager::OnRecved(IOCPSessionBasePtr inpSession, RecvPacketPtr inpPacket, DWORD inCbTransferred)
+{
+	PacketBase::EPacketState result;
+
+	// recv 완료 확인
+	result = IOCPNetworkManagerBase<IOCPNetworkManager>::sInstance->CompleteRecv(
+		inpSession,
+		inpPacket,
+		inCbTransferred);
+
+	switch (result)
+	{
+	case PacketBase::EPacketState::Error:
+		return false;
+	case PacketBase::EPacketState::End:
+		return false;
+	case PacketBase::EPacketState::InComplete:
+		return false;
+	case PacketBase::EPacketState::Completed:
+		// 완료된 경우 시간을 기록
+		inpPacket->RecordRecvTime();
+		break;
+	}
+
+	return true;
+}
+
+bool IOCPNetworkManager::OnSended(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket, DWORD inCbTransferred)
+{
+	PacketBase::EPacketState result;
+
+	// send 완료 확인
+	result = IOCPNetworkManagerBase<IOCPNetworkManager>::sInstance->CompleteSend(
+		inpSession,
+		inpPacket,
+		inCbTransferred);
+
+	switch (result)
+	{
+	case PacketBase::EPacketState::Error:
+		return false;
+	case PacketBase::EPacketState::End:
+		return false;
+	case PacketBase::EPacketState::InComplete:
+		return false;
+	case PacketBase::EPacketState::Completed:
+		break;
+	}
 
 	return true;
 }
@@ -89,11 +142,13 @@ void IOCPNetworkManager::OnCompleteRecv(IOCPSessionBasePtr inpSession, RecvPacke
 		break;
 	}
 
-
+	// 패킷 회수
+	PacketManager::sInstance->RetrieveRecvPacket(inpPacket);
 }
 
 void IOCPNetworkManager::OnCompleteSend(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket)
 {
-
+	// Retrieve packet
+	PacketManager::sInstance->RetrieveSendPacket(inpPacket);
 }
 

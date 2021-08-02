@@ -7,19 +7,19 @@ using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
 class InputMemoryStream
 {
 protected:
-	char* m_buffer;				// 버퍼
+	BYTE* m_buffer;				// 버퍼
 	bool  m_isBufferOwner;		// 버퍼의 소유권이 있을 경우에만 해제하도록								
 
 	size_t m_head;				// 읽기 시작할 현제 head 의 위치
 	size_t m_capacity;			// 최대 용량
 public:
 	InputMemoryStream(size_t inByteCount);
-	InputMemoryStream(char* inBuffer, size_t inByteCount, bool inIsOwner = false);
+	InputMemoryStream(BYTE* inBuffer, size_t inByteCount, bool inIsOwner = false);
 	InputMemoryStream(const InputMemoryStream& inOther);
 	InputMemoryStream& operator=(const InputMemoryStream& inOther);
 	~InputMemoryStream();
 public:
-	const char* GetBufferPtr();
+	const BYTE* GetBufferPtr();
 	size_t GetLength() const;
 	size_t GetCapacity() const;
 public:
@@ -48,7 +48,7 @@ using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
 class OutputMemoryStream
 {
 protected:
-	char* m_buffer;				// 버퍼
+	BYTE* m_buffer;				// 버퍼
 	size_t m_head;				// 쓰기 시작할 현제 head의 위치
 	size_t m_capacity;			// 최대 용량
 
@@ -59,7 +59,7 @@ public:
 	OutputMemoryStream& operator=(const OutputMemoryStream& inOther);
 	~OutputMemoryStream();
 public:
-	const char* GetBufferPtr();
+	const BYTE* GetBufferPtr();
 	size_t GetLength() const;
 	size_t GetCapacity() const;
 public:

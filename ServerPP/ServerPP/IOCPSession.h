@@ -12,6 +12,11 @@ protected:
 public:
 	IOCPSession();
 
+	bool Recv() override;
+	bool Send() override;
+	bool OnCompleteRecv() override;
+	bool OnCompleteSend() override;
+
 	void SetSigned(bool b);
 	bool IsSigned() const;
 };

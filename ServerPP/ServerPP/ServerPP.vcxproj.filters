@@ -99,6 +99,12 @@
     <ClCompile Include="MemoryStream.cpp">
       <Filter>01_NetBase\source</Filter>
     </ClCompile>
+    <ClCompile Include="CipherManager.cpp">
+      <Filter>00_Base\source</Filter>
+    </ClCompile>
+    <ClCompile Include="KISA_CIPHER\KISA_SEED_ECB.cpp">
+      <Filter>00_Base\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h">
@@ -166,6 +172,12 @@
     </ClInclude>
     <ClInclude Include="MemoryStream.h">
       <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="CipherManager.h">
+      <Filter>00_Base\header</Filter>
+    </ClInclude>
+    <ClInclude Include="KISA_CIPHER\KISA_SEED_ECB.h">
+      <Filter>00_Base\header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

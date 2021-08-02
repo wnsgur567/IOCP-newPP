@@ -52,13 +52,13 @@ RecvPacket::~RecvPacket()
 
 void RecvPacket::GetReady()
 {
-	Byte* ptr = m_pStream->m_buffer;
+	BYTE* ptr = m_pStream->m_buffer;
 	
 	// overlap 초기화
 	m_overlappedEx.flush();
 
 	// wsabuf 초기화
-	m_wsabuf.buf = ptr + m_recvbytes;
+	m_wsabuf.buf = (CHAR*)ptr + m_recvbytes;
 	if (m_sizeflag)
 	{
 		m_wsabuf.len = sizeof(packetSize_t) - m_recvbytes;
@@ -72,11 +72,6 @@ void RecvPacket::GetReady()
 IOCPInputMemoryStreamPtr RecvPacket::GetStream()
 {
 	return m_pStream;
-}
-
-Byte* RecvPacket::GetBuffer() const
-{
-	return m_pStream->m_buffer;
 }
 
 void RecvPacket::RecordRecvTime()
@@ -121,36 +116,30 @@ SendPacket::SendPacket(packetSize_t inStreamCapacity)
 
 void SendPacket::GetReady(const packetId_t inPacketID)
 {
-	Byte* buf = m_pStream->m_buffer;
+	BYTE* buf = m_pStream->m_buffer;
 
 	// 패킷 구성 : total packet size + packet id + stream
 
 	m_overlappedEx.flush();
+
 	if (m_state == EPacketState::Idle)
 	{	// 처음 Send 하는 경우
+
 		// total packet size = packet id size + stream size
 		packetSize_t total_size = sizeof(packetId_t) + m_pStream->GetLength();
 		memcpy(buf, &total_size, sizeof(packetSize_t));
 		memcpy(buf + sizeof(packetSize_t), &inPacketID, sizeof(packetId_t));
 		memcpy(buf + sizeof(packetSize_t) + sizeof(packetId_t), m_pStream->GetBufferPtr(), m_pStream->GetLength());
 		m_target_sendbytes = total_size + sizeof(packetSize_t);
+
+		
+		// TODO : Encryption
 	}
 
 	// wsa buf 초기화
-	m_wsabuf.buf = buf + m_sendbytes;
+	m_wsabuf.buf = (CHAR*)buf + m_sendbytes;
 	m_wsabuf.len = m_target_sendbytes - m_sendbytes;
 }
-
-IOCPOutputMemoryStreamPtr SendPacket::GetStream()
-{
-	return m_pStream;
-}
-
-Byte* SendPacket::GetBuffer() const
-{
-	return m_pStream->m_buffer;
-}
-
 
 void SendPacket::Initialize(PacketBasePtr inpThis)
 {

@@ -18,6 +18,11 @@ IOCPInputMemoryStream::IOCPInputMemoryStream(const bufsize_t inCapacity)
 
 }
 
+void IOCPInputMemoryStream::Decryption()
+{
+	//CipherManager::sInstance->Decryption()
+}
+
 
 
 void IOCPOutputMemoryStream::GetReady()
@@ -27,18 +32,22 @@ void IOCPOutputMemoryStream::GetReady()
 
 void IOCPOutputMemoryStream::SetSize(const bufsize_t inSize)
 {
-	Byte* ptr = m_buffer;
+	BYTE* ptr = m_buffer;
 	memcpy(ptr, &inSize, sizeof(inSize));
 }
 
 void IOCPOutputMemoryStream::SetID(const packetId_t inID)
 {
-	Byte* ptr = m_buffer + sizeof(bufsize_t);
+	BYTE* ptr = m_buffer + sizeof(bufsize_t);
 	memcpy(ptr, &inID, sizeof(inID));
 }
 
 IOCPOutputMemoryStream::IOCPOutputMemoryStream(const bufsize_t inCapacity)
 	: OutputMemoryStream(inCapacity)
+{
+}
+
+void IOCPOutputMemoryStream::Encryption()
 {
 }
 

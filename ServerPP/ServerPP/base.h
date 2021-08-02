@@ -16,7 +16,6 @@
 #include<chrono>
 
 #undef max
-using Byte = char;
 using gid_t = size_t;
 using gsize_t = size_t;
 
@@ -43,6 +42,8 @@ enum class ESessionState
 // base
 #include "Singleton.h"
 #include "CriticalSection.h"
+//#include "KISA_CIPHER/KISA_SEED_ECB.h"
+#include "CipherManager.h"
 
 // net base
 #include "MemoryStream.h"

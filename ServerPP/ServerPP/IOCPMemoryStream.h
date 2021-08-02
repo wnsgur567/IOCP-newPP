@@ -13,6 +13,8 @@ class IOCPInputMemoryStream : public InputMemoryStream
 private:
 	friend class RecvPacket;
 	friend class PacketManager;
+	template <typename T>
+	friend class IOCPNetworkManagerBase;
 public:
 	using bufsize_t = ::gsize_t;
 	using packetId_t = ::gid_t;
@@ -20,7 +22,8 @@ protected:
 	void GetReady();
 	packetId_t GetID();
 public:
-	IOCPInputMemoryStream(const bufsize_t);
+	IOCPInputMemoryStream(const bufsize_t);	
+	void Decryption();
 };
 using IOCPInputMemoryStreamPtr = std::shared_ptr<IOCPInputMemoryStream>;
 
@@ -39,5 +42,7 @@ protected:
 	void SetID(const packetId_t);
 public:
 	IOCPOutputMemoryStream(const bufsize_t);
+	void Encryption();
 };
+
 using IOCPOutputMemoryStreamPtr = std::shared_ptr<IOCPOutputMemoryStream>;
