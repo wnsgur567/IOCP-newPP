@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Windows.h>
+#include "Singleton.h"
+
 class CipherManager : public Singleton<CipherManager>
 {
 private:

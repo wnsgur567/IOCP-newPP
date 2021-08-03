@@ -19,21 +19,22 @@ public:
 
 	HandlePtr GetHCPPtr() const;
 public:
-	bool RecvAsync(IOCPSessionBasePtr inpSession, RecvPacketPtr inpRecvPacket);	// 비동기 recv
-	bool SendAsync(IOCPSessionBasePtr inpSession, SendPacketPtr inpSendPacket);	// 비동기 send	
-	PacketBase::EPacketState CompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpRecvPacket, const packetSize_t inCompletebyte);
-	PacketBase::EPacketState CompleteSend(IOCPSessionBasePtr inpSession, SendPacketPtr inpSendPacket, const packetSize_t inCompletebyte);
+	bool RecvAsync(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer);	// 비동기 recv
+	bool SendAsync(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer);	// 비동기 send	
 	static DWORD WINAPI WorkerThread(LPVOID arg);
+protected:
+	PacketBase::EPacketState CompleteRecv(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, const packetSize_t inCompletebyte);
+	PacketBase::EPacketState CompleteSend(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, const packetSize_t inCompletebyte);
 protected:
 	virtual bool DoFrame() = 0;
 
-	virtual bool OnRecved(IOCPSessionBasePtr, RecvPacketPtr, DWORD) = 0;
-	virtual bool OnSended(IOCPSessionBasePtr, SendPacketPtr, DWORD) = 0;
+	virtual bool OnRecved(TCPSocketPtr, RecvPacketPtr, VoidPtr, DWORD) = 0;
+	virtual bool OnSended(TCPSocketPtr, SendPacketPtr, VoidPtr, DWORD) = 0;
+	virtual bool OnCompleteRecv(VoidPtr) = 0;
+	virtual bool OnCompleteSend(VoidPtr) = 0;
 
-	virtual void OnAccepted(TCPSocketPtr inpSock, SocketAddress inSock) = 0;
-	virtual void OnDisconnected(IOCPSessionBasePtr inpSession) = 0;
-	virtual void OnCompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpPacket) = 0;
-	virtual void OnCompleteSend(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket) = 0;
+	virtual void OnAccepted(AcceptPacketPtr) = 0;
+	virtual void OnDisconnected(VoidPtr) = 0;
 };
 
 
@@ -64,19 +65,18 @@ HandlePtr IOCPNetworkManagerBase<T>::GetHCPPtr() const
 }
 
 template<typename T>
-bool IOCPNetworkManagerBase<T>::RecvAsync(IOCPSessionBasePtr inpSession, RecvPacketPtr inpRecvPacket)
+inline bool IOCPNetworkManagerBase<T>::RecvAsync(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer)
 {
 	int retval;
 	DWORD recvbytes;
 	DWORD flags = 0;
-	TCPSocketPtr pSock = inpSession->GetSockPtr();
 
 	// overlap wsa 준비셋팅
 	inpRecvPacket->GetReady();
-	inpRecvPacket->m_overlappedEx.pointer = inpSession;
+	inpRecvPacket->m_overlappedEx.pointer = inPointer;
 
 	// 비동기 async 수행
-	retval = WSARecv(pSock->GetSock(),
+	retval = WSARecv(inpSock->GetSock(),
 		&inpRecvPacket->m_wsabuf, 1, &recvbytes, &flags,
 		&inpRecvPacket->m_overlappedEx.overlapped, nullptr);
 
@@ -93,17 +93,16 @@ bool IOCPNetworkManagerBase<T>::RecvAsync(IOCPSessionBasePtr inpSession, RecvPac
 }
 
 template<typename T>
-bool IOCPNetworkManagerBase<T>::SendAsync(IOCPSessionBasePtr inpSession, SendPacketPtr inpSendPacket)
+inline bool IOCPNetworkManagerBase<T>::SendAsync(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer)
 {
 	int retval;
 	DWORD sendbytes;
 	DWORD flags = 0;
-	TCPSocketPtr pSock = inpSession->GetSockPtr();
 
-	inpSendPacket->GetReady(inpSession->m_newSendID++);
-	inpSendPacket->m_overlappedEx.pointer = inpSession;
+	inpSendPacket->GetReady();
+	inpSendPacket->m_overlappedEx.pointer = inPointer;
 
-	retval = WSASend(pSock->GetSock(),
+	retval = WSASend(inpSock->GetSock(),
 		&inpSendPacket->m_wsabuf, 1, &sendbytes,
 		0, &inpSendPacket->m_overlappedEx.overlapped, nullptr);
 
@@ -120,7 +119,7 @@ bool IOCPNetworkManagerBase<T>::SendAsync(IOCPSessionBasePtr inpSession, SendPac
 }
 
 template<typename T>
-PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpRecvPacket, const packetSize_t inCompletebyte)
+inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
 {
 	BYTE* ptr = inpRecvPacket->m_pStream->m_buffer;
 
@@ -135,7 +134,7 @@ PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(IOCPSessionBase
 			inpRecvPacket->m_sizeflag = false;
 		}
 
-		if (!RecvAsync(inpSession, inpRecvPacket))
+		if (false == RecvAsync(inpSock, inpRecvPacket, inPointer))
 		{
 			return PacketBase::EPacketState::Error;
 		}
@@ -147,30 +146,23 @@ PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(IOCPSessionBase
 
 	if (inpRecvPacket->m_recvbytes != inpRecvPacket->m_target_recvbytes)
 	{
-		if (!RecvAsync(inpSession, inpRecvPacket))
+		if (false == RecvAsync(inpSock, inpRecvPacket, inPointer))
 		{
 			return PacketBase::EPacketState::Error;
 		}
 		return PacketBase::EPacketState::InComplete;
 	}
 
-	//inpRecvPacket->UnPacking();
-
-	// duplicate check
-	if (inpRecvPacket->GetId() < inpSession->m_newRecvID)
-		return PacketBase::EPacketState::Duplicated;
-
-	++inpSession->m_newRecvID;
 	return PacketBase::EPacketState::Completed;
 }
 
 template<typename T>
-PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteSend(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket, const packetSize_t inCompletebyte)
+inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteSend(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
 {
-	inpPacket->m_sendbytes += inCompletebyte;
-	if (inpPacket->m_sendbytes != inpPacket->m_target_sendbytes)
+	inpSendPacket->m_sendbytes += inCompletebyte;
+	if (inpSendPacket->m_sendbytes != inpSendPacket->m_target_sendbytes)
 	{
-		if (!SendAsync(inpSession, inpPacket))
+		if (!SendAsync(inpSock, inpSendPacket, inPointer))
 		{
 			return PacketBase::EPacketState::Error;
 		}
@@ -194,80 +186,55 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 		retval = GetQueuedCompletionStatus(hcp, &cbTransferred,
 			(PULONG_PTR)&pSock, (LPOVERLAPPED*)&overlapped, INFINITE);
 
-
-		IOCPSessionBasePtr pIOCPSession;
-		if (nullptr != overlapped->pointer)
-			pIOCPSession = std::static_pointer_cast<IOCPSessionBase>(overlapped->pointer);
+		VoidPtr pointer = overlapped->pointer;
 		PacketBaseWeakPtr pPacket = overlapped->pPacket;
 
-		if (overlapped->type != OverlappedEx::EOverlappedType::Accept)
+		// 비동기 입출력 결과 확인
+		if (retval == 0 || cbTransferred == 0)
 		{
-			// 비동기 입출력 결과 확인
-			if (retval == 0 || cbTransferred == 0)
-			{
-				if (retval == 0)
-				{
-					DWORD temp1, temp2;
-					WSAGetOverlappedResult(pSock->GetSock(),
-						&overlapped->overlapped,
-						&temp1, FALSE, &temp2);
-					SocketUtil::ReportError("WSAGetOverlappedResult()");
-				}
-
-				//pSession->SetState(ESessionState::Disconnected);
-				IOCPNetworkManagerBase<T>::sInstance->OnDisconnected(pIOCPSession);
-				continue;
+			if (retval == 0)
+			{	// error
+				DWORD temp1, temp2;
+				WSAGetOverlappedResult(pSock->GetSock(),
+					&overlapped->overlapped,
+					&temp1, FALSE, &temp2);
+				SocketUtil::ReportError("WSAGetOverlappedResult()");
 			}
 
-			/*if (pSession->GetState() == ESessionState::Disconnected)
-			{
-				pSession->OnDisconnected();
-				continue;
-			}*/
+			// OnDiscnnected
+			IOCPNetworkManagerBase<T>::sInstance->OnDisconnected(pointer);
+			continue;
 		}
+
 
 		switch (overlapped->type)
 		{
 		case OverlappedEx::EOverlappedType::Accept:
 		{
-			// down casting
 			AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<AcceptPacket>(pPacket.lock());
-			IOCPNetworkManagerBase<T>::sInstance->OnAccepted(pAcceptPacket->GetPSock(), pAcceptPacket->GetAddr());
-
-			PacketManager::sInstance->RetrieveAcceptPacket(pAcceptPacket);
+			// OnAccept
+			IOCPNetworkManagerBase<T>::sInstance->OnAccepted(pAcceptPacket);
 		}
 		break;
 
 		case  OverlappedEx::EOverlappedType::Recv:
 		{
-			// down casting
 			RecvPacketPtr pRecvPacket = std::static_pointer_cast<RecvPacket>(pPacket.lock());
-
-			if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(pIOCPSession, pRecvPacket, cbTransferred))
+			if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(pSock, pRecvPacket, pointer, cbTransferred))
 				continue;
+			// Recv Completed
+			IOCPNetworkManagerBase<T>::sInstance->OnCompleteRecv(pointer);
 
-			// complete recv process
-			IOCPNetworkManagerBase<T>::sInstance->OnCompleteRecv(pIOCPSession, pRecvPacket);
-
-			// recv 날려놓기
-			RecvPacketPtr pNewRecvPacket = PacketManager::sInstance->GetRecvPacketFromPool();
-			if (!IOCPNetworkManagerBase<T>::sInstance->RecvAsync(pIOCPSession, pNewRecvPacket))
-			{
-				continue;
-			}
 		}
 		break;
 
 		case OverlappedEx::EOverlappedType::Send:
 		{
-			// down casting
 			SendPacketPtr pSendPacket = std::static_pointer_cast<SendPacket>(pPacket.lock());
-
-			if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(pIOCPSession, pSendPacket, cbTransferred))
+			if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(pSock, pSendPacket, pointer, cbTransferred))
 				continue;
-
-			// complete send process;
-			IOCPNetworkManagerBase<T>::sInstance->OnCompleteSend(pIOCPSession, pSendPacket);
+			// Send Completed
+			IOCPNetworkManagerBase<T>::sInstance->OnCompleteSend(pointer);
 		}
 		break;
 		}

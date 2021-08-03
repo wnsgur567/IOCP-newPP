@@ -9,21 +9,18 @@ bool PacketManager::Initialize(LPVOID inArgs)
 	for (size_t i = 0; i < pArgs->numberOfAcptPacket; i++)
 	{	// acceptpacket
 		AcceptPacketPtr a_ptr = std::make_shared<AcceptPacket>();
-		a_ptr->Initialize(a_ptr);
 		m_acceptpacket_pool.push(a_ptr);
 		m_acceptpacket_container.push_back(a_ptr);
 	}
 	for (size_t i = 0; i < pArgs->numberOfRecvPacket; i++)
 	{	// recvpacket
 		RecvPacketPtr r_ptr = std::make_shared<RecvPacket>(pArgs->capacityOfRecvBuffer);
-		r_ptr->Initialize(r_ptr);
 		m_recvpacket_pool.push(r_ptr);
 		m_recvpacket_container.push_back(r_ptr);
 	}
 	for (size_t i = 0; i < pArgs->numberOfSendPacket; i++)
 	{	// sendpacket
 		SendPacketPtr s_ptr = std::make_shared<SendPacket>(pArgs->capacityOfSendBuffer);
-		s_ptr->Initialize(s_ptr);
 		m_sendpacket_pool.push(s_ptr);
 		m_sendpacket_container.push_back(s_ptr);
 	}

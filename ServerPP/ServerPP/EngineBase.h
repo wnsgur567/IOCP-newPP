@@ -35,9 +35,18 @@ inline bool EngineBase<DerivedEngine, DerivedNetworkManager, DerivedSessionManag
 		return false;
 	DerivedNetworkManager::sInstance->Initialize(nullptr);
 
+	// 암호 매니저
+	if (false == CipherManager::StaticInit())
+		return false;
+	CipherManager::sInstance->Initialize(nullptr);
+
+	// 패킷 매니저
+	PacketManager::InitializeArgs packetArgs;
+	packetArgs.capacityOfRecvBuffer = packetArgs.capacityOfSendBuffer = BUFSIZE;
+	packetArgs.numberOfAcptPacket = packetArgs.numberOfRecvPacket = packetArgs.numberOfSendPacket = 1024;
 	if (false == PacketManager::StaticInit())
 		return false;
-	PacketManager::sInstance->Initialize(nullptr);
+	PacketManager::sInstance->Initialize(&packetArgs);
 
 	return true;
 }

@@ -16,17 +16,13 @@ struct OverlappedEx
 	WSAOVERLAPPED overlapped;
 	EOverlappedType type;
 	PacketBaseWeakPtr pPacket;
-	std::shared_ptr<void> pointer;	// 임의의 포인터를 담을 포인터
+	VoidPtr pointer;	// 임의의 포인터를 담을 포인터
 
 	OverlappedEx(EOverlappedType inType)
-		: overlapped(), type(inType)
+		: overlapped(), type(inType) /*, pPacket()*/
 		, pointer(nullptr)
 	{
 
-	}
-	void Initialize(PacketBasePtr inpPacket)
-	{
-		pPacket = inpPacket;
 	}
 	void flush()
 	{
@@ -56,10 +52,9 @@ protected:
 	EPacketState	m_state;
 	OverlappedEx	m_overlappedEx;
 public:
-	unsigned __int32 GetId() const { return m_id; }
-	void SetId(unsigned __int32 inId) { m_id = inId; }
-
-	virtual void Initialize(PacketBasePtr) = 0;
+	packetId_t GetId() const { return m_id; }
+	void SetId(packetId_t inId) { m_id = inId; }
+	
 	virtual void Clear() = 0;
 	OverlappedEx& GetOverlappedRef() { return m_overlappedEx; }
 protected:
@@ -78,7 +73,8 @@ protected:
 class AcceptPacket;
 using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
 
-class AcceptPacket : public PacketBase
+class AcceptPacket  
+	: public PacketBase , public std::enable_shared_from_this<AcceptPacket>
 {
 	friend class PacketManager;
 	template <typename T>
@@ -91,10 +87,9 @@ public:
 	AcceptPacket()
 		:PacketBase(OverlappedEx::EOverlappedType::Accept)
 	{
-
+		m_overlappedEx.pPacket = weak_from_this();
 	}
-
-	void Initialize(PacketBasePtr inpPacket) override;
+	
 	void GetReady();
 
 	void Set(TCPSocketPtr inpSock, SocketAddress inAddr);
@@ -106,7 +101,8 @@ public:
 class RecvPacket;
 using RecvPacketPtr = std::shared_ptr<RecvPacket>;
 // using input stream
-class RecvPacket : public PacketBase
+class RecvPacket 
+	: public PacketBase, public std::enable_shared_from_this<RecvPacket>
 {
 	friend class PacketManager;
 	template <typename T>
@@ -127,14 +123,15 @@ public:
 	RecvPacket(packetSize_t inStreamCapacity);
 	~RecvPacket();
 
-	// packet을 새로 할당 시 정보 초기화용
-	void Initialize(PacketBasePtr inpThis);
 	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
 
 	// recv 전 overlapped 및 wsabuf 초기화
 	void GetReady();
 	IOCPInputMemoryStreamPtr GetStream();		
+
+	// stream 의 buffer 를 복호화
+	void Decryption();
 
 	// 패킷 recv 가 완료된 시간을 기록
 	void RecordRecvTime();
@@ -144,7 +141,8 @@ public:
 class SendPacket;
 using SendPacketPtr = std::shared_ptr<SendPacket>;
 // using output stream
-class SendPacket : public PacketBase
+class SendPacket
+	: public PacketBase , public std::enable_shared_from_this<SendPacket>
 {
 	friend class PacketManager;
 	template <typename T>
@@ -158,11 +156,12 @@ private:
 public:
 	SendPacket(packetSize_t inStreamCapacity);
 
-	// packet을 새로 할당 시 정보 초기화용
-	void Initialize(PacketBasePtr inpThis) override;
 	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
 
-	// send 전 overlapped 및 wsabuf 초기화 && packgin
-	void GetReady(const packetId_t inPacketID);	
+	// send 전 overlapped 및 wsabuf 초기화
+	void GetReady();	
+
+	// stream 의 buffer 를 암호화
+	void Encryption();
 };

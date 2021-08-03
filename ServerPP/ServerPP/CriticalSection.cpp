@@ -1,4 +1,4 @@
-#include "base.h"
+#include "CriticalSection.h"
 
 CriticalSection::CriticalSection()
 {

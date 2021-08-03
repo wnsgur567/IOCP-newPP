@@ -24,25 +24,12 @@ constexpr unsigned __int32	BUFSIZE = 512;
 constexpr unsigned __int32	STREAMPOOLCAPACITY = 128;
 #define SOCKET_END	0
 
-
 using HandlePtr = std::shared_ptr<HANDLE>;
-
-
-enum class ESessionState
-{
-	None,
-
-	Sign,
-
-	Disconnected
-};
-
-
+using VoidPtr = std::shared_ptr<void>;
 
 // base
 #include "Singleton.h"
 #include "CriticalSection.h"
-//#include "KISA_CIPHER/KISA_SEED_ECB.h"
 #include "CipherManager.h"
 
 // net base
@@ -50,7 +37,6 @@ enum class ESessionState
 #include "SocketAddress.h"
 #include "TCPSocket.h"
 #include "SocketUtil.h"
-
 
 // IOCP packet and stream
 #include "IOCPMemoryStream.h"

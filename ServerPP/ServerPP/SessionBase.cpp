@@ -7,7 +7,7 @@ void SessionBase::SetID(id_t inID)
 }
 
 SessionBase::SessionBase()
-	: m_id(0), m_state(ESessionState::None),
+	: m_id(0),
 	m_pSock(nullptr),
 	m_newSendID(1), m_newRecvID(1)
 {
@@ -22,17 +22,8 @@ SessionBase::id_t SessionBase::GetID()
 	return m_id;
 }
 
-ESessionState SessionBase::GetState()
-{
-	return m_state;
-}
 
 TCPSocketPtr SessionBase::GetSockPtr()
 {
 	return m_pSock;
-}
-
-void SessionBase::SetState(ESessionState inState)
-{
-	m_state = inState;
 }

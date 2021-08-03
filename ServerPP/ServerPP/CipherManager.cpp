@@ -1,5 +1,7 @@
 #include "KISA_CIPHER/KISA_SEED_ECB.h"
-#include "base.h"
+#include "CipherManager.h"
+
+Implementation_sInstance(CipherManager);
 
 CipherManager::CipherManager()
 	: m_pdwRoundKey()
@@ -25,7 +27,7 @@ void CipherManager::Encryption(BYTE* inpData, size_t inSize)
 	
 	while (complete_size < inSize)
 	{
-		//SEED_Encrypt(ptr, m_pdwRoundKey);
+		SEED_Encrypt(ptr, m_pdwRoundKey);
 
 		ptr += m_block_size;
 		complete_size += m_block_size;		
@@ -39,7 +41,7 @@ void CipherManager::Decryption(BYTE* inpData, size_t inSize)
 
 	while (complete_size < inSize)
 	{
-		//SEED_Decrypt(ptr, m_pdwRoundKey);
+		SEED_Decrypt(ptr, m_pdwRoundKey);
 
 		ptr += m_block_size;
 		complete_size += m_block_size;

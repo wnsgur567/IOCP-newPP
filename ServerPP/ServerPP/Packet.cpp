@@ -1,11 +1,5 @@
 #include "base.h"
 
-
-void AcceptPacket::Initialize(PacketBasePtr inpPacket)
-{
-	m_overlappedEx.Initialize(inpPacket);
-}
-
 void AcceptPacket::GetReady()
 {
 	// ... 없음
@@ -41,7 +35,8 @@ RecvPacket::RecvPacket(packetSize_t inStreamCapacity)
 	m_sizeflag(true),
 	m_recvbytes(0),
 	m_target_recvbytes(0)
-{
+{	
+	m_overlappedEx.pPacket = weak_from_this();
 	m_pStream = std::make_shared<IOCPInputMemoryStream>(inStreamCapacity);	
 }
 
@@ -74,6 +69,12 @@ IOCPInputMemoryStreamPtr RecvPacket::GetStream()
 	return m_pStream;
 }
 
+void RecvPacket::Decryption()
+{
+	// buffer 에 바로 작업함
+	CipherManager::sInstance->Decryption(m_pStream->m_buffer, m_pStream->GetLength());
+}
+
 void RecvPacket::RecordRecvTime()
 {
 	m_recv_time = std::chrono::high_resolution_clock::now();
@@ -82,11 +83,6 @@ void RecvPacket::RecordRecvTime()
 RecvPacket::time_point_t RecvPacket::GetRecvTime() const
 {
 	return m_recv_time;
-}
-
-void RecvPacket::Initialize(PacketBasePtr inpThis)
-{
-	m_overlappedEx.Initialize(inpThis);
 }
 
 void RecvPacket::Clear()
@@ -103,7 +99,6 @@ void RecvPacket::Clear()
 	m_overlappedEx.flush();
 }
 
-
 SendPacket::SendPacket(packetSize_t inStreamCapacity)
 	:PacketBase(OverlappedEx::EOverlappedType::Send),
 	m_pStream(nullptr),
@@ -111,10 +106,11 @@ SendPacket::SendPacket(packetSize_t inStreamCapacity)
 	m_target_sendbytes(0)
 
 {
+	m_overlappedEx.pPacket = weak_from_this();
 	m_pStream = std::make_shared<IOCPOutputMemoryStream>(inStreamCapacity);
 }
 
-void SendPacket::GetReady(const packetId_t inPacketID)
+void SendPacket::GetReady()
 {
 	BYTE* buf = m_pStream->m_buffer;
 
@@ -128,7 +124,7 @@ void SendPacket::GetReady(const packetId_t inPacketID)
 		// total packet size = packet id size + stream size
 		packetSize_t total_size = sizeof(packetId_t) + m_pStream->GetLength();
 		memcpy(buf, &total_size, sizeof(packetSize_t));
-		memcpy(buf + sizeof(packetSize_t), &inPacketID, sizeof(packetId_t));
+		memcpy(buf + sizeof(packetSize_t), &m_id, sizeof(packetId_t));
 		memcpy(buf + sizeof(packetSize_t) + sizeof(packetId_t), m_pStream->GetBufferPtr(), m_pStream->GetLength());
 		m_target_sendbytes = total_size + sizeof(packetSize_t);
 
@@ -141,9 +137,9 @@ void SendPacket::GetReady(const packetId_t inPacketID)
 	m_wsabuf.len = m_target_sendbytes - m_sendbytes;
 }
 
-void SendPacket::Initialize(PacketBasePtr inpThis)
+void SendPacket::Encryption()
 {
-	m_overlappedEx.Initialize(inpThis);
+	CipherManager::sInstance->Encryption(m_pStream->m_buffer, m_pStream->GetLength());
 }
 
 void SendPacket::Clear()

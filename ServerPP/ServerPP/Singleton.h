@@ -1,5 +1,15 @@
 #pragma once
 
+#include<memory>
+
+#ifndef VOID 
+#define VOID void
+#endif // !VOID
+
+#ifndef LPVOID 
+#define LPVOID VOID*
+#endif // !LPVOID
+
 template <typename T>
 class Singleton
 {

@@ -40,15 +40,9 @@ bool IOCPNetworkManager::DoFrame()
 	return true;
 }
 
-bool IOCPNetworkManager::OnRecved(IOCPSessionBasePtr inpSession, RecvPacketPtr inpPacket, DWORD inCbTransferred)
+bool IOCPNetworkManager::OnRecved(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, DWORD inCbTransferred)
 {
-	PacketBase::EPacketState result;
-
-	// recv 완료 확인
-	result = IOCPNetworkManagerBase<IOCPNetworkManager>::sInstance->CompleteRecv(
-		inpSession,
-		inpPacket,
-		inCbTransferred);
+	PacketBase::EPacketState result = CompleteRecv(inpSock, inpRecvPacket, inPointer, inCbTransferred);
 
 	switch (result)
 	{
@@ -60,22 +54,17 @@ bool IOCPNetworkManager::OnRecved(IOCPSessionBasePtr inpSession, RecvPacketPtr i
 		return false;
 	case PacketBase::EPacketState::Completed:
 		// 완료된 경우 시간을 기록
-		inpPacket->RecordRecvTime();
+		inpRecvPacket->RecordRecvTime();
 		break;
 	}
 
 	return true;
 }
 
-bool IOCPNetworkManager::OnSended(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket, DWORD inCbTransferred)
+bool IOCPNetworkManager::OnSended(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, DWORD inCbTransferred)
 {
-	PacketBase::EPacketState result;
-
 	// send 완료 확인
-	result = IOCPNetworkManagerBase<IOCPNetworkManager>::sInstance->CompleteSend(
-		inpSession,
-		inpPacket,
-		inCbTransferred);
+	PacketBase::EPacketState result = CompleteSend(inpSock, inpSendPacket, inPointer, inCbTransferred);
 
 	switch (result)
 	{
@@ -92,63 +81,45 @@ bool IOCPNetworkManager::OnSended(IOCPSessionBasePtr inpSession, SendPacketPtr i
 	return true;
 }
 
-void IOCPNetworkManager::OnAccepted(TCPSocketPtr inpSock, SocketAddress inAddress)
+bool IOCPNetworkManager::OnCompleteRecv(VoidPtr inPointer)
 {
+	IOCPSessionBasePtr pSession = std::static_pointer_cast<IOCPSessionBase>(inPointer);
+
+	if (false == pSession->OnCompleteRecv())
+		return false;
+	return true;
+}
+
+bool IOCPNetworkManager::OnCompleteSend(VoidPtr inPointer)
+{
+	IOCPSessionPtr pSession = std::static_pointer_cast<IOCPSession>(inPointer);
+
+	if (false == pSession->OnCompleteSend())
+		return false;
+	return true;
+}
+
+void IOCPNetworkManager::OnAccepted(AcceptPacketPtr inpPacket)
+{
+	// 새로운 클라이언트 세션 생성
 	IOCPSessionPtr pSession = IOCPSessionManager::sInstance->CreateSession<IOCPSession>();
-	pSession->m_pSock = inpSock;
-	pSession->m_addr = inAddress;
+	pSession->m_pSock = inpPacket->GetPSock();
+	pSession->m_addr = inpPacket->GetAddr();
 
-	SocketUtil::LinkIOCPThread(inpSock, *m_pHcp);
-
-	pSession->SetState(ESessionState::Sign);
-
-	// 최초 recv
-	RecvPacketPtr pPacket = PacketManager::sInstance->GetRecvPacketFromPool();;
-	sInstance->RecvAsync(pSession, pPacket);
-}
-
-void IOCPNetworkManager::OnDisconnected(IOCPSessionBasePtr inpSession)
-{
-
-
-
-}
-
-void IOCPNetworkManager::OnCompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpPacket)
-{
-	IOCPSessionPtr pSession = std::static_pointer_cast<IOCPSession>(inpSession);
-
-	InputMemoryStreamPtr pStream = inpPacket->GetStream();
-	ESessionState state = pSession->GetState();
-	switch (state)
-	{
-	case ESessionState::None:
-		break;
-	case ESessionState::Sign:
-	{
-		// QQ : stream 처리를 밖에서 할 것인가 안에서 할 것인가?
-		auto result = SignManager::sInstance->StreamProcess(pStream, pSession->IsSigned());
-
-		SendPacketPtr pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
-		//pSendPacket->SetStream(result.pStream);
-
-		if (false == SendAsync(pSession, pSendPacket))
-		{
-			// ...
-		}
-	}
-	break;
-	case ESessionState::Disconnected:
-		break;
-	}
+	// thread 연결
+	SocketUtil::LinkIOCPThread(pSession->m_pSock, *m_pHcp);	
 
 	// 패킷 회수
-	PacketManager::sInstance->RetrieveRecvPacket(inpPacket);
+	PacketManager::sInstance->RetrieveAcceptPacket(inpPacket);
+
+	// 최초 recv
+	if (false == pSession->Recv())
+	{
+		// TODO : disconnected or return false
+	}
 }
 
-void IOCPNetworkManager::OnCompleteSend(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket)
+void IOCPNetworkManager::OnDisconnected(VoidPtr)
 {
-	// Retrieve packet
-	PacketManager::sInstance->RetrieveSendPacket(inpPacket);
+	// TODO : disconnected
 }
-

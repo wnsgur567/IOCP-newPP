@@ -8,11 +8,11 @@ public:
 public:
 	bool DoFrame() override;
 
-	bool OnRecved(IOCPSessionBasePtr, RecvPacketPtr, DWORD) override;
-	bool OnSended(IOCPSessionBasePtr, SendPacketPtr, DWORD) override;
+	bool OnRecved(TCPSocketPtr, RecvPacketPtr, VoidPtr, DWORD) override;
+	bool OnSended(TCPSocketPtr, SendPacketPtr, VoidPtr, DWORD) override;
+	bool OnCompleteRecv(VoidPtr) override;
+	bool OnCompleteSend(VoidPtr) override;
 
-	void OnAccepted(TCPSocketPtr, SocketAddress) override;
-	void OnDisconnected(IOCPSessionBasePtr inpSession) override;
-	void OnCompleteRecv(IOCPSessionBasePtr inpSession, RecvPacketPtr inpPacket) override;
-	void OnCompleteSend(IOCPSessionBasePtr inpSession, SendPacketPtr inpPacket) override;
+	void OnAccepted(AcceptPacketPtr) override;
+	void OnDisconnected(VoidPtr) override;
 };

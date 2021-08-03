@@ -14,7 +14,7 @@ public:
 	using id_t = PacketBase::packetId_t;
 protected:
 	id_t m_id;
-	ESessionState m_state;
+	
 	TCPSocketPtr m_pSock;
 	SocketAddress m_addr;
 
@@ -29,9 +29,7 @@ public:
 protected:
 	TCPSocketPtr GetSockPtr();
 	id_t GetID();
-	void SetID(id_t inID);
-	ESessionState GetState();
-	void SetState(ESessionState inState);
+	void SetID(id_t inID);	
 protected:
 	virtual void Initialze() = 0;
 public:
