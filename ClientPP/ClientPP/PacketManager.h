@@ -1,25 +1,33 @@
 #pragma once
 
+// Initialize 시 내부에 정의한 Args 구조체를 정의하여 넘겨줄 것
 class PacketManager : public Singleton<PacketManager>
 {
+private:
 	friend class Singleton;
 	friend class IOCPNetworkManager;
 public:
-	using psize_t = unsigned __int32;
-	using id_t = unsigned __int32;
-
+	using packetSize_t = PacketBase::packetSize_t;
+	using packetId_t = ::PacketBase::packetId_t;
 private:
 	PacketManager()
-		: m_capacity(STREAMPOOLCAPACITY),
-		m_recvpacket_pool(), m_sendpacket_pool()
+		: m_recvpacket_pool(), m_sendpacket_pool()
 	{}
 public:
 	~PacketManager();
 
+	struct InitializeArgs
+	{
+		size_t numberOfAcptPacket;		// Pooling 할 AcceptPackt 개수
+		size_t numberOfRecvPacket;		// Pooling 할 RecvPacket 개수
+		size_t capacityOfRecvBuffer;	// RecvPacket 의 buffer 최대 용량
+		size_t numberOfSendPacket;		// Pooling 할 SendPacket 개수
+		size_t capacityOfSendBuffer;	// SendPacket 의 buffer 최대 용량
+	};
+
 	bool Initialize(LPVOID) override;
 	void Finalize() override;
 private:
-	psize_t m_capacity;
 
 	// 풀링한 패킷이 사라지지 않도록 hold 할 보관 컨테이너임...
 	std::list<AcceptPacketPtr> m_acceptpacket_container;

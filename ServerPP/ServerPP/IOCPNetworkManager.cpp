@@ -34,15 +34,15 @@ bool IOCPNetworkManager::DoFrame()
 	PostQueuedCompletionStatus(
 		*IOCPNetworkManager::sInstance->m_pHcp,
 		1,
-		(ULONG_PTR)&pAcceptPacket,
+		NULL,
 		&pAcceptPacket->GetOverlappedRef().overlapped);
 
 	return true;
 }
 
-bool IOCPNetworkManager::OnRecved(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, DWORD inCbTransferred)
+bool IOCPNetworkManager::OnRecved(SOCKET inSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, DWORD inCbTransferred)
 {
-	PacketBase::EPacketState result = CompleteRecv(inpSock, inpRecvPacket, inPointer, inCbTransferred);
+	PacketBase::EPacketState result = CompleteRecv(inSock, inpRecvPacket, inPointer, inCbTransferred);
 
 	switch (result)
 	{
@@ -61,10 +61,10 @@ bool IOCPNetworkManager::OnRecved(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPac
 	return true;
 }
 
-bool IOCPNetworkManager::OnSended(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, DWORD inCbTransferred)
+bool IOCPNetworkManager::OnSended(SOCKET inSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, DWORD inCbTransferred)
 {
 	// send 완료 확인
-	PacketBase::EPacketState result = CompleteSend(inpSock, inpSendPacket, inPointer, inCbTransferred);
+	PacketBase::EPacketState result = CompleteSend(inSock, inpSendPacket, inPointer, inCbTransferred);
 
 	switch (result)
 	{
@@ -107,11 +107,12 @@ void IOCPNetworkManager::OnAccepted(AcceptPacketPtr inpPacket)
 	pSession->m_addr = inpPacket->GetAddr();
 
 	// thread 연결
-	SocketUtil::LinkIOCPThread(pSession->m_pSock, *m_pHcp);	
+	SocketUtil::LinkIOCPThread(pSession->m_pSock->GetSock(), *m_pHcp);
 
 	// 패킷 회수
 	PacketManager::sInstance->RetrieveAcceptPacket(inpPacket);
 
+	pSession->Initialze();
 	// 최초 recv
 	if (false == pSession->Recv())
 	{

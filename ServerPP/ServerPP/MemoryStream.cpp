@@ -158,7 +158,7 @@ void OutputMemoryStream::Write(const void* inData, size_t inByteCount)
 	m_head = result_head;
 }
 
-void OutputMemoryStream::Wirte(const std::string& inString)
+void OutputMemoryStream::Write(const std::string& inString)
 {
 	int length = static_cast<int>(inString.length());
 	Write<int>(length);

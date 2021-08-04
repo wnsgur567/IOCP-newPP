@@ -1,23 +1,25 @@
 #pragma once
 
+class InputMemoryStream;
+using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
+
 // recv buffer 용
 class InputMemoryStream
 {
-	friend class RecvPacket;	// iocp 용
-private:
-	char* m_buffer;				// 버퍼
+protected:
+	BYTE* m_buffer;				// 버퍼
 	bool  m_isBufferOwner;		// 버퍼의 소유권이 있을 경우에만 해제하도록								
 
 	size_t m_head;				// 읽기 시작할 현제 head 의 위치
 	size_t m_capacity;			// 최대 용량
 public:
 	InputMemoryStream(size_t inByteCount);
-	InputMemoryStream(char* inBuffer, size_t inByteCount, bool inIsOwner = false);
+	InputMemoryStream(BYTE* inBuffer, size_t inByteCount, bool inIsOwner = false);
 	InputMemoryStream(const InputMemoryStream& inOther);
 	InputMemoryStream& operator=(const InputMemoryStream& inOther);
 	~InputMemoryStream();
 public:
-	const char* GetBufferPtr();
+	const BYTE* GetBufferPtr();
 	size_t GetLength() const;
 	size_t GetCapacity() const;
 public:
@@ -39,12 +41,14 @@ inline void InputMemoryStream::Read(T& outData)
 }
 
 
+class OutputMemoryStream;
+using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
+
 // send buffer 용
 class OutputMemoryStream
 {
-	friend class SendPacket;	// iocp 용
-private:
-	char* m_buffer;				// 버퍼
+protected:
+	BYTE* m_buffer;				// 버퍼
 	size_t m_head;				// 쓰기 시작할 현제 head의 위치
 	size_t m_capacity;			// 최대 용량
 
@@ -55,13 +59,13 @@ public:
 	OutputMemoryStream& operator=(const OutputMemoryStream& inOther);
 	~OutputMemoryStream();
 public:
-	const char* GetBufferPtr();
+	const BYTE* GetBufferPtr();
 	size_t GetLength() const;
 	size_t GetCapacity() const;
 public:
 	void Write(const void* inData, size_t inByteCount);
 	template<typename T> void Write(const T& inData);
-	void Write(const std::string& inString);
+	void Wirte(const std::string& inString);
 };
 
 // only primitive type

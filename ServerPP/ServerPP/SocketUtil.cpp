@@ -75,12 +75,12 @@ HandlePtr SocketUtil::CreateIOCP(LPTHREAD_START_ROUTINE inWorkThreadPtr, std::ve
 	return hcpPtr;
 }
 
-HandlePtr SocketUtil::LinkIOCPThread(TCPSocketPtr inpSock, HANDLE hcp)
+HandlePtr SocketUtil::LinkIOCPThread(SOCKET inSock, HANDLE hcp)
 {
 	return std::make_shared<HANDLE>(
-		CreateIoCompletionPort((HANDLE)inpSock->GetSock(),
+		CreateIoCompletionPort((HANDLE)inSock,
 			hcp,
-			(ULONG_PTR)&inpSock,
+			(ULONG_PTR)inSock,
 			0));
 }
 

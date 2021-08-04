@@ -19,17 +19,17 @@ public:
 
 	HandlePtr GetHCPPtr() const;
 public:
-	bool RecvAsync(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer);	// 비동기 recv
-	bool SendAsync(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer);	// 비동기 send	
+	bool RecvAsync(SOCKET, RecvPacketPtr, VoidPtr);	// 비동기 recv
+	bool SendAsync(SOCKET, SendPacketPtr, VoidPtr);	// 비동기 send	
 	static DWORD WINAPI WorkerThread(LPVOID arg);
 protected:
-	PacketBase::EPacketState CompleteRecv(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, const packetSize_t inCompletebyte);
-	PacketBase::EPacketState CompleteSend(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, const packetSize_t inCompletebyte);
+	PacketBase::EPacketState CompleteRecv(SOCKET, RecvPacketPtr, VoidPtr, const packetSize_t);
+	PacketBase::EPacketState CompleteSend(SOCKET, SendPacketPtr, VoidPtr, const packetSize_t);
 protected:
 	virtual bool DoFrame() = 0;
 
-	virtual bool OnRecved(TCPSocketPtr, RecvPacketPtr, VoidPtr, DWORD) = 0;
-	virtual bool OnSended(TCPSocketPtr, SendPacketPtr, VoidPtr, DWORD) = 0;
+	virtual bool OnRecved(SOCKET, RecvPacketPtr, VoidPtr, DWORD) = 0;
+	virtual bool OnSended(SOCKET, SendPacketPtr, VoidPtr, DWORD) = 0;
 	virtual bool OnCompleteRecv(VoidPtr) = 0;
 	virtual bool OnCompleteSend(VoidPtr) = 0;
 
@@ -65,7 +65,7 @@ HandlePtr IOCPNetworkManagerBase<T>::GetHCPPtr() const
 }
 
 template<typename T>
-inline bool IOCPNetworkManagerBase<T>::RecvAsync(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer)
+inline bool IOCPNetworkManagerBase<T>::RecvAsync(SOCKET inSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer)
 {
 	int retval;
 	DWORD recvbytes;
@@ -76,7 +76,7 @@ inline bool IOCPNetworkManagerBase<T>::RecvAsync(TCPSocketPtr inpSock, RecvPacke
 	inpRecvPacket->m_overlappedEx.pointer = inPointer;
 
 	// 비동기 async 수행
-	retval = WSARecv(inpSock->GetSock(),
+	retval = WSARecv(inSock,
 		&inpRecvPacket->m_wsabuf, 1, &recvbytes, &flags,
 		&inpRecvPacket->m_overlappedEx.overlapped, nullptr);
 
@@ -93,7 +93,7 @@ inline bool IOCPNetworkManagerBase<T>::RecvAsync(TCPSocketPtr inpSock, RecvPacke
 }
 
 template<typename T>
-inline bool IOCPNetworkManagerBase<T>::SendAsync(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer)
+inline bool IOCPNetworkManagerBase<T>::SendAsync(SOCKET inSock, SendPacketPtr inpSendPacket, VoidPtr inPointer)
 {
 	int retval;
 	DWORD sendbytes;
@@ -102,7 +102,7 @@ inline bool IOCPNetworkManagerBase<T>::SendAsync(TCPSocketPtr inpSock, SendPacke
 	inpSendPacket->GetReady();
 	inpSendPacket->m_overlappedEx.pointer = inPointer;
 
-	retval = WSASend(inpSock->GetSock(),
+	retval = WSASend(inSock,
 		&inpSendPacket->m_wsabuf, 1, &sendbytes,
 		0, &inpSendPacket->m_overlappedEx.overlapped, nullptr);
 
@@ -119,7 +119,7 @@ inline bool IOCPNetworkManagerBase<T>::SendAsync(TCPSocketPtr inpSock, SendPacke
 }
 
 template<typename T>
-inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(TCPSocketPtr inpSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
+inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(SOCKET inSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
 {
 	BYTE* ptr = inpRecvPacket->m_pStream->m_buffer;
 
@@ -134,7 +134,7 @@ inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(TCPSocke
 			inpRecvPacket->m_sizeflag = false;
 		}
 
-		if (false == RecvAsync(inpSock, inpRecvPacket, inPointer))
+		if (false == RecvAsync(inSock, inpRecvPacket, inPointer))
 		{
 			return PacketBase::EPacketState::Error;
 		}
@@ -146,7 +146,7 @@ inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(TCPSocke
 
 	if (inpRecvPacket->m_recvbytes != inpRecvPacket->m_target_recvbytes)
 	{
-		if (false == RecvAsync(inpSock, inpRecvPacket, inPointer))
+		if (false == RecvAsync(inSock, inpRecvPacket, inPointer))
 		{
 			return PacketBase::EPacketState::Error;
 		}
@@ -157,12 +157,12 @@ inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(TCPSocke
 }
 
 template<typename T>
-inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteSend(TCPSocketPtr inpSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
+inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteSend(SOCKET inSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
 {
 	inpSendPacket->m_sendbytes += inCompletebyte;
 	if (inpSendPacket->m_sendbytes != inpSendPacket->m_target_sendbytes)
 	{
-		if (!SendAsync(inpSock, inpSendPacket, inPointer))
+		if (!SendAsync(inSock, inpSendPacket, inPointer))
 		{
 			return PacketBase::EPacketState::Error;
 		}
@@ -180,11 +180,11 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 	while (true)
 	{
 		DWORD cbTransferred;
-		TCPSocketPtr pSock;
+		SOCKET sock;
 		OverlappedEx* overlapped;
 
 		retval = GetQueuedCompletionStatus(hcp, &cbTransferred,
-			(PULONG_PTR)&pSock, (LPOVERLAPPED*)&overlapped, INFINITE);
+			(PULONG_PTR)&sock, (LPOVERLAPPED*)&overlapped, INFINITE);
 
 		VoidPtr pointer = overlapped->pointer;
 		PacketBaseWeakPtr pPacket = overlapped->pPacket;
@@ -195,7 +195,7 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 			if (retval == 0)
 			{	// error
 				DWORD temp1, temp2;
-				WSAGetOverlappedResult(pSock->GetSock(),
+				WSAGetOverlappedResult(sock,
 					&overlapped->overlapped,
 					&temp1, FALSE, &temp2);
 				SocketUtil::ReportError("WSAGetOverlappedResult()");
@@ -220,7 +220,7 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 		case  OverlappedEx::EOverlappedType::Recv:
 		{
 			RecvPacketPtr pRecvPacket = std::static_pointer_cast<RecvPacket>(pPacket.lock());
-			if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(pSock, pRecvPacket, pointer, cbTransferred))
+			if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(sock, pRecvPacket, pointer, cbTransferred))
 				continue;
 			// Recv Completed
 			IOCPNetworkManagerBase<T>::sInstance->OnCompleteRecv(pointer);
@@ -231,7 +231,7 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 		case OverlappedEx::EOverlappedType::Send:
 		{
 			SendPacketPtr pSendPacket = std::static_pointer_cast<SendPacket>(pPacket.lock());
-			if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(pSock, pSendPacket, pointer, cbTransferred))
+			if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(sock, pSendPacket, pointer, cbTransferred))
 				continue;
 			// Send Completed
 			IOCPNetworkManagerBase<T>::sInstance->OnCompleteSend(pointer);

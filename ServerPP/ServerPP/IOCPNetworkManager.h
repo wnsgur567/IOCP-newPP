@@ -8,8 +8,8 @@ public:
 public:
 	bool DoFrame() override;
 
-	bool OnRecved(TCPSocketPtr, RecvPacketPtr, VoidPtr, DWORD) override;
-	bool OnSended(TCPSocketPtr, SendPacketPtr, VoidPtr, DWORD) override;
+	bool OnRecved(SOCKET, RecvPacketPtr, VoidPtr, DWORD) override;
+	bool OnSended(SOCKET, SendPacketPtr, VoidPtr, DWORD) override;
 	bool OnCompleteRecv(VoidPtr) override;
 	bool OnCompleteSend(VoidPtr) override;
 

@@ -1,5 +1,12 @@
 #include "base.h"
 
+AcceptPacketPtr AcceptPacket::Create()
+{
+	AcceptPacketPtr pThis(new AcceptPacket());
+	pThis->m_overlappedEx.pPacket = pThis;
+	return pThis;
+}
+
 void AcceptPacket::GetReady()
 {
 	// ... 없음
@@ -29,20 +36,23 @@ void AcceptPacket::Clear()
 }
 
 
-RecvPacket::RecvPacket(packetSize_t inStreamCapacity)
+RecvPacket::RecvPacket()
 	: PacketBase(OverlappedEx::EOverlappedType::Recv),
 	m_pStream(nullptr),
+	m_wsabuf(),
 	m_sizeflag(true),
 	m_recvbytes(0),
 	m_target_recvbytes(0)
 {	
-	m_overlappedEx.pPacket = weak_from_this();
-	m_pStream = std::make_shared<IOCPInputMemoryStream>(inStreamCapacity);	
+	
 }
 
-RecvPacket::~RecvPacket()
+RecvPacketPtr RecvPacket::Create(packetSize_t inStreamCapacity)
 {
-
+	RecvPacketPtr pThis(new RecvPacket);
+	pThis->m_pStream = std::make_shared<IOCPInputMemoryStream>(inStreamCapacity);
+	pThis->m_overlappedEx.pPacket = pThis;
+	return pThis;
 }
 
 void RecvPacket::GetReady()
@@ -72,7 +82,9 @@ IOCPInputMemoryStreamPtr RecvPacket::GetStream()
 void RecvPacket::Decryption()
 {
 	// buffer 에 바로 작업함
-	CipherManager::sInstance->Decryption(m_pStream->m_buffer, m_pStream->GetLength());
+	CipherManager::sInstance->Decryption(
+		m_pStream->m_buffer + sizeof(packetId_t) + sizeof(packetSize_t), 
+		m_pStream->GetLength());
 }
 
 void RecvPacket::RecordRecvTime()
@@ -99,15 +111,23 @@ void RecvPacket::Clear()
 	m_overlappedEx.flush();
 }
 
-SendPacket::SendPacket(packetSize_t inStreamCapacity)
+SendPacket::SendPacket()
 	:PacketBase(OverlappedEx::EOverlappedType::Send),
 	m_pStream(nullptr),
+	m_wsabuf(),
 	m_sendbytes(0),
 	m_target_sendbytes(0)
 
 {
-	m_overlappedEx.pPacket = weak_from_this();
-	m_pStream = std::make_shared<IOCPOutputMemoryStream>(inStreamCapacity);
+
+}
+
+SendPacketPtr SendPacket::Create(packetSize_t inStreamCapacity)
+{
+	SendPacketPtr pThis(new SendPacket());
+	pThis->m_pStream = std::make_shared<IOCPOutputMemoryStream>(inStreamCapacity);
+	pThis->m_overlappedEx.pPacket = pThis;
+	return pThis;
 }
 
 void SendPacket::GetReady()
@@ -137,9 +157,16 @@ void SendPacket::GetReady()
 	m_wsabuf.len = m_target_sendbytes - m_sendbytes;
 }
 
+IOCPOutputMemoryStreamPtr SendPacket::GetStreamPtr()
+{
+	return m_pStream;
+}
+
 void SendPacket::Encryption()
 {
-	CipherManager::sInstance->Encryption(m_pStream->m_buffer, m_pStream->GetLength());
+	CipherManager::sInstance->Encryption(
+		m_pStream->m_buffer + sizeof(packetId_t) + sizeof(packetSize_t),
+		m_pStream->GetLength());
 }
 
 void SendPacket::Clear()

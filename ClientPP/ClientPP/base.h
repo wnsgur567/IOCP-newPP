@@ -16,7 +16,11 @@
 #include<chrono>
 
 #undef max
-using Byte = char;
+
+using gid_t = size_t;
+using gsize_t = size_t;
+using VoidPtr = std::shared_ptr<void>;
+
 using id_t = unsigned __int32;
 
 #define						SERVERIP "127.0.0.1"
@@ -65,13 +69,16 @@ enum class E_OverlappedType
 
 #include "CriticalSection.h"
 #include "Singleton.h"
+#include "CipherManager.h"
 
 #include "MemoryStream.h"
+#include "IOCPMemoryStream.h"
+
 #include "SocketUtil.h"
 #include "SocketAddress.h"
 #include "TCPSocket.h"
-#include "PacketManager.h"
 #include "Packet.h"
+#include "PacketManager.h"
 
 
 

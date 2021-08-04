@@ -139,7 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CipherManager.cpp" />
     <ClCompile Include="CriticalSection.cpp" />
+    <ClCompile Include="IOCPMemoryStream.cpp" />
+    <ClCompile Include="KISA_CIPHER\KISA_SEED_ECB.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MemoryStream.cpp" />
     <ClCompile Include="NetworkEngine.cpp" />
@@ -155,7 +158,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h" />
+    <ClInclude Include="CipherManager.h" />
     <ClInclude Include="CriticalSection.h" />
+    <ClInclude Include="IOCPMemoryStream.h" />
+    <ClInclude Include="KISA_CIPHER\KISA_SEED_ECB.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="NetworkEngine.h" />
     <ClInclude Include="NetworkEngineBase.h" />

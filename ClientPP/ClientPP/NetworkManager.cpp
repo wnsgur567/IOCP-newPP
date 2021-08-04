@@ -2,6 +2,7 @@
 
 Implementation_sInstance(NetworkManagerClient);
 
+static int Temp = 1;
 
 // 임시
 enum class EProtocol
@@ -28,6 +29,7 @@ bool NetworkManagerClient::DoFrame()
 		break;
 	case ESessionState::Sign:
 	{
+		/*
 		printf("1.sign in\n2.sign up\n3.exit\n");
 		int input;
 		scanf("%d", &input);
@@ -113,9 +115,57 @@ bool NetworkManagerClient::DoFrame()
 			break;
 		}
 
+		*/
 
+		printf("테스트 시작...\n");
 
+		
 
+		const char* msg = "\
+테스트 메세지입니다.....\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+aaaaaaaaaaaaaaaaaaaaaa\n\
+end\n\n";
+
+		auto pSendpacket = PacketManager::sInstance->GetSendPacketFromPool();
+		auto pStream = pSendpacket->m_pStream;
+
+		int msg_length = strlen(msg);
+		pStream->Write(&msg_length, sizeof(msg_length));
+		pStream->Write(msg, strlen(msg));
+
+		printf("sendID:%d\n", Temp);
+		pSendpacket->SetId(Temp++);
+		
+		pSendpacket->Encryption();
+
+		if (false == Send(pSendpacket))
+		{
+			// ...
+		}
+
+		auto pRecvPacket = PacketManager::sInstance->GetRecvPacketFromPool();
+		if (false == Recv(pRecvPacket))
+		{
+			// ...
+		}
+
+		auto recvID = pRecvPacket->GetId();
+
+		pRecvPacket->Decryption();
+
+		printf("recvID:%d\n", recvID);
+		char recv_msg[512];
+		ZeroMemory(recv_msg,512);
+		auto recv_stream = pRecvPacket->GetStream();
+		int recv_msg_length;
+		recv_stream->Read(&recv_msg_length, sizeof(recv_msg_length));
+		recv_stream->Read(recv_msg, recv_msg_length);
 
 	}
 	break;
@@ -135,11 +185,11 @@ bool NetworkManagerClient::Recv(RecvPacketPtr& outRecvPacket)
 
 	auto pPacket = PacketManager::sInstance->GetRecvPacketFromPool();
 
-	int size = pSock->Recv(&pPacket->m_target_recvbytes, sizeof(RecvPacket::psize_t));
+	int size = pSock->Recv(&pPacket->m_target_recvbytes, sizeof(RecvPacket::packetSize_t));
 	if (size == SOCKET_ERROR)
 		return false;
 
-	size = pSock->Recv(pPacket->m_buf, pPacket->m_target_recvbytes);
+	size = pSock->Recv(pPacket->m_pStream->m_buffer, pPacket->m_target_recvbytes);
 	if (size == SOCKET_ERROR)
 		return false;
 
@@ -159,9 +209,9 @@ bool NetworkManagerClient::Send(SendPacketPtr inpPacket)
 
 	auto packet_id = pSessionBase->CountingSendID();
 	// 패킷 처리....
-	inpPacket->GetReady(packet_id);
+	inpPacket->GetReady();
 
-	int retval = pSock->Send(inpPacket->m_buf, inpPacket->m_target_sendbytes);
+	int retval = pSock->Send(inpPacket->m_pStream->m_buffer, inpPacket->m_target_sendbytes);
 	if (retval == SOCKET_ERROR)
 		return false;
 

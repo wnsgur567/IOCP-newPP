@@ -2,28 +2,25 @@
 
 Implementation_sInstance(PacketManager);
 
-PacketManager::~PacketManager()
+bool PacketManager::Initialize(LPVOID inArgs)
 {
+	InitializeArgs* pArgs = (InitializeArgs*)inArgs;
 
-}
-
-bool PacketManager::Initialize(LPVOID)
-{
-	for (psize_t i = 0; i < m_capacity; i++)
-	{
-		// acceptpacket
+	for (size_t i = 0; i < pArgs->numberOfAcptPacket; i++)
+	{	// acceptpacket
 		AcceptPacketPtr a_ptr = std::make_shared<AcceptPacket>();
-		a_ptr->Init(a_ptr);
 		m_acceptpacket_pool.push(a_ptr);
 		m_acceptpacket_container.push_back(a_ptr);
-		// recvpacket
-		RecvPacketPtr r_ptr = std::make_shared<RecvPacket>(BUFSIZE);
-		r_ptr->Init(r_ptr);
+	}
+	for (size_t i = 0; i < pArgs->numberOfRecvPacket; i++)
+	{	// recvpacket
+		RecvPacketPtr r_ptr = std::make_shared<RecvPacket>(pArgs->capacityOfRecvBuffer);
 		m_recvpacket_pool.push(r_ptr);
 		m_recvpacket_container.push_back(r_ptr);
-		// sendpacket
-		SendPacketPtr s_ptr = std::make_shared<SendPacket>(BUFSIZE);
-		s_ptr->Init(s_ptr);
+	}
+	for (size_t i = 0; i < pArgs->numberOfSendPacket; i++)
+	{	// sendpacket
+		SendPacketPtr s_ptr = std::make_shared<SendPacket>(pArgs->capacityOfSendBuffer);
 		m_sendpacket_pool.push(s_ptr);
 		m_sendpacket_container.push_back(s_ptr);
 	}
@@ -32,11 +29,35 @@ bool PacketManager::Initialize(LPVOID)
 
 void PacketManager::Finalize()
 {
+	m_acceptpacket_container.clear();
+	while (false == m_acceptpacket_pool.empty())
+	{
+		m_acceptpacket_pool.pop();
+	}
+
+	m_recvpacket_container.clear();
+	while (false == m_recvpacket_pool.empty())
+	{
+		m_recvpacket_pool.pop();
+	}
+
+	m_sendpacket_container.clear();
+	while (false == m_sendpacket_pool.empty())
+	{
+		m_sendpacket_pool.pop();
+	}
+
+}
+
+
+PacketManager::~PacketManager()
+{
+
 }
 
 AcceptPacketPtr PacketManager::GetAcceptPacketFromPool()
 {
-	AcceptPacketPtr pRetPacket =  m_acceptpacket_pool.front();
+	AcceptPacketPtr pRetPacket = m_acceptpacket_pool.front();
 	m_acceptpacket_pool.pop();
 	pRetPacket->Clear();
 	return pRetPacket;
@@ -57,6 +78,7 @@ RecvPacketPtr PacketManager::GetRecvPacketFromPool()
 
 void PacketManager::RetrieveRecvPacket(RecvPacketPtr inpPacket)
 {
+	inpPacket->Clear();
 	m_recvpacket_pool.push(inpPacket);
 }
 
@@ -70,4 +92,6 @@ SendPacketPtr PacketManager::GetSendPacketFromPool()
 
 void PacketManager::RetrieveSendPacket(SendPacketPtr inpPacket)
 {
+	inpPacket->Clear();
+	m_sendpacket_pool.push(inpPacket);
 }

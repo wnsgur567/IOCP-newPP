@@ -21,7 +21,7 @@ IOCPSession::EState IOCPSession::GetState()
 bool IOCPSession::Recv()
 {
 	if (false == IOCPNetworkManager::sInstance->RecvAsync(
-		m_pSock,
+		m_pSock->GetSock(),
 		m_pRecvPacket,
 		shared_from_this()))
 		return false;
@@ -44,7 +44,7 @@ bool IOCPSession::Send(SendPacketPtr pSendPacket)
 	if (m_sendPacketQueue.size() == 1)
 	{	// 즉시 전송
 		if (false == IOCPNetworkManager::sInstance->SendAsync(
-			m_pSock,
+			m_pSock->GetSock(),
 			m_sendPacketQueue.front(),
 			shared_from_this()))
 			return false;
@@ -56,6 +56,8 @@ bool IOCPSession::Send(SendPacketPtr pSendPacket)
 bool IOCPSession::OnCompleteRecv()
 {
 	// 완료된 패킷의 id를 확인
+	auto packet_id = m_pRecvPacket->GetId();
+	printf("recv_id : (%d, %d)\n", packet_id, m_newRecvID);
 	if (m_pRecvPacket->GetId() < m_newRecvID)
 	{	// 이미 처리 완료된 중복 패킷 폐기
 		return true;
@@ -73,6 +75,35 @@ bool IOCPSession::OnCompleteRecv()
 		break;
 	case EState::Sign:
 	{
+		// ...
+		printf("테스트 시작\n");
+
+		auto pStream = m_pRecvPacket->GetStream();
+		char msg[512];
+		
+		int msg_length;
+		pStream->Read(&msg_length, sizeof(msg_length));
+		pStream->Read(&msg, msg_length);
+		msg[msg_length + 1] = NULL;
+
+		printf("\n전송된 메시지 길이 : %d\n", msg_length);
+		printf("전송된 메세지 : %s", msg);
+
+		auto pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
+		printf("\nsend_id : (%d)\n", m_newSendID);
+		pSendPacket->SetId(m_newSendID++);
+
+		auto pSendStream = pSendPacket->GetStreamPtr();
+		pSendStream->Write(&msg_length, sizeof(msg_length));
+		pSendStream->Write(msg, msg_length);
+
+		pSendStream->Encryption();
+
+		printf("\n그대로 다시 전송...\n");
+		if (Send(pSendPacket))
+		{
+			// ...
+		}
 
 	}
 	break;
@@ -85,7 +116,7 @@ bool IOCPSession::OnCompleteRecv()
 	/*--------- data process end ----------*/
 
 	// recv 날려놓기
-	if (false == IOCPNetworkManager::sInstance->RecvAsync(m_pSock, m_pRecvPacket, shared_from_this()))
+	if (false == IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
 	{
 		return false;
 	}

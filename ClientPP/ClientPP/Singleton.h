@@ -1,5 +1,15 @@
 #pragma once
 
+#include<memory>
+
+#ifndef VOID 
+#define VOID void
+#endif // !VOID
+
+#ifndef LPVOID 
+#define LPVOID VOID*
+#endif // !LPVOID
+
 template <typename T>
 class Singleton
 {
@@ -15,7 +25,7 @@ public:
 	Singleton& operator=(const Singleton&) = delete;
 	static bool StaticInit()
 	{
-		sInstance.reset(new T());		
+		sInstance.reset(new T());
 		return true;
 	}
 	virtual ~Singleton()

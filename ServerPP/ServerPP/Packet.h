@@ -1,5 +1,10 @@
 #pragma once
 
+// shared from this 혹은 weak from this는 생성자에서 호출하면 안됨
+// 왜?		 : shared ptr 관련 변수들은 해당 생성자가 끝난이후 생성되므로
+// 해결 방안  : 생성자는 접근 못하도록 잠그고 Crerate 함수를 별도로 지정하고 내부에서 초기화 할것
+// 결론  	 : shared from this 는 멤버함수에서 사용 할 경우에 필요함
+
 class PacketBase;
 using PacketBasePtr = std::shared_ptr<PacketBase>;
 using PacketBaseWeakPtr = std::weak_ptr<PacketBase>;
@@ -74,7 +79,7 @@ class AcceptPacket;
 using AcceptPacketPtr = std::shared_ptr<AcceptPacket>;
 
 class AcceptPacket  
-	: public PacketBase , public std::enable_shared_from_this<AcceptPacket>
+	: public PacketBase
 {
 	friend class PacketManager;
 	template <typename T>
@@ -83,13 +88,14 @@ protected:
 	TCPSocketPtr m_pClientSock;
 	SocketAddress m_sockAddr;
 
-public:
+private:
 	AcceptPacket()
 		:PacketBase(OverlappedEx::EOverlappedType::Accept)
 	{
-		m_overlappedEx.pPacket = weak_from_this();
 	}
-	
+public:
+	static AcceptPacketPtr Create();
+public:
 	void GetReady();
 
 	void Set(TCPSocketPtr inpSock, SocketAddress inAddr);
@@ -102,7 +108,7 @@ class RecvPacket;
 using RecvPacketPtr = std::shared_ptr<RecvPacket>;
 // using input stream
 class RecvPacket 
-	: public PacketBase, public std::enable_shared_from_this<RecvPacket>
+	: public PacketBase
 {
 	friend class PacketManager;
 	template <typename T>
@@ -119,10 +125,11 @@ private:
 	packetSize_t	m_target_recvbytes;
 
 	time_point_t m_recv_time;	// 패킷 수신이 완료된 시간 complete recv
+private:
+	RecvPacket();
 public:
-	RecvPacket(packetSize_t inStreamCapacity);
-	~RecvPacket();
-
+	static RecvPacketPtr Create(packetSize_t inStreamCapacity);
+public:
 	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
 
@@ -142,7 +149,7 @@ class SendPacket;
 using SendPacketPtr = std::shared_ptr<SendPacket>;
 // using output stream
 class SendPacket
-	: public PacketBase , public std::enable_shared_from_this<SendPacket>
+	: public PacketBase
 {
 	friend class PacketManager;
 	template <typename T>
@@ -153,15 +160,17 @@ private:
 	WSABUF				m_wsabuf;
 	packetSize_t		m_sendbytes;				// 현재 send 수치
 	packetSize_t		m_target_sendbytes;			// 목표 send 수치
+private:
+	SendPacket();
 public:
-	SendPacket(packetSize_t inStreamCapacity);
-
+	static SendPacketPtr Create(packetSize_t inStreamCapacity);
+public:
 	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
 
 	// send 전 overlapped 및 wsabuf 초기화
 	void GetReady();	
-
+	IOCPOutputMemoryStreamPtr GetStreamPtr();
 	// stream 의 buffer 를 암호화
 	void Encryption();
 };

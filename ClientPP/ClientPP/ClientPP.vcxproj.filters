@@ -60,6 +60,15 @@
     <ClCompile Include="PacketManager.cpp">
       <Filter>NetBase</Filter>
     </ClCompile>
+    <ClCompile Include="KISA_CIPHER\KISA_SEED_ECB.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="CipherManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPMemoryStream.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h">
@@ -117,6 +126,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SignInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="KISA_CIPHER\KISA_SEED_ECB.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CipherManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPMemoryStream.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

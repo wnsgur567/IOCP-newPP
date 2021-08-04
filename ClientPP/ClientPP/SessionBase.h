@@ -6,7 +6,7 @@ using SessionBasePtr = std::shared_ptr<SessionBase>;
 class SessionBase
 {
 public:
-	using psize_t = PacketManager::psize_t;
+	using psize_t = PacketManager::packetSize_t;
 	using pid_t = ::id_t;
 	template <typename T>
 	friend class NetworkManagerClientBase;
