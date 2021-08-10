@@ -11,10 +11,7 @@ private:
 public:
 	using packetSize_t = PacketBase::packetSize_t;
 	using pid_t = PacketBase::packetId_t;
-	using id_t = PacketBase::packetId_t;
-protected:
-	id_t m_id;
-	
+protected:	
 	TCPSocketPtr m_pSock;
 	SocketAddress m_addr;
 
@@ -27,9 +24,7 @@ public:
 	SessionBase(const SessionBase&) = delete;
 	SessionBase& operator=(const SessionBase&) = delete;
 protected:
-	TCPSocketPtr GetSockPtr();
-	id_t GetID();
-	void SetID(id_t inID);	
+	TCPSocketPtr GetSockPtr();	
 protected:
 	virtual void Initialze() = 0;
 public:

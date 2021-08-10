@@ -46,7 +46,7 @@ bool NetworkManagerServer<T>::Initialize(LPVOID)
 		return false;
 
 	// debug
-	printf("Initializing NetworkManager at port %d", m_port);
+	printf("Initializing NetworkManager at port %d\n", m_port);
 
 	// listening
 	if (false == m_pListenSock->Listen(SOMAXCONN))

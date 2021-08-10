@@ -102,6 +102,9 @@
     <ClCompile Include="KISA_CIPHER\KISA_SEED_ECB.cpp">
       <Filter>00_Base\source</Filter>
     </ClCompile>
+    <ClCompile Include="ClientState.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="KISA_CIPHER\KISA_SEED_ECB.h">
       <Filter>00_Base\header</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientState.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

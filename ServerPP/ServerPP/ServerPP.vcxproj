@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CipherManager.cpp" />
+    <ClCompile Include="ClientState.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="IOCPNetworkManager.cpp" />
     <ClCompile Include="IOCPSessionBase.cpp" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="base.h" />
     <ClInclude Include="CipherManager.h" />
+    <ClInclude Include="ClientState.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineBase.h" />
     <ClInclude Include="IOCPNetworkManager.h" />

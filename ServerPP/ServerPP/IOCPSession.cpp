@@ -2,20 +2,15 @@
 
 
 void IOCPSession::Initialze()
-{
-	m_state = EState::Sign;
+{	
 
 }
 
 IOCPSession::IOCPSession()
 	: IOCPSessionBase(),
-	m_state(EState::None), m_isSigned(false)
+	m_isSigned(false)
 {
-}
 
-IOCPSession::EState IOCPSession::GetState()
-{
-	return m_state;
 }
 
 bool IOCPSession::Recv()
@@ -131,8 +126,24 @@ bool IOCPSession::OnCompleteSend()
 
 	/*--------- change state process end ----------*/
 
+	// queue 확인
+	// 남아있는 패킷이 있을경우 전송
+	if (false == m_sendPacketQueue.empty())
+	{
+		// 즉시 전송
+		if (false == IOCPNetworkManager::sInstance->SendAsync(
+			m_pSock->GetSock(),
+			m_sendPacketQueue.front(),
+			shared_from_this()))
+			return false;		
+	}
 
-	return false;
+	return true;
+}
+
+void IOCPSession::OnBeforeDisconnected()
+{
+	// Session 정리
 }
 
 bool IOCPSession::IsSigned() const

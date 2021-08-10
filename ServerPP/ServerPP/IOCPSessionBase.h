@@ -18,4 +18,5 @@ public:
 	virtual bool Send(OutputMemoryStreamPtr pStream) = 0;
 	virtual bool OnCompleteRecv() = 0;
 	virtual bool OnCompleteSend() = 0;
+	virtual void OnBeforeDisconnected() = 0;
 };

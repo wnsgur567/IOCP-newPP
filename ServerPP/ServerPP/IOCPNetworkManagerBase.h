@@ -190,55 +190,61 @@ DWORD __stdcall IOCPNetworkManagerBase<T>::WorkerThread(LPVOID arg)
 		VoidPtr pointer = overlapped->pointer;
 		PacketBaseWeakPtr pPacket = overlapped->pPacket;
 
-		// 비동기 입출력 결과 확인
-		if (retval == 0 || cbTransferred == 0)
+		try
 		{
-			if (retval == 0)
-			{	// error
-				DWORD temp1, temp2;
-				WSAGetOverlappedResult(sock,
-					&overlapped->overlapped,
-					&temp1, FALSE, &temp2);
-				SocketUtil::ReportError("WSAGetOverlappedResult()");
+			// 비동기 입출력 결과 확인
+			if (retval == 0 || cbTransferred == 0)
+			{
+				if (retval == 0)
+				{	// error
+					DWORD temp1, temp2;
+					WSAGetOverlappedResult(sock,
+						&overlapped->overlapped,
+						&temp1, FALSE, &temp2);
+					SocketUtil::ReportError("WSAGetOverlappedResult()");
+				}
+
+				throw std::exception();
 			}
 
+			switch (overlapped->type)
+			{
+			case OverlappedEx::EOverlappedType::Accept:
+			{
+				AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<AcceptPacket>(pPacket.lock());
+				// OnAccept
+				IOCPNetworkManagerBase<T>::sInstance->OnAccepted(pAcceptPacket);
+			}
+			break;
+
+			case  OverlappedEx::EOverlappedType::Recv:
+			{
+				RecvPacketPtr pRecvPacket = std::static_pointer_cast<RecvPacket>(pPacket.lock());
+				if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(sock, pRecvPacket, pointer, cbTransferred))
+					continue;
+				// Recv Completed
+				if (false == IOCPNetworkManagerBase<T>::sInstance->OnCompleteRecv(pointer))
+					throw std::exception();
+			}
+			break;
+
+			case OverlappedEx::EOverlappedType::Send:
+			{
+				SendPacketPtr pSendPacket = std::static_pointer_cast<SendPacket>(pPacket.lock());
+				if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(sock, pSendPacket, pointer, cbTransferred))
+					continue;
+				// Send Completed
+				if (false == IOCPNetworkManagerBase<T>::sInstance->OnCompleteSend(pointer))
+					throw std::exception();
+			}
+			break;
+			}
+		}
+		catch (const std::exception&)
+		{
 			// OnDiscnnected
-			IOCPNetworkManagerBase<T>::sInstance->OnDisconnected(pointer);
-			continue;
-		}
-
-
-		switch (overlapped->type)
-		{
-		case OverlappedEx::EOverlappedType::Accept:
-		{
-			AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<AcceptPacket>(pPacket.lock());
-			// OnAccept
-			IOCPNetworkManagerBase<T>::sInstance->OnAccepted(pAcceptPacket);
-		}
-		break;
-
-		case  OverlappedEx::EOverlappedType::Recv:
-		{
-			RecvPacketPtr pRecvPacket = std::static_pointer_cast<RecvPacket>(pPacket.lock());
-			if (false == IOCPNetworkManagerBase<T>::sInstance->OnRecved(sock, pRecvPacket, pointer, cbTransferred))
-				continue;
-			// Recv Completed
-			IOCPNetworkManagerBase<T>::sInstance->OnCompleteRecv(pointer);
-
-		}
-		break;
-
-		case OverlappedEx::EOverlappedType::Send:
-		{
-			SendPacketPtr pSendPacket = std::static_pointer_cast<SendPacket>(pPacket.lock());
-			if (false == IOCPNetworkManagerBase<T>::sInstance->OnSended(sock, pSendPacket, pointer, cbTransferred))
-				continue;
-			// Send Completed
-			IOCPNetworkManagerBase<T>::sInstance->OnCompleteSend(pointer);
-		}
-		break;
-		}
+			IOCPNetworkManagerBase<T>::sInstance->OnDisconnected(pointer);			
+		}		
 	}
 
 	return 0;

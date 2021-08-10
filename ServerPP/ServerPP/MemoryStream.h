@@ -1,5 +1,9 @@
 #pragma once
 
+using BYTE = unsigned char;
+#include<memory>
+#include<string>
+
 class InputMemoryStream;
 using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
 

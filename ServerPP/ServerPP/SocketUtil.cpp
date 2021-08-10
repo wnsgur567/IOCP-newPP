@@ -35,7 +35,7 @@ void SocketUtil::ReportError(const char* inOperationDesc)
 		(LPTSTR)&lpMsgBuf,
 		0, NULL);
 
-	printf("Error %s: %d- %s", inOperationDesc, errorNum, (char*)lpMsgBuf);
+	printf("Error %s: %d- %s\n", inOperationDesc, errorNum, (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
 

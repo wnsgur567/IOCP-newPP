@@ -56,6 +56,7 @@ using VoidPtr = std::shared_ptr<void>;
 // network
 #include "SessionManager.h"
 #include "IOCPSession.h"
+#include "ClientState.h"
 #include "IOCPNetworkManager.h"
 #include "Engine.h"
 

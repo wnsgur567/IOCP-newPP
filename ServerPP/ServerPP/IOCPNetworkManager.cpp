@@ -47,9 +47,11 @@ bool IOCPNetworkManager::OnRecved(SOCKET inSock, RecvPacketPtr inpRecvPacket, Vo
 	switch (result)
 	{
 	case PacketBase::EPacketState::Error:
-		return false;
+		//return false;
+		throw std::exception();
 	case PacketBase::EPacketState::End:
-		return false;
+		//return false;
+		throw std::exception();
 	case PacketBase::EPacketState::InComplete:
 		return false;
 	case PacketBase::EPacketState::Completed:
@@ -69,9 +71,11 @@ bool IOCPNetworkManager::OnSended(SOCKET inSock, SendPacketPtr inpSendPacket, Vo
 	switch (result)
 	{
 	case PacketBase::EPacketState::Error:
-		return false;
+		//return false;
+		throw std::exception();
 	case PacketBase::EPacketState::End:
-		return false;
+		//return false;
+		throw std::exception();
 	case PacketBase::EPacketState::InComplete:
 		return false;
 	case PacketBase::EPacketState::Completed:
@@ -120,7 +124,16 @@ void IOCPNetworkManager::OnAccepted(AcceptPacketPtr inpPacket)
 	}
 }
 
-void IOCPNetworkManager::OnDisconnected(VoidPtr)
+void IOCPNetworkManager::OnDisconnected(VoidPtr inPointer)
 {
-	// TODO : disconnected
+	IOCPSessionPtr pSession = std::static_pointer_cast<IOCPSession>(inPointer);
+	// 세션 내부 자원 정리
+	pSession->OnBeforeDisconnected();
+
+	// session 삭제
+	IOCPSessionManager::sInstance->DestroySession(pSession);
+	ULONG ptr = (ULONG)pSession.get();
+	// Debug
+	printf("(%d) : Session 삭제 완료\n",ptr);
+
 }
