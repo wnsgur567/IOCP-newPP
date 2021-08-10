@@ -35,7 +35,7 @@ bool IOCPNetworkManager::DoFrame()
 		*IOCPNetworkManager::sInstance->m_pHcp,
 		1,
 		NULL,
-		&pAcceptPacket->GetOverlappedRef().overlapped);
+		&pAcceptPacket->GetOverlappedPtr()->overlapped);
 
 	return true;
 }

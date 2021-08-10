@@ -23,6 +23,11 @@ bool PacketManager::Initialize(LPVOID inArgs)
 		SendPacketPtr s_ptr = SendPacket::Create(pArgs->capacityOfSendBuffer);
 		m_sendpacket_pool.push(s_ptr);
 		m_sendpacket_container.push_back(s_ptr);
+
+		// stream
+		OutputMemoryStreamPtr pStream = std::make_shared<OutputMemoryStream>(pArgs->capacityOfSendBuffer);
+		m_sendStream_queue.push(pStream);
+		m_sendStream_container.push_back(pStream);
 	}
 	return true;
 }
@@ -87,6 +92,8 @@ SendPacketPtr PacketManager::GetSendPacketFromPool()
 	SendPacketPtr pRetPacket = m_sendpacket_pool.front();
 	m_sendpacket_pool.pop();
 	pRetPacket->Clear();
+
+	
 	return pRetPacket;
 }
 
@@ -94,4 +101,15 @@ void PacketManager::RetrieveSendPacket(SendPacketPtr inpPacket)
 {
 	inpPacket->Clear();
 	m_sendpacket_pool.push(inpPacket);
+
+	auto pStream = inpPacket->m_pStream;
+	pStream->Clear();
+	m_sendStream_queue.push(pStream);
+}
+
+OutputMemoryStreamPtr PacketManager::GetSendStreamFromPool()
+{
+	OutputMemoryStreamPtr pStream = m_sendStream_queue.front();
+	m_sendStream_queue.pop();	
+	return pStream;
 }

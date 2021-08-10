@@ -6,6 +6,7 @@ InputMemoryStream::InputMemoryStream(size_t inByteCount)
 	:m_buffer(nullptr),
 	m_isBufferOwner(true),
 	m_head(0),
+	m_length(0),
 	m_capacity(inByteCount)
 {
 	m_buffer = new BYTE[m_capacity];
@@ -18,6 +19,7 @@ InputMemoryStream::InputMemoryStream(BYTE* inBuffer, size_t inByteCount, bool in
 	: m_buffer(inBuffer),
 	m_isBufferOwner(inIsOwner),
 	m_head(0),
+	m_length(0),
 	m_capacity(inByteCount)
 {
 
@@ -29,6 +31,7 @@ InputMemoryStream::InputMemoryStream(const InputMemoryStream& inOther)
 	: m_buffer(nullptr),
 	m_isBufferOwner(true),
 	m_head(inOther.m_head),
+	m_length(inOther.m_length),
 	m_capacity(inOther.m_capacity)
 {
 	m_buffer = new BYTE[m_capacity];
@@ -41,6 +44,7 @@ InputMemoryStream& InputMemoryStream::operator=(const InputMemoryStream& inOther
 		delete[] m_buffer;
 	m_capacity = inOther.m_capacity;
 	m_head = inOther.m_head;
+	m_length = inOther.m_length;
 	m_isBufferOwner = true;
 	m_buffer = new BYTE[m_capacity];
 	memcpy(m_buffer, inOther.m_buffer, m_capacity);
@@ -55,14 +59,19 @@ InputMemoryStream::~InputMemoryStream()
 		delete[] m_buffer;
 }
 
-const BYTE* InputMemoryStream::GetBufferPtr()
+void InputMemoryStream::SetLenth(const size_t inLength)
+{
+	m_length = inLength;
+}
+
+BYTE* InputMemoryStream::GetBufferPtr()
 {
 	return m_buffer;
 }
 
 size_t InputMemoryStream::GetLength() const
 {
-	return m_head;
+	return m_length;
 }
 
 size_t InputMemoryStream::GetCapacity() const
@@ -70,9 +79,15 @@ size_t InputMemoryStream::GetCapacity() const
 	return m_capacity;
 }
 
+void InputMemoryStream::Clear()
+{
+	m_head = 0;
+	m_length = 0;
+}
+
 size_t InputMemoryStream::GetRemainDataSize() const
 {
-	return (m_capacity - m_head);
+	return (m_capacity - m_length);
 }
 
 void InputMemoryStream::Read(void* outData, size_t inByteCount)
@@ -131,7 +146,7 @@ OutputMemoryStream::~OutputMemoryStream()
 	delete[] m_buffer;
 }
 
-const BYTE* OutputMemoryStream::GetBufferPtr()
+BYTE* OutputMemoryStream::GetBufferPtr()
 {
 	return m_buffer;
 }
@@ -146,6 +161,11 @@ size_t OutputMemoryStream::GetCapacity() const
 	return m_capacity;
 }
 
+void OutputMemoryStream::Clear()
+{
+	m_head = 0;
+}
+
 void OutputMemoryStream::Write(const void* inData, size_t inByteCount)
 {
 	size_t result_head = m_head + inByteCount;
@@ -158,7 +178,7 @@ void OutputMemoryStream::Write(const void* inData, size_t inByteCount)
 	m_head = result_head;
 }
 
-void OutputMemoryStream::Wirte(const std::string& inString)
+void OutputMemoryStream::Write(const std::string& inString)
 {
 	int length = static_cast<int>(inString.length());
 	Write<int>(length);

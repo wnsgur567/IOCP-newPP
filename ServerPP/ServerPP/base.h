@@ -39,7 +39,6 @@ using VoidPtr = std::shared_ptr<void>;
 #include "SocketUtil.h"
 
 // IOCP packet and stream
-#include "IOCPMemoryStream.h"
 #include "Packet.h"
 #include "PacketManager.h"
 

@@ -18,6 +18,6 @@ public:
 	bool Initialize(LPVOID) override;
 	void Finalize() override;
 public:
-	void Encryption(BYTE*, size_t);
+	size_t Encryption(BYTE*, size_t);
 	void Decryption(BYTE*, size_t);
 };

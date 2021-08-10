@@ -43,49 +43,38 @@ RecvPacket::RecvPacket()
 	m_sizeflag(true),
 	m_recvbytes(0),
 	m_target_recvbytes(0)
-{	
-	
+{
+
 }
 
 RecvPacketPtr RecvPacket::Create(packetSize_t inStreamCapacity)
 {
 	RecvPacketPtr pThis(new RecvPacket);
-	pThis->m_pStream = std::make_shared<IOCPInputMemoryStream>(inStreamCapacity);
+	pThis->m_pStream = std::make_shared<InputMemoryStream>(inStreamCapacity);
 	pThis->m_overlappedEx.pPacket = pThis;
 	return pThis;
 }
 
 void RecvPacket::GetReady()
 {
-	BYTE* ptr = m_pStream->m_buffer;
-	
 	// overlap 초기화
 	m_overlappedEx.flush();
 
-	// wsabuf 초기화
-	m_wsabuf.buf = (CHAR*)ptr + m_recvbytes;
+	// wsabuf 초기화	
 	if (m_sizeflag)
 	{
+		m_wsabuf.buf = (CHAR*)&m_target_recvbytes + m_recvbytes;
 		m_wsabuf.len = sizeof(packetSize_t) - m_recvbytes;
 	}
 	else
 	{
+		BYTE* ptr = m_pStream->GetBufferPtr();
+		m_wsabuf.buf = (CHAR*)ptr + m_recvbytes;
 		m_wsabuf.len = m_target_recvbytes - m_recvbytes;
 	}
 }
 
-IOCPInputMemoryStreamPtr RecvPacket::GetStream()
-{
-	return m_pStream;
-}
 
-void RecvPacket::Decryption()
-{
-	// buffer 에 바로 작업함
-	CipherManager::sInstance->Decryption(
-		m_pStream->m_buffer + sizeof(packetId_t) + sizeof(packetSize_t), 
-		m_pStream->GetLength());
-}
 
 void RecvPacket::RecordRecvTime()
 {
@@ -111,6 +100,22 @@ void RecvPacket::Clear()
 	m_overlappedEx.flush();
 }
 
+void RecvPacket::UnPackging(packetId_t& outID, InputMemoryStreamPtr& outpStream)
+{
+	BYTE* ptr = m_pStream->GetBufferPtr();
+
+	// id
+	m_pStream->Read(&outID, sizeof(packetId_t));
+
+	// decryption
+	CipherManager::sInstance->Decryption(
+		m_pStream->GetBufferPtr() + sizeof(packetId_t),
+		m_pStream->GetLength());
+
+	// stream
+	outpStream = m_pStream;
+}
+
 SendPacket::SendPacket()
 	:PacketBase(OverlappedEx::EOverlappedType::Send),
 	m_pStream(nullptr),
@@ -125,49 +130,23 @@ SendPacket::SendPacket()
 SendPacketPtr SendPacket::Create(packetSize_t inStreamCapacity)
 {
 	SendPacketPtr pThis(new SendPacket());
-	pThis->m_pStream = std::make_shared<IOCPOutputMemoryStream>(inStreamCapacity);
+	pThis->m_pStream = std::make_shared<OutputMemoryStream>(inStreamCapacity);
 	pThis->m_overlappedEx.pPacket = pThis;
 	return pThis;
 }
 
 void SendPacket::GetReady()
 {
-	BYTE* buf = m_pStream->m_buffer;
-
-	// 패킷 구성 : total packet size + packet id + stream
+	BYTE* buf = m_pStream->GetBufferPtr();
 
 	m_overlappedEx.flush();
-
-	if (m_state == EPacketState::Idle)
-	{	// 처음 Send 하는 경우
-
-		// total packet size = packet id size + stream size
-		packetSize_t total_size = sizeof(packetId_t) + m_pStream->GetLength();
-		memcpy(buf, &total_size, sizeof(packetSize_t));
-		memcpy(buf + sizeof(packetSize_t), &m_id, sizeof(packetId_t));
-		memcpy(buf + sizeof(packetSize_t) + sizeof(packetId_t), m_pStream->GetBufferPtr(), m_pStream->GetLength());
-		m_target_sendbytes = total_size + sizeof(packetSize_t);
-
-		
-		// TODO : Encryption
-	}
 
 	// wsa buf 초기화
 	m_wsabuf.buf = (CHAR*)buf + m_sendbytes;
 	m_wsabuf.len = m_target_sendbytes - m_sendbytes;
 }
 
-IOCPOutputMemoryStreamPtr SendPacket::GetStreamPtr()
-{
-	return m_pStream;
-}
 
-void SendPacket::Encryption()
-{
-	CipherManager::sInstance->Encryption(
-		m_pStream->m_buffer + sizeof(packetId_t) + sizeof(packetSize_t),
-		m_pStream->GetLength());
-}
 
 void SendPacket::Clear()
 {
@@ -175,4 +154,27 @@ void SendPacket::Clear()
 	m_sendbytes = 0;
 	m_target_sendbytes = 0;
 	m_overlappedEx.pointer = nullptr;
+}
+
+// total size + packetid + data
+void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
+{
+	// data encryption
+	size_t retBits = CipherManager::sInstance->Encryption(
+		inStream->GetBufferPtr(),
+		inStream->GetLength());
+
+	// total size = id size + data size
+	packetSize_t total_size = sizeof(packetId_t) + retBits;
+	m_pStream->Write(&total_size, sizeof(packetSize_t));
+
+	// id
+	m_pStream->Write(&id, sizeof(packetId_t));
+
+	// data
+	m_pStream->Write(inStream->GetBufferPtr(), inStream->GetLength());
+
+	// bytes setting
+	m_target_sendbytes = total_size + sizeof(packetSize_t);
+
 }

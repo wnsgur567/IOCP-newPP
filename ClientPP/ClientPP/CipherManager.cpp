@@ -20,18 +20,30 @@ void CipherManager::Finalize()
 
 }
 
-void CipherManager::Encryption(BYTE* inpData, size_t inSize)
+size_t CipherManager::Encryption(BYTE* inpData, size_t inSize)
 {
 	BYTE* ptr = inpData;
 	size_t complete_size = 0;
+
+	// add padding bits for encryption
+
+
+	printf("\n\nEncrpyion...\n");
 
 	while (complete_size < inSize)
 	{
 		SEED_Encrypt(ptr, m_pdwRoundKey);
 
+		// debug
+		for (int i = 0; i < m_block_size; i++)
+			printf("%02X ", ptr[i]);
+		printf("\n");
+
 		ptr += m_block_size;
 		complete_size += m_block_size;
 	}
+
+	return complete_size;
 }
 
 void CipherManager::Decryption(BYTE* inpData, size_t inSize)
@@ -39,9 +51,16 @@ void CipherManager::Decryption(BYTE* inpData, size_t inSize)
 	BYTE* ptr = inpData;
 	size_t complete_size = 0;
 
+	printf("\n\nDecrpyion...\n");
+
 	while (complete_size < inSize)
 	{
 		SEED_Decrypt(ptr, m_pdwRoundKey);
+
+		// debug
+		for (int i = 0; i < m_block_size; i++)
+			printf("%02X ", ptr[i]);
+		printf("\n");
 
 		ptr += m_block_size;
 		complete_size += m_block_size;

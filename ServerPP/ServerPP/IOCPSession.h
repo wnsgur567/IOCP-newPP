@@ -30,7 +30,7 @@ public:
 	//void SetSigned(bool b);
 
 	bool Recv() override;
-	bool Send(SendPacketPtr pSendPacket) override;
+	bool Send(OutputMemoryStreamPtr pStream) override;
 	bool OnCompleteRecv() override;	// Network manager에 의해 완료 시 호출됨
 	bool OnCompleteSend() override; // Network manager에 의해 완료 시 호출됨	
 };

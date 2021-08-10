@@ -121,7 +121,7 @@ inline bool IOCPNetworkManagerBase<T>::SendAsync(SOCKET inSock, SendPacketPtr in
 template<typename T>
 inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(SOCKET inSock, RecvPacketPtr inpRecvPacket, VoidPtr inPointer, const packetSize_t inCompletebyte)
 {
-	BYTE* ptr = inpRecvPacket->m_pStream->m_buffer;
+	BYTE* ptr = inpRecvPacket->m_pStream->GetBufferPtr();
 
 	if (inpRecvPacket->m_sizeflag)
 	{
@@ -129,7 +129,6 @@ inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(SOCKET i
 
 		if (inpRecvPacket->m_recvbytes == sizeof(PacketBase::packetSize_t))
 		{
-			memcpy(&inpRecvPacket->m_target_recvbytes, ptr, sizeof(PacketBase::packetSize_t));
 			inpRecvPacket->m_recvbytes = 0;
 			inpRecvPacket->m_sizeflag = false;
 		}
@@ -152,6 +151,8 @@ inline PacketBase::EPacketState IOCPNetworkManagerBase<T>::CompleteRecv(SOCKET i
 		}
 		return PacketBase::EPacketState::InComplete;
 	}
+
+	inpRecvPacket->m_pStream->SetLenth(inpRecvPacket->m_recvbytes);
 
 	return PacketBase::EPacketState::Completed;
 }

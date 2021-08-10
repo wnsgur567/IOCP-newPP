@@ -56,12 +56,9 @@ protected:
 	packetId_t		m_id;
 	EPacketState	m_state;
 	OverlappedEx	m_overlappedEx;
-public:
-	packetId_t GetId() const { return m_id; }
-	void SetId(packetId_t inId) { m_id = inId; }
-	
+public:	
 	virtual void Clear() = 0;
-	OverlappedEx& GetOverlappedRef() { return m_overlappedEx; }
+	OverlappedEx* GetOverlappedPtr() { return &m_overlappedEx; }
 protected:
 	PacketBase(OverlappedEx::EOverlappedType inType) :
 		m_id(0), m_state(EPacketState::Idle),
@@ -117,7 +114,7 @@ public:
 	using time_point_t = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
 private:
-	IOCPInputMemoryStreamPtr m_pStream;	// session 에서 사용할 datastream
+	InputMemoryStreamPtr m_pStream;	// session 에서 사용할 datastream
 
 	WSABUF			m_wsabuf;
 	bool			m_sizeflag;
@@ -128,21 +125,17 @@ private:
 private:
 	RecvPacket();
 public:
-	static RecvPacketPtr Create(packetSize_t inStreamCapacity);
-public:
 	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
-
 	// recv 전 overlapped 및 wsabuf 초기화
-	void GetReady();
-	IOCPInputMemoryStreamPtr GetStream();		
-
-	// stream 의 buffer 를 복호화
-	void Decryption();
+	void GetReady();	
 
 	// 패킷 recv 가 완료된 시간을 기록
 	void RecordRecvTime();
 	time_point_t GetRecvTime() const;
+public:
+	static RecvPacketPtr Create(packetSize_t inStreamCapacity);
+	void UnPackging(packetId_t& outID, InputMemoryStreamPtr& outpStream);
 };
 
 class SendPacket;
@@ -155,7 +148,7 @@ class SendPacket
 	template <typename T>
 	friend class IOCPNetworkManagerBase;
 private:
-	IOCPOutputMemoryStreamPtr m_pStream; // session 에서 사용할 datastream
+	OutputMemoryStreamPtr m_pStream; // session 에서 사용할 datastream
 
 	WSABUF				m_wsabuf;
 	packetSize_t		m_sendbytes;				// 현재 send 수치
@@ -163,14 +156,11 @@ private:
 private:
 	SendPacket();
 public:
-	static SendPacketPtr Create(packetSize_t inStreamCapacity);
-public:
 	// packet을 Pool에서 가져올때 정보 초기화용
 	void Clear() override;
-
 	// send 전 overlapped 및 wsabuf 초기화
-	void GetReady();	
-	IOCPOutputMemoryStreamPtr GetStreamPtr();
-	// stream 의 buffer 를 암호화
-	void Encryption();
+	void GetReady();
+public:
+	static SendPacketPtr Create(packetSize_t inStreamCapacity);
+	void Packing(packetId_t inID, OutputMemoryStreamPtr inStream);
 };

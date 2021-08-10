@@ -12,6 +12,7 @@ public:
 	TCPSocket(SOCKET inSocket);
 	~TCPSocket();
 
+	SOCKET*			GetSockPtr();
 	SOCKET			GetSock() const;
 	bool			IsBlockSock() const;
 

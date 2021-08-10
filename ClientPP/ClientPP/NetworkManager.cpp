@@ -122,7 +122,7 @@ bool NetworkManagerClient::DoFrame()
 		
 
 		const char* msg = "\
-테스트 메세지입니다.....\n\
+This is Test Message.....\n\
 aaaaaaaaaaaaaaaaaaaaaa\n\
 aaaaaaaaaaaaaaaaaaaaaa\n\
 aaaaaaaaaaaaaaaaaaaaaa\n\
@@ -133,39 +133,41 @@ aaaaaaaaaaaaaaaaaaaaaa\n\
 end\n\n";
 
 		auto pSendpacket = PacketManager::sInstance->GetSendPacketFromPool();
-		auto pStream = pSendpacket->m_pStream;
+		auto pStream = PacketManager::sInstance->GetSendStreamFromPool();
 
 		int msg_length = strlen(msg);
 		pStream->Write(&msg_length, sizeof(msg_length));
 		pStream->Write(msg, strlen(msg));
 
 		printf("sendID:%d\n", Temp);
-		pSendpacket->SetId(Temp++);
+		pSendpacket->Packing(Temp, pStream);	
 		
-		pSendpacket->Encryption();
 
 		if (false == Send(pSendpacket))
 		{
 			// ...
 		}
-
-		auto pRecvPacket = PacketManager::sInstance->GetRecvPacketFromPool();
+				
+		RecvPacketPtr pRecvPacket;
 		if (false == Recv(pRecvPacket))
 		{
 			// ...
 		}
 
-		auto recvID = pRecvPacket->GetId();
+		InputMemoryStreamPtr recvStream;
+		PacketBase::packetId_t recv_id;
+		pRecvPacket->UnPackging(recv_id, recvStream);
+			
 
-		pRecvPacket->Decryption();
-
-		printf("recvID:%d\n", recvID);
+		printf("recvID:%d\n", recv_id);
 		char recv_msg[512];
 		ZeroMemory(recv_msg,512);
-		auto recv_stream = pRecvPacket->GetStream();
+		
 		int recv_msg_length;
-		recv_stream->Read(&recv_msg_length, sizeof(recv_msg_length));
-		recv_stream->Read(recv_msg, recv_msg_length);
+		recvStream->Read(&recv_msg_length, sizeof(recv_msg_length));
+		recvStream->Read(recv_msg, recv_msg_length);
+				
+		printf("recv msg : %s\n", recv_msg);
 
 	}
 	break;
@@ -189,14 +191,11 @@ bool NetworkManagerClient::Recv(RecvPacketPtr& outRecvPacket)
 	if (size == SOCKET_ERROR)
 		return false;
 
-	size = pSock->Recv(pPacket->m_pStream->m_buffer, pPacket->m_target_recvbytes);
+	size = pSock->Recv(pPacket->m_pStream->GetBufferPtr(), pPacket->m_target_recvbytes);
 	if (size == SOCKET_ERROR)
 		return false;
 
-	// 중복 패킷인 경우
-	if (pSessionBase->IsDuplicatedPacket(pPacket->GetId()))
-		return Recv(outRecvPacket);
-
+	pPacket->m_pStream->SetLenth(size);
 	// 정상 처리
 	outRecvPacket = pPacket;
 
@@ -210,8 +209,8 @@ bool NetworkManagerClient::Send(SendPacketPtr inpPacket)
 	auto packet_id = pSessionBase->CountingSendID();
 	// 패킷 처리....
 	inpPacket->GetReady();
-
-	int retval = pSock->Send(inpPacket->m_pStream->m_buffer, inpPacket->m_target_sendbytes);
+	
+	int retval = pSock->Send(inpPacket->m_pStream->GetBufferPtr(), inpPacket->m_target_sendbytes);
 	if (retval == SOCKET_ERROR)
 		return false;
 

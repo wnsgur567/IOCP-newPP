@@ -72,7 +72,6 @@ enum class E_OverlappedType
 #include "CipherManager.h"
 
 #include "MemoryStream.h"
-#include "IOCPMemoryStream.h"
 
 #include "SocketUtil.h"
 #include "SocketAddress.h"

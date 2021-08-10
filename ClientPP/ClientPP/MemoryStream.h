@@ -11,6 +11,7 @@ protected:
 	bool  m_isBufferOwner;		// 버퍼의 소유권이 있을 경우에만 해제하도록								
 
 	size_t m_head;				// 읽기 시작할 현제 head 의 위치
+	size_t m_length;			// 버퍼에 쓴 용량
 	size_t m_capacity;			// 최대 용량
 public:
 	InputMemoryStream(size_t inByteCount);
@@ -19,9 +20,11 @@ public:
 	InputMemoryStream& operator=(const InputMemoryStream& inOther);
 	~InputMemoryStream();
 public:
-	const BYTE* GetBufferPtr();
+	void SetLenth(const size_t inLength);
+	BYTE* GetBufferPtr();
 	size_t GetLength() const;
 	size_t GetCapacity() const;
+	void Clear();
 public:
 	size_t GetRemainDataSize() const;
 	void Read(void* outData, size_t inByteCount);
@@ -59,13 +62,14 @@ public:
 	OutputMemoryStream& operator=(const OutputMemoryStream& inOther);
 	~OutputMemoryStream();
 public:
-	const BYTE* GetBufferPtr();
+	BYTE* GetBufferPtr();
 	size_t GetLength() const;
 	size_t GetCapacity() const;
+	void Clear();
 public:
 	void Write(const void* inData, size_t inByteCount);
 	template<typename T> void Write(const T& inData);
-	void Wirte(const std::string& inString);
+	void Write(const std::string& inString);
 };
 
 // only primitive type

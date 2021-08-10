@@ -1,6 +1,8 @@
 #pragma once
 
 // Initialize 시 내부에 정의한 Args 구조체를 정의하여 넘겨줄 것
+// send packet 내부의 stream 은 버퍼를 alloc 하지 않음
+// pooling 된 stream 을 가져와 작업 이후 사용할 sendpacket 의 packing 함수로 넘겨줄것
 class PacketManager : public Singleton<PacketManager>
 {
 private:
@@ -33,12 +35,14 @@ private:
 	std::list<AcceptPacketPtr> m_acceptpacket_container;
 	std::list<RecvPacketPtr> m_recvpacket_container;
 	std::list<SendPacketPtr> m_sendpacket_container;
+	std::list<OutputMemoryStreamPtr> m_sendStream_container;
 
 	// iocp를 위한 스트림 풀링
 	// 일반 동기화의 경우 소켓당 한개씩만 매칭 시킬 것
 	std::queue<AcceptPacketPtr> m_acceptpacket_pool;
 	std::queue<RecvPacketPtr> m_recvpacket_pool;
 	std::queue<SendPacketPtr> m_sendpacket_pool;
+	std::queue<OutputMemoryStreamPtr> m_sendStream_queue;
 
 public:
 	AcceptPacketPtr GetAcceptPacketFromPool();
@@ -47,4 +51,5 @@ public:
 	void RetrieveRecvPacket(RecvPacketPtr inpPacket);
 	SendPacketPtr GetSendPacketFromPool();
 	void RetrieveSendPacket(SendPacketPtr inpPacket);
+	OutputMemoryStreamPtr GetSendStreamFromPool();	// send packet 회수 시 같이 처리
 };

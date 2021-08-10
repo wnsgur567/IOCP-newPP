@@ -12,6 +12,11 @@ TCPSocket::~TCPSocket()
 	closesocket(m_socket);
 }
 
+SOCKET* TCPSocket::GetSockPtr()
+{
+	return &m_socket;
+}
+
 SOCKET TCPSocket::GetSock() const
 {
 	return m_socket;

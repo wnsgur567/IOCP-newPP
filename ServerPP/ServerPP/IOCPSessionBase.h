@@ -15,7 +15,7 @@ protected:
 public:
 	IOCPSessionBase();
 	virtual bool Recv() = 0;
-	virtual bool Send(SendPacketPtr pSendPacket) = 0;
+	virtual bool Send(OutputMemoryStreamPtr pStream) = 0;
 	virtual bool OnCompleteRecv() = 0;
 	virtual bool OnCompleteSend() = 0;
 };

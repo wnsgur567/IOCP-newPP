@@ -81,9 +81,6 @@
     <ClCompile Include="SocketUtil.cpp">
       <Filter>01_NetBase\source</Filter>
     </ClCompile>
-    <ClCompile Include="IOCPMemoryStream.cpp">
-      <Filter>02_IOCPBase\source</Filter>
-    </ClCompile>
     <ClCompile Include="IOCPSessionBase.cpp">
       <Filter>02_IOCPBase\source</Filter>
     </ClCompile>
@@ -162,9 +159,6 @@
       <Filter>02_IOCPBase\header</Filter>
     </ClInclude>
     <ClInclude Include="IOCPNetworkManagerBase.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="IOCPMemoryStream.h">
       <Filter>02_IOCPBase\header</Filter>
     </ClInclude>
     <ClInclude Include="EngineBase.h">

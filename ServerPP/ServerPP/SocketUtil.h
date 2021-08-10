@@ -25,6 +25,6 @@ public:
 
 #pragma region completion model
 	static HandlePtr CreateIOCP(LPTHREAD_START_ROUTINE inWorkThreadPtr, std::vector<HandlePtr>& outWorkerThreads);
-	static HandlePtr LinkIOCPThread(SOCKET inSock, HANDLE hcp);
+	static HandlePtr LinkIOCPThread(SOCKET inpSock, HANDLE hcp);
 #pragma endregion
 };

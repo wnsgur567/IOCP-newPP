@@ -29,13 +29,13 @@ bool IOCPSession::Recv()
 	return true;
 }
 
-bool IOCPSession::Send(SendPacketPtr pSendPacket)
+bool IOCPSession::Send(OutputMemoryStreamPtr pStream)
 {
-	// packet id 셋팅
-	pSendPacket->SetId(m_newSendID++);
+	auto pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
 
-	// send 전 stream 암호화
-	pSendPacket->Encryption();
+	//
+	pSendPacket->Packing(m_newSendID, pStream);
+	++m_newSendID;	
 
 	// send queue 에 추가
 	m_sendPacketQueue.push(pSendPacket);
@@ -55,17 +55,19 @@ bool IOCPSession::Send(SendPacketPtr pSendPacket)
 
 bool IOCPSession::OnCompleteRecv()
 {
-	// 완료된 패킷의 id를 확인
-	auto packet_id = m_pRecvPacket->GetId();
+	PacketBase::packetId_t packet_id;
+	InputMemoryStreamPtr pStream;
+	
+	m_pRecvPacket->UnPackging(packet_id, pStream);
+
+	// 완료된 패킷의 id를 확인	
 	printf("recv_id : (%d, %d)\n", packet_id, m_newRecvID);
-	if (m_pRecvPacket->GetId() < m_newRecvID)
+	if (packet_id < m_newRecvID)
 	{	// 이미 처리 완료된 중복 패킷 폐기
 		return true;
 	}
 
 	++m_newRecvID;
-	// stream 복호화
-	m_pRecvPacket->Decryption();
 
 	/*--------- data process     ----------*/
 
@@ -76,9 +78,7 @@ bool IOCPSession::OnCompleteRecv()
 	case EState::Sign:
 	{
 		// ...
-		printf("테스트 시작\n");
-
-		auto pStream = m_pRecvPacket->GetStream();
+		printf("테스트 시작\n");		
 		char msg[512];
 		
 		int msg_length;
@@ -89,18 +89,14 @@ bool IOCPSession::OnCompleteRecv()
 		printf("\n전송된 메시지 길이 : %d\n", msg_length);
 		printf("전송된 메세지 : %s", msg);
 
-		auto pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
 		printf("\nsend_id : (%d)\n", m_newSendID);
-		pSendPacket->SetId(m_newSendID++);
-
-		auto pSendStream = pSendPacket->GetStreamPtr();
+		auto pSendStream = PacketManager::sInstance->GetSendStreamFromPool();
+			
 		pSendStream->Write(&msg_length, sizeof(msg_length));
-		pSendStream->Write(msg, msg_length);
-
-		pSendStream->Encryption();
+		pSendStream->Write(msg, msg_length);		
 
 		printf("\n그대로 다시 전송...\n");
-		if (Send(pSendPacket))
+		if (Send(pSendStream))
 		{
 			// ...
 		}
