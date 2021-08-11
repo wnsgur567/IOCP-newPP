@@ -66,42 +66,13 @@ bool IOCPSession::OnCompleteRecv()
 
 	/*--------- data process     ----------*/
 
-	switch (m_state)
-	{
-	case EState::None:
-		break;
-	case EState::Sign:
+	// for send stream
+	OutputMemoryStreamPtr pInuputStream = m_current_state->OnRecvCompleted(pStream);
+
+	printf("\nsend_id : (%d)\n", m_newSendID);
+	if (Send(pInuputStream))
 	{
 		// ...
-		printf("테스트 시작\n");		
-		char msg[512];
-		
-		int msg_length;
-		pStream->Read(&msg_length, sizeof(msg_length));
-		pStream->Read(&msg, msg_length);
-		msg[msg_length + 1] = NULL;
-
-		printf("\n전송된 메시지 길이 : %d\n", msg_length);
-		printf("전송된 메세지 : %s", msg);
-
-		printf("\nsend_id : (%d)\n", m_newSendID);
-		auto pSendStream = PacketManager::sInstance->GetSendStreamFromPool();
-			
-		pSendStream->Write(&msg_length, sizeof(msg_length));
-		pSendStream->Write(msg, msg_length);		
-
-		printf("\n그대로 다시 전송...\n");
-		if (Send(pSendStream))
-		{
-			// ...
-		}
-
-	}
-	break;
-	case EState::Disconnected:
-		break;
-	default:
-		break;
 	}
 
 	/*--------- data process end ----------*/

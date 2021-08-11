@@ -8,50 +8,51 @@ class IOCPSession
 {
 private:
 	friend class IOCPNetworkManager;
-public:	
+public:
+	class ClientState;
+	using ClientStatePtr = std::shared_ptr<ClientState>;
 	class ClientState
 	{
 	public:
+		using fpCreateState = ClientStatePtr(*)();
 		enum class EState
 		{
 			None = 0,
 
 			Sign,
-			Game,
+			Lobby,
+			Village,
+			Dungeon,			
 
 			Chat,
-		};	
-		ClientState();
+		};
+	protected:
+		EState m_state;
+	public:
+		ClientState(EState inState) : m_state(inState) {}
 		virtual OutputMemoryStreamPtr OnRecvCompleted(InputMemoryStreamPtr) = 0;
-		virtual void OnSendCompleted() = 0;
-		void ChangeState(IOCPSessionPtr pSession, EState inState)
+		virtual void OnSendCompleted(IOCPSessionPtr) = 0;
+		void ChangeState(IOCPSessionPtr pSession, EState inState, fpCreateState inFp)
 		{
 			auto pState = pSession->m_state_map.find(inState);
 			if (pSession->m_state_map.end() == pState)
 			{	// 없는 경우 
 				// 새 state 생성
-
+				ClientStatePtr newState = inFp();
+				pSession->m_state_map.insert({ inState, newState });
+				pSession->m_current_state = newState;
 			}
-			// 있는 경우 
-			pSession->m_current_state = pState->second;
+			else
+			{	// 있는 경우 
+				pSession->m_current_state = pState->second;
+			}
 		}
 	};
-	using ClientStatePtr = std::shared_ptr<ClientState>;
-
-	/*enum class EState
-	{
-		None,
-
-		Sign,
-
-		Disconnected
-	};*/
 protected:
 	ClientStatePtr m_current_state;	// 현재 state
 	std::unordered_map<ClientState::EState, ClientStatePtr> m_state_map;
-	//EState m_state;
 	bool m_isSigned;
-	void Initialze() override;	
+	void Initialze() override;
 public:
 	IOCPSession();
 
