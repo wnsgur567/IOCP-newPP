@@ -160,6 +160,7 @@ void SendPacket::Clear()
 void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
 {
 	// data encryption
+	// ret bits 는 패딩 비트가 포함된 크기임
 	size_t retBits = CipherManager::sInstance->Encryption(
 		inStream->GetBufferPtr(),
 		inStream->GetLength());
@@ -172,7 +173,7 @@ void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
 	m_pStream->Write(&id, sizeof(packetId_t));
 
 	// data
-	m_pStream->Write(inStream->GetBufferPtr(), inStream->GetLength());
+	m_pStream->Write(inStream->GetBufferPtr(), retBits);
 
 	// bytes setting
 	m_target_sendbytes = total_size + sizeof(packetSize_t);

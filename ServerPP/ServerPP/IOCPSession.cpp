@@ -2,8 +2,11 @@
 
 
 void IOCPSession::Initialze()
-{	
-
+{
+	// 첫 시작을 로그인 상태로 변경함
+	auto pSignState = SignState::Create();
+	m_current_state = pSignState;
+	m_state_map.insert({ ClientState::EState::Sign,pSignState });
 }
 
 IOCPSession::IOCPSession()
@@ -30,7 +33,7 @@ bool IOCPSession::Send(OutputMemoryStreamPtr pStream)
 
 	//
 	pSendPacket->Packing(m_newSendID, pStream);
-	++m_newSendID;	
+	++m_newSendID;
 
 	// send queue 에 추가
 	m_sendPacketQueue.push(pSendPacket);
@@ -52,7 +55,7 @@ bool IOCPSession::OnCompleteRecv()
 {
 	PacketBase::packetId_t packet_id;
 	InputMemoryStreamPtr pStream;
-	
+
 	m_pRecvPacket->UnPackging(packet_id, pStream);
 
 	// 완료된 패킷의 id를 확인	
@@ -95,6 +98,8 @@ bool IOCPSession::OnCompleteSend()
 
 	/*--------- change state process     ----------*/
 
+	// state 호출
+
 	/*--------- change state process end ----------*/
 
 	// queue 확인
@@ -106,7 +111,7 @@ bool IOCPSession::OnCompleteSend()
 			m_pSock->GetSock(),
 			m_sendPacketQueue.front(),
 			shared_from_this()))
-			return false;		
+			return false;
 	}
 
 	return true;
