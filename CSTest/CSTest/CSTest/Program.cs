@@ -17,62 +17,68 @@ namespace CSTest
 
         static unsafe void Main(string[] args)
         {
-            Cipher.CipherTest.SEED_KeySchedKey(userKey, m_pdwRoundKey);
+            //            Cipher.CipherTest.SEED_KeySchedKey(userKey, m_pdwRoundKey);
 
-            string test_string = @"This is a lot of 12 point text to test the
-ocr code and see if it works on all types
-of file format.
+            //            string test_string = @"This is a lot of 12 point text to test the
+            //ocr code and see if it works on all types
+            //of file format.
 
-The quick brown dog jumped over the
-lazy fox.The quick brown dog jumped
-over the lazy fox.The quick brown dog
-jumped over the lazy fox.The quick
-brown dog jumped over the lazy fox.";
+            //The quick brown dog jumped over the
+            //lazy fox.The quick brown dog jumped
+            //over the lazy fox.The quick brown dog
+            //jumped over the lazy fox.The quick
+            //brown dog jumped over the lazy fox.";
 
-            int str_size = test_string.Length;
-            byte[] str_bytes = Encoding.UTF8.GetBytes(test_string);
+            //            int str_size = test_string.Length;
+            //            byte[] str_bytes = Encoding.UTF8.GetBytes(test_string);
 
-            Console.WriteLine(Encoding.UTF8.GetString(str_bytes));
-            Console.WriteLine();
+            //            Console.WriteLine(Encoding.UTF8.GetString(str_bytes));
+            //            Console.WriteLine();
 
-            Encryption(str_bytes, Convert.ToUInt32(str_size));
-            Console.WriteLine(Encoding.UTF8.GetString(str_bytes));
-            Console.WriteLine();
+            //            Encryption(str_bytes, Convert.ToUInt32(str_size));
+            //            Console.WriteLine(Encoding.UTF8.GetString(str_bytes));
+            //            Console.WriteLine();
 
-            Decryption(str_bytes, Convert.ToUInt32(str_size));
-            Console.WriteLine(Encoding.UTF8.GetString(str_bytes));
-            Console.WriteLine();
-
-
+            //            Decryption(str_bytes, Convert.ToUInt32(str_size));
+            //            Console.WriteLine(Encoding.UTF8.GetString(str_bytes));
+            //            Console.WriteLine();
 
 
 
-            // input plaintext to be encrypted
-            //byte[] pbData = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-            //         0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F};
+            NetworkManagerClient client = new NetworkManagerClient();
 
-            //fixed (byte* ptr = pbData)
-            //    Cipher.CipherTest.SEED_Encrtpy(ptr, m_pdwRoundKey);
-
-            //for (int i = 0; i < 16; i++)
-            //{
-            //    Console.Write("{0} ", pbData[i]);
-            //}
-            //Console.WriteLine();
-
-            //fixed (byte* ptr = pbData)
-            //    Cipher.CipherTest.SEED_Decrypt(ptr, m_pdwRoundKey);
+            client.__Initialize();
 
 
-            //for (int i = 0; i < 16; i++)
-            //{
-            //    Console.Write("{0} ", pbData[i]);
-            //}
-            //Console.WriteLine();
+            while (true)
+            {
+                if (false == DoSomthing(client))
+                    break;
+            }
 
+            client.__Finalize();
 
+            Console.WriteLine("\n---app end---");
+        }
 
+        public static bool DoSomthing(NetworkManagerClient client)
+        {
+            string text = "this is test text for networking";
+            
+            while (true)
+            {
+                var keyInfo = Console.ReadKey();
+                if (keyInfo.Key == ConsoleKey.A)
+                {
+                    client.Send(Encoding.Unicode.GetBytes(text));
+                }
+                else if (keyInfo.Key == ConsoleKey.B)
+                {
+                    break;
+                }
+            }
 
+            return false;
         }
 
         public static unsafe uint Encryption(byte[] pData, uint inSize)
