@@ -1,10 +1,13 @@
-﻿using System;
+﻿#define __DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Threading;
+
 
 namespace CSTest
 {
@@ -16,15 +19,22 @@ namespace CSTest
         static int PORT = 9000;
 
         TcpClient client;
-        NetworkStream stream;
+        NetworkStream netstream;
+
+
+        int sendstream_head;
+        byte[] sendstream;  // TODO : -> send queue
+
+        int recvstream_head;
         byte[] recvstream;
 
         public void __Initialize()
         {
             client = new TcpClient(IP, PORT);
 
-            stream = client.GetStream();
+            netstream = client.GetStream();
             recvstream = new byte[BUFSIZE];
+            sendstream = new byte[BUFSIZE];
 
             //string msg = "Test Message for sending to Server";
             //byte[] sendbuf = Encoding.UTF8.GetBytes(msg);         
@@ -40,39 +50,48 @@ namespace CSTest
 
         public void __Finalize()
         {
-            stream.Close();
+            netstream.Close();
             client.Close();
         }
 
-        public void Send(byte[] pData)
+        public void WriteToStream(byte[] pData, int size)
         {
-            stream.Write(pData, 0, pData.Length);
+            Array.Copy(pData, 0, sendstream, sendstream_head, size);
+            sendstream_head += size;
+            //pData.CopyTo(sendstream, sendstream_head);
+        }
+
+        public void Send()
+        {
+            netstream.Write(sendstream, 0, sendstream_head);
+            sendstream_head = 0;
         }
         public void Recv(ref byte[] pData)
         {
-            int recvbytes = stream.Read(pData, 0, pData.Length);
+            int recvbytes = netstream.Read(pData, 0, pData.Length);
         }
 
         void RecvThread()
         {
-
+#if __DEBUG
+            Console.WriteLine("RecvThread Start");
+#endif
             while (true)
             {
                 try
                 {
-                    if(stream.DataAvailable)
+
+                    int recv_bytes = netstream.Read(recvstream, 0, recvstream.Length);
+                    if (recv_bytes == 0)
                     {
-                        int recv_bytes = stream.Read(recvstream, 0, recvstream.Length);
-                        if (recv_bytes == 0)
-                        {
 #if __DEBUG
-                        Console.WriteLine("Recv end signal");                        
+                        Console.WriteLine("Recv end signal");
 #endif
-                            break;
-                        }
-
-
+                        break;
                     }
+
+
+
 
 
                     // TODO : State
@@ -83,9 +102,18 @@ namespace CSTest
                 catch (Exception)
                 {
 
-
+#if __DEBUG
+                    Console.WriteLine("RecvThread exception");
+#endif
                 }
             }
+
+#if __DEBUG
+            Console.WriteLine("RecvThread End");
+#endif
         }
     }
+
+
+
 }

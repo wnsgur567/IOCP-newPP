@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace CSTest
@@ -64,13 +65,57 @@ namespace CSTest
         public static bool DoSomthing(NetworkManagerClient client)
         {
             string text = "this is test text for networking";
-            
+
             while (true)
             {
                 var keyInfo = Console.ReadKey();
                 if (keyInfo.Key == ConsoleKey.A)
                 {
-                    client.Send(Encoding.Unicode.GetBytes(text));
+
+                    int total_size = 0;
+
+                    int packet_id = 1;
+                    total_size += sizeof(int);
+
+                    int state = 1;  // sign 기준 sign in
+                    total_size += sizeof(int);
+
+                    int str_size = text.Length;
+                    total_size += sizeof(int);
+                    total_size += str_size;
+
+                    byte[] id_bytes = BitConverter.GetBytes(packet_id);
+
+                    byte[] state_bytes = BitConverter.GetBytes(state);
+                    byte[] str_length_bytes = BitConverter.GetBytes(str_size);
+                    byte[] str_bytes = Encoding.Unicode.GetBytes(text);
+
+                    byte[] packet_size_bytes = BitConverter.GetBytes(total_size);
+
+                    // total size
+                    client.WriteToStream(packet_size_bytes, sizeof(int));
+                    // id
+                    client.WriteToStream(id_bytes, sizeof(int));
+
+                    byte[] combination = new byte[512]; // tmp size
+
+
+                    // data
+                    state_bytes.CopyTo(combination, 0);
+                    str_length_bytes.CopyTo(combination, sizeof(int));
+                    str_bytes.CopyTo(combination, sizeof(int) + sizeof(int));
+
+                    // data encryption
+                    var size = Program.Encryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
+                    client.WriteToStream(combination, Convert.ToInt32(size));
+
+                    //// state
+                    //client.WriteToStream(state_bytes, sizeof(int));
+                    //// data
+                    //client.WriteToStream(str_length_bytes, sizeof(int));
+                    //client.WriteToStream(str_bytes, str_size);
+
+                    client.Send();
                 }
                 else if (keyInfo.Key == ConsoleKey.B)
                 {

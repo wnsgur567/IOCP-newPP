@@ -64,7 +64,7 @@ bool IOCPNetworkManager::OnRecved(SOCKET inSock, RecvPacketPtr inpRecvPacket, Vo
 }
 
 bool IOCPNetworkManager::OnSended(SOCKET inSock, SendPacketPtr inpSendPacket, VoidPtr inPointer, DWORD inCbTransferred)
-{
+{ 
 	// send 완료 확인
 	PacketBase::EPacketState result = CompleteSend(inSock, inpSendPacket, inPointer, inCbTransferred);
 
