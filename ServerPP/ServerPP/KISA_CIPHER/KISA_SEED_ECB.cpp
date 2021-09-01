@@ -11,7 +11,7 @@
 
 #include "KISA_SEED_ECB.h"
 
-static DWORD SS0[256] = {
+static _DWORD SS0[256] = {
 0x2989a1a8, 0x05858184, 0x16c6d2d4, 0x13c3d3d0, 0x14445054, 0x1d0d111c, 0x2c8ca0ac, 0x25052124,
 0x1d4d515c, 0x03434340, 0x18081018, 0x1e0e121c, 0x11415150, 0x3cccf0fc, 0x0acac2c8, 0x23436360,
 0x28082028, 0x04444044, 0x20002020, 0x1d8d919c, 0x20c0e0e0, 0x22c2e2e0, 0x08c8c0c8, 0x17071314,
@@ -46,7 +46,7 @@ static DWORD SS0[256] = {
 0x28c8e0e8, 0x1b0b1318, 0x05050104, 0x39497178, 0x10809090, 0x2a4a6268, 0x2a0a2228, 0x1a8a9298
 };
 
-static DWORD SS1[256] = {
+static _DWORD SS1[256] = {
 0x38380830, 0xe828c8e0, 0x2c2d0d21, 0xa42686a2, 0xcc0fcfc3, 0xdc1eced2, 0xb03383b3, 0xb83888b0,
 0xac2f8fa3, 0x60204060, 0x54154551, 0xc407c7c3, 0x44044440, 0x6c2f4f63, 0x682b4b63, 0x581b4b53,
 0xc003c3c3, 0x60224262, 0x30330333, 0xb43585b1, 0x28290921, 0xa02080a0, 0xe022c2e2, 0xa42787a3,
@@ -81,7 +81,7 @@ static DWORD SS1[256] = {
 0xd819c9d1, 0x4c0c4c40, 0x80038383, 0x8c0f8f83, 0xcc0ecec2, 0x383b0b33, 0x480a4a42, 0xb43787b3
 };
 
-static DWORD SS2[256] = {
+static _DWORD SS2[256] = {
 0xa1a82989, 0x81840585, 0xd2d416c6, 0xd3d013c3, 0x50541444, 0x111c1d0d, 0xa0ac2c8c, 0x21242505,
 0x515c1d4d, 0x43400343, 0x10181808, 0x121c1e0e, 0x51501141, 0xf0fc3ccc, 0xc2c80aca, 0x63602343,
 0x20282808, 0x40440444, 0x20202000, 0x919c1d8d, 0xe0e020c0, 0xe2e022c2, 0xc0c808c8, 0x13141707,
@@ -116,7 +116,7 @@ static DWORD SS2[256] = {
 0xe0e828c8, 0x13181b0b, 0x01040505, 0x71783949, 0x90901080, 0x62682a4a, 0x22282a0a, 0x92981a8a
 };
 
-static DWORD SS3[256] = {
+static _DWORD SS3[256] = {
 0x08303838, 0xc8e0e828, 0x0d212c2d, 0x86a2a426, 0xcfc3cc0f, 0xced2dc1e, 0x83b3b033, 0x88b0b838,
 0x8fa3ac2f, 0x40606020, 0x45515415, 0xc7c3c407, 0x44404404, 0x4f636c2f, 0x4b63682b, 0x4b53581b,
 0xc3c3c003, 0x42626022, 0x03333033, 0x85b1b435, 0x09212829, 0x80a0a020, 0xc2e2e022, 0x87a3a427,
@@ -184,17 +184,17 @@ static DWORD SS3[256] = {
 
 void SEED_Encrypt(
 	BYTE* pbData, 				// [in,out]	data to be encrypted
-	DWORD* pdwRoundKey)			// [in]			round keys for encryption
+	_DWORD* pdwRoundKey)			// [in]			round keys for encryption
 {
-	DWORD L0, L1, R0, R1;		// Iuput/output values at each rounds
-	DWORD T0, T1;				// Temporary variables for round function F
-	DWORD* K = pdwRoundKey;		// Pointer of round keys
+	_DWORD L0, L1, R0, R1;		// Iuput/output values at each rounds
+	_DWORD T0, T1;				// Temporary variables for round function F
+	_DWORD* K = pdwRoundKey;		// Pointer of round keys
 
 // Set up input values for first round
-	L0 = ((DWORD)pbData[3] << 24) | ((DWORD)pbData[2] << 16) | ((DWORD)pbData[1] << 8) | ((DWORD)pbData[0]);
-	L1 = ((DWORD)pbData[7] << 24) | ((DWORD)pbData[6] << 16) | ((DWORD)pbData[5] << 8) | ((DWORD)pbData[4]);
-	R0 = ((DWORD)pbData[11] << 24) | ((DWORD)pbData[10] << 16) | ((DWORD)pbData[9] << 8) | ((DWORD)pbData[8]);
-	R1 = ((DWORD)pbData[15] << 24) | ((DWORD)pbData[14] << 16) | ((DWORD)pbData[13] << 8) | ((DWORD)pbData[12]);
+	L0 = ((_DWORD)pbData[3] << 24) | ((_DWORD)pbData[2] << 16) | ((_DWORD)pbData[1] << 8) | ((_DWORD)pbData[0]);
+	L1 = ((_DWORD)pbData[7] << 24) | ((_DWORD)pbData[6] << 16) | ((_DWORD)pbData[5] << 8) | ((_DWORD)pbData[4]);
+	R0 = ((_DWORD)pbData[11] << 24) | ((_DWORD)pbData[10] << 16) | ((_DWORD)pbData[9] << 8) | ((_DWORD)pbData[8]);
+	R1 = ((_DWORD)pbData[15] << 24) | ((_DWORD)pbData[14] << 16) | ((_DWORD)pbData[13] << 8) | ((_DWORD)pbData[12]);
 
 	// Reorder for big endian 
 	// Because SEED use little endian order in default
@@ -258,17 +258,17 @@ void SEED_Encrypt(
 // Same as encrypt, except that round keys are applied in reverse order
 void SEED_Decrypt(
 	BYTE* pbData, 				// [in,out]	data to be decrypted
-	DWORD* pdwRoundKey)			// [in]			round keys for decryption
+	_DWORD* pdwRoundKey)			// [in]			round keys for decryption
 {
-	DWORD L0, L1, R0, R1;		// Iuput/output values at each rounds
-	DWORD T0, T1;				// Temporary variables for round function F
-	DWORD* K = pdwRoundKey;		// Pointer of round keys
+	_DWORD L0, L1, R0, R1;		// Iuput/output values at each rounds
+	_DWORD T0, T1;				// Temporary variables for round function F
+	_DWORD* K = pdwRoundKey;		// Pointer of round keys
 
 // Set up input values for first round
-	L0 = ((DWORD)pbData[3] << 24) | ((DWORD)pbData[2] << 16) | ((DWORD)pbData[1] << 8) | ((DWORD)pbData[0]);
-	L1 = ((DWORD)pbData[7] << 24) | ((DWORD)pbData[6] << 16) | ((DWORD)pbData[5] << 8) | ((DWORD)pbData[4]);
-	R0 = ((DWORD)pbData[11] << 24) | ((DWORD)pbData[10] << 16) | ((DWORD)pbData[9] << 8) | ((DWORD)pbData[8]);
-	R1 = ((DWORD)pbData[15] << 24) | ((DWORD)pbData[14] << 16) | ((DWORD)pbData[13] << 8) | ((DWORD)pbData[12]);
+	L0 = ((_DWORD)pbData[3] << 24) | ((_DWORD)pbData[2] << 16) | ((_DWORD)pbData[1] << 8) | ((_DWORD)pbData[0]);
+	L1 = ((_DWORD)pbData[7] << 24) | ((_DWORD)pbData[6] << 16) | ((_DWORD)pbData[5] << 8) | ((_DWORD)pbData[4]);
+	R0 = ((_DWORD)pbData[11] << 24) | ((_DWORD)pbData[10] << 16) | ((_DWORD)pbData[9] << 8) | ((_DWORD)pbData[8]);
+	R1 = ((_DWORD)pbData[15] << 24) | ((_DWORD)pbData[14] << 16) | ((_DWORD)pbData[13] << 8) | ((_DWORD)pbData[12]);
 
 	// Reorder for big endian 
 #ifdef LITTLE_ENDIAN
@@ -377,18 +377,18 @@ void SEED_Decrypt(
 /******************************** Key Schedule ********************************/
 
 void SEED_KeySchedKey(
-	DWORD* pdwRoundKey,			// [out]	round keys for encryption or decryption
+	_DWORD* pdwRoundKey,			// [out]	round keys for encryption or decryption
 	BYTE* pbUserKey)			// [in]		secret user key
 {
-	DWORD A, B, C, D;				// Iuput/output values at each rounds
-	DWORD T0, T1;					// Temporary variable
-	DWORD* K = pdwRoundKey;			// Pointer of round keys
+	_DWORD A, B, C, D;				// Iuput/output values at each rounds
+	_DWORD T0, T1;					// Temporary variable
+	_DWORD* K = pdwRoundKey;			// Pointer of round keys
 
 // Set up input values for Key Schedule	
-	A = ((DWORD)pbUserKey[3] << 24) | ((DWORD)pbUserKey[2] << 16) | ((DWORD)pbUserKey[1] << 8) | ((DWORD)pbUserKey[0]);
-	B = ((DWORD)pbUserKey[7] << 24) | ((DWORD)pbUserKey[6] << 16) | ((DWORD)pbUserKey[5] << 8) | ((DWORD)pbUserKey[4]);
-	C = ((DWORD)pbUserKey[11] << 24) | ((DWORD)pbUserKey[10] << 16) | ((DWORD)pbUserKey[9] << 8) | ((DWORD)pbUserKey[8]);
-	D = ((DWORD)pbUserKey[15] << 24) | ((DWORD)pbUserKey[14] << 16) | ((DWORD)pbUserKey[13] << 8) | ((DWORD)pbUserKey[12]);
+	A = ((_DWORD)pbUserKey[3] << 24) | ((_DWORD)pbUserKey[2] << 16) | ((_DWORD)pbUserKey[1] << 8) | ((_DWORD)pbUserKey[0]);
+	B = ((_DWORD)pbUserKey[7] << 24) | ((_DWORD)pbUserKey[6] << 16) | ((_DWORD)pbUserKey[5] << 8) | ((_DWORD)pbUserKey[4]);
+	C = ((_DWORD)pbUserKey[11] << 24) | ((_DWORD)pbUserKey[10] << 16) | ((_DWORD)pbUserKey[9] << 8) | ((_DWORD)pbUserKey[8]);
+	D = ((_DWORD)pbUserKey[15] << 24) | ((_DWORD)pbUserKey[14] << 16) | ((_DWORD)pbUserKey[13] << 8) | ((_DWORD)pbUserKey[12]);
 
 	// Reorder for big endian 
 #ifndef BIG_ENDIAN

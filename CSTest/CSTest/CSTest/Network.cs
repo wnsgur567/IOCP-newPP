@@ -64,6 +64,7 @@ namespace CSTest
         public void Send()
         {
             netstream.Write(sendstream, 0, sendstream_head);
+            Console.WriteLine($"send bytes : {sendstream_head}");
             sendstream_head = 0;
         }
         public void Recv(ref byte[] pData)

@@ -38,8 +38,8 @@ struct OverlappedEx
 class PacketBase
 {
 public:
-	using packetSize_t = ::gsize_t;
-	using packetId_t = ::gid_t;
+	using packetSize_t = ::gid32_t;
+	using packetId_t = ::gid32_t;
 
 	enum class EPacketState
 	{

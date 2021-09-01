@@ -52,9 +52,16 @@ void CipherManager::Decryption(BYTE* inpData, size_t inSize)
 
 	while (complete_size < inSize)
 	{
+		// debug
+		printf("before:\n");
+		for (int i = 0; i < m_block_size; i++)
+			printf("%02X ", ptr[i]);
+		printf("\n");
+
 		SEED_Decrypt(ptr, m_pdwRoundKey);
 
 		// debug
+		printf("after:\n");
 		for (int i = 0; i < m_block_size; i++)
 			printf("%02X ", ptr[i]);
 		printf("\n");

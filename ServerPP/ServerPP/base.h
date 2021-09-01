@@ -16,8 +16,10 @@
 #include<chrono>
 
 #undef max
-using gid_t = size_t;
-using gsize_t = size_t;
+using gid32_t = unsigned __int32;
+using gid64_t = unsigned __int64;
+using gsize32_t = unsigned __int32;
+using gsize64_t = unsigned __int64;
 
 constexpr u_short			SERVERPORT = 9000;
 constexpr unsigned __int32	BUFSIZE = 512;
@@ -26,6 +28,9 @@ constexpr unsigned __int32	STREAMPOOLCAPACITY = 128;
 
 using HandlePtr = std::shared_ptr<HANDLE>;
 using VoidPtr = std::shared_ptr<void>;
+
+#define __DEBUG
+//#define __CIPHER_ON
 
 // base
 #include "Singleton.h"

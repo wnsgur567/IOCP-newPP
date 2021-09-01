@@ -113,8 +113,14 @@ void IOCPNetworkManager::OnAccepted(AcceptPacketPtr inpPacket)
 	// thread 연결
 	SocketUtil::LinkIOCPThread(pSession->m_pSock->GetSock(), *m_pHcp);
 
-	// 패킷 회수
+	// accept 패킷 회수
 	PacketManager::sInstance->RetrieveAcceptPacket(inpPacket);
+
+#ifdef __DEBUG
+	::size_t ptr = (::size_t)pSession.get();
+	printf("(%llu) : Session 생성\n", ptr);
+#endif
+
 
 	pSession->Initialze();
 	// 최초 recv
@@ -132,8 +138,9 @@ void IOCPNetworkManager::OnDisconnected(VoidPtr inPointer)
 
 	// session 삭제
 	IOCPSessionManager::sInstance->DestroySession(pSession);
-	ULONG ptr = (ULONG)pSession.get();
-	// Debug
-	printf("(%d) : Session 삭제 완료\n",ptr);
-
+	
+#ifdef __DEBUG
+	::size_t ptr = (::size_t)pSession.get();
+	printf("(%llu) : Session 삭제 완료\n",ptr);
+#endif
 }

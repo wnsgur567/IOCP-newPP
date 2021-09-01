@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define __DEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -45,6 +47,7 @@ namespace CSTest
             //            Console.WriteLine();
 
 
+            Cipher.CipherTest.SEED_KeySchedKey(userKey, m_pdwRoundKey);
 
             NetworkManagerClient client = new NetworkManagerClient();
 
@@ -72,50 +75,59 @@ namespace CSTest
                 if (keyInfo.Key == ConsoleKey.A)
                 {
 
-                    int total_size = 0;
+
 
                     int packet_id = 1;
-                    total_size += sizeof(int);
-
                     int state = 1;  // sign 기준 sign in
-                    total_size += sizeof(int);
 
                     int str_size = text.Length;
-                    total_size += sizeof(int);
-                    total_size += str_size;
 
-                    byte[] id_bytes = BitConverter.GetBytes(packet_id);
+                    
 
                     byte[] state_bytes = BitConverter.GetBytes(state);
-                    byte[] str_length_bytes = BitConverter.GetBytes(str_size);
+                    byte[] str_length_bytes = BitConverter.GetBytes(str_size);                    
                     byte[] str_bytes = Encoding.Unicode.GetBytes(text);
-
-                    byte[] packet_size_bytes = BitConverter.GetBytes(total_size);
-
-                    // total size
-                    client.WriteToStream(packet_size_bytes, sizeof(int));
-                    // id
-                    client.WriteToStream(id_bytes, sizeof(int));
 
                     byte[] combination = new byte[512]; // tmp size
 
 
-                    // data
+                    // data ... state, strsize, str
                     state_bytes.CopyTo(combination, 0);
                     str_length_bytes.CopyTo(combination, sizeof(int));
                     str_bytes.CopyTo(combination, sizeof(int) + sizeof(int));
 
                     // data encryption
-                    var size = Program.Encryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
-                    client.WriteToStream(combination, Convert.ToInt32(size));
+#if __DEBUG
+                    for (int i = 0; i < sizeof(int) + sizeof(int) + str_size; i++)
+                    {
+                        Console.Write("{0:X} ", combination[i]);
+                    }
+                    Console.WriteLine();
+#endif
+                    //var size = Program.Encryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
+                    //int total_size = sizeof(int) + Convert.ToInt32(size);
 
-                    //// state
-                    //client.WriteToStream(state_bytes, sizeof(int));
-                    //// data
-                    //client.WriteToStream(str_length_bytes, sizeof(int));
-                    //client.WriteToStream(str_bytes, str_size);
+                    //// total size
+                    //byte[] packet_size_bytes = BitConverter.GetBytes(total_size);
+                    //client.WriteToStream(packet_size_bytes, sizeof(int));
+                    //// id
+                    //byte[] id_bytes = BitConverter.GetBytes(packet_id);
+                    //client.WriteToStream(id_bytes, sizeof(int));
+
+                    //client.WriteToStream(combination, Convert.ToInt32(size));
+
+                    // total size
+                    byte[] total = BitConverter.GetBytes(sizeof(int) + sizeof(int) + str_size);
+                    client.WriteToStream(total,sizeof(int));
+                    // state
+                    client.WriteToStream(state_bytes, sizeof(int));
+                    // data
+                    client.WriteToStream(str_length_bytes, sizeof(int));
+                    client.WriteToStream(str_bytes, str_size);
 
                     client.Send();
+
+                    //size =  Program.Decryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
                 }
                 else if (keyInfo.Key == ConsoleKey.B)
                 {
@@ -144,8 +156,9 @@ namespace CSTest
                 for (int i = 0; i < BLOCK_SIZE; i++)
                 {
                     fixed (byte* ptr = pData)
-                        Console.WriteLine("{0}", (ptr + complete_size)[i]);
+                        Console.Write("{0:X} ", (ptr + complete_size)[i]);
                 }
+                Console.WriteLine();
 #endif
                 complete_size += BLOCK_SIZE;
             }
@@ -172,8 +185,9 @@ namespace CSTest
                 for (int i = 0; i < BLOCK_SIZE; i++)
                 {
                     fixed (byte* ptr = pData)
-                        Console.WriteLine("{0}", (ptr + complete_size)[i]);
+                        Console.Write("{0:X} ", (ptr + complete_size)[i]);
                 }
+                Console.WriteLine();
 #endif
                 complete_size += BLOCK_SIZE;
             }

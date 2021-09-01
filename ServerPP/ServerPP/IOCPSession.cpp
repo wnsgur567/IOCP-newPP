@@ -58,8 +58,11 @@ bool IOCPSession::OnCompleteRecv()
 
 	m_pRecvPacket->UnPackging(packet_id, pStream);
 
+#ifdef __DEBUG
 	// 완료된 패킷의 id를 확인	
-	printf("recv_id : (%d, %d)\n", packet_id, m_newRecvID);
+	printf("recv_id : (%lu, %lu)\n", packet_id, m_newRecvID);
+#endif // __DEBUG
+
 	if (packet_id < m_newRecvID)
 	{	// 이미 처리 완료된 중복 패킷 폐기
 		return true;
@@ -72,7 +75,10 @@ bool IOCPSession::OnCompleteRecv()
 	// for send stream
 	OutputMemoryStreamPtr pInuputStream = m_current_state->OnRecvCompleted(pStream);
 
-	printf("\nsend_id : (%d)\n", m_newSendID);
+#ifdef __DEBUG
+	printf("\nsend_id : (%lu)\n", m_newSendID);
+#endif // __DEBUG
+
 	if (Send(pInuputStream))
 	{
 		// ...

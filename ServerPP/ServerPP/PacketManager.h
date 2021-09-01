@@ -8,7 +8,7 @@ class PacketManager : public Singleton<PacketManager>
 private:
 	friend class Singleton;
 	friend class IOCPNetworkManager;
-public:
+public:	
 	using packetSize_t = PacketBase::packetSize_t;
 	using packetId_t = ::PacketBase::packetId_t;
 private:
@@ -20,11 +20,11 @@ public:
 
 	struct InitializeArgs
 	{
-		size_t numberOfAcptPacket;		// Pooling 할 AcceptPackt 개수
-		size_t numberOfRecvPacket;		// Pooling 할 RecvPacket 개수
-		size_t capacityOfRecvBuffer;	// RecvPacket 의 buffer 최대 용량
-		size_t numberOfSendPacket;		// Pooling 할 SendPacket 개수
-		size_t capacityOfSendBuffer;	// SendPacket 의 buffer 최대 용량
+		::gsize64_t numberOfAcptPacket;		// Pooling 할 AcceptPackt 개수
+		::gsize64_t numberOfRecvPacket;		// Pooling 할 RecvPacket 개수
+		packetSize_t capacityOfRecvBuffer;	// RecvPacket 의 buffer 최대 용량
+		::gsize64_t numberOfSendPacket;		// Pooling 할 SendPacket 개수
+		packetSize_t capacityOfSendBuffer;	// SendPacket 의 buffer 최대 용량
 	};
 
 	bool Initialize(LPVOID) override;

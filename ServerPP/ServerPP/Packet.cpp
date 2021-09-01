@@ -107,10 +107,12 @@ void RecvPacket::UnPackging(packetId_t& outID, InputMemoryStreamPtr& outpStream)
 	// id
 	m_pStream->Read(&outID, sizeof(packetId_t));
 
+#ifdef __CIPHER_ON
 	// decryption
 	CipherManager::sInstance->Decryption(
 		m_pStream->GetBufferPtr() + sizeof(packetId_t),
-		m_pStream->GetLength());
+		m_pStream->GetLength() - sizeof(packetId_t));
+#endif
 
 	// stream
 	outpStream = m_pStream;
@@ -166,7 +168,7 @@ void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
 		inStream->GetLength());
 
 	// total size = id size + data size
-	packetSize_t total_size = sizeof(packetId_t) + retBits;
+	packetSize_t total_size = sizeof(packetId_t) + static_cast<packetSize_t>(retBits);
 	m_pStream->Write(&total_size, sizeof(packetSize_t));
 
 	// id
