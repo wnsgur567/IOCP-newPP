@@ -11,6 +11,8 @@
 
 #include "KISA_SEED_ECB.h"
 
+static bool IsLittleEndian = true;
+
 static _DWORD SS0[256] = {
 0x2989a1a8, 0x05858184, 0x16c6d2d4, 0x13c3d3d0, 0x14445054, 0x1d0d111c, 0x2c8ca0ac, 0x25052124,
 0x1d4d515c, 0x03434340, 0x18081018, 0x1e0e121c, 0x11415150, 0x3cccf0fc, 0x0acac2c8, 0x23436360,
@@ -198,12 +200,15 @@ void SEED_Encrypt(
 
 	// Reorder for big endian 
 	// Because SEED use little endian order in default
-#ifdef LITTLE_ENDIAN
-	L0 = EndianChange(L0);
-	L1 = EndianChange(L1);
-	R0 = EndianChange(R0);
-	R1 = EndianChange(R1);
-#endif
+
+
+	if (IsLittleEndian)
+	{
+		L0 = EndianChange(L0);
+		L1 = EndianChange(L1);
+		R0 = EndianChange(R0);
+		R1 = EndianChange(R1);
+	}
 
 	SEED_KeySched(L0, L1, R0, R1, K); 	// Round 1
 	SEED_KeySched(R0, R1, L0, L1, K + 2); 	// Round 2
@@ -223,12 +228,13 @@ void SEED_Encrypt(
 	SEED_KeySched(R0, R1, L0, L1, K + 30); 	// Round 16
 
 
-#ifdef LITTLE_ENDIAN
-	L0 = EndianChange(L0);
-	L1 = EndianChange(L1);
-	R0 = EndianChange(R0);
-	R1 = EndianChange(R1);
-#endif
+	if (IsLittleEndian)
+	{
+		L0 = EndianChange(L0);
+		L1 = EndianChange(L1);
+		R0 = EndianChange(R0);
+		R1 = EndianChange(R1);
+	}
 
 	// Copying output values from last round to pbData
 	pbData[0] = (BYTE)((R0) & 0xFF);
@@ -271,12 +277,14 @@ void SEED_Decrypt(
 	R1 = ((_DWORD)pbData[15] << 24) | ((_DWORD)pbData[14] << 16) | ((_DWORD)pbData[13] << 8) | ((_DWORD)pbData[12]);
 
 	// Reorder for big endian 
-#ifdef LITTLE_ENDIAN
-	L0 = EndianChange(L0);
-	L1 = EndianChange(L1);
-	R0 = EndianChange(R0);
-	R1 = EndianChange(R1);
-#endif
+	if (IsLittleEndian)
+	{
+		L0 = EndianChange(L0);
+		L1 = EndianChange(L1);
+		R0 = EndianChange(R0);
+		R1 = EndianChange(R1);
+	}
+
 	//printf("%08X %08X %08X %08X\n",L0,L1,R0,R1);
 
 	SEED_KeySched(L0, L1, R0, R1, K + 30); 	// Round 1
@@ -296,12 +304,15 @@ void SEED_Decrypt(
 	SEED_KeySched(L0, L1, R0, R1, K + 2); 	// Round 15
 	SEED_KeySched(R0, R1, L0, L1, K + 0); 	// Round 16
 
-#ifdef LITTLE_ENDIAN
-	L0 = EndianChange(L0);
-	L1 = EndianChange(L1);
-	R0 = EndianChange(R0);
-	R1 = EndianChange(R1);
-#endif
+	if (IsLittleEndian)
+	{
+		L0 = EndianChange(L0);
+		L1 = EndianChange(L1);
+		R0 = EndianChange(R0);
+		R1 = EndianChange(R1);
+	}
+
+
 
 	// Copy output values from last round to pbData
 	pbData[0] = (BYTE)((R0) & 0xFF);
@@ -391,12 +402,15 @@ void SEED_KeySchedKey(
 	D = ((_DWORD)pbUserKey[15] << 24) | ((_DWORD)pbUserKey[14] << 16) | ((_DWORD)pbUserKey[13] << 8) | ((_DWORD)pbUserKey[12]);
 
 	// Reorder for big endian 
-#ifndef BIG_ENDIAN
-	A = EndianChange(A);
-	B = EndianChange(B);
-	C = EndianChange(C);
-	D = EndianChange(D);
-#endif
+	if (false == IsLittleEndian)
+	{
+		A = EndianChange(A);
+		B = EndianChange(B);
+		C = EndianChange(C);
+		D = EndianChange(D);
+	}
+
+
 
 	// i-th round keys( K_i,0 and K_i,1 ) are denoted as K[2*(i-1)] and K[2*i-1], respectively
 	RoundKeyUpdate0(K, A, B, C, D, KC0);	// K_1,0 and K_1,1

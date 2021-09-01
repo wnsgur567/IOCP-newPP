@@ -30,7 +30,7 @@ using HandlePtr = std::shared_ptr<HANDLE>;
 using VoidPtr = std::shared_ptr<void>;
 
 #define __DEBUG
-//#define __CIPHER_ON
+#define __CIPHER_ON
 
 // base
 #include "Singleton.h"

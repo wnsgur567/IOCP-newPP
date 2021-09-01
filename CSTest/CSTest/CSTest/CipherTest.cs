@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Cipher
 {
-    using DWORD = System.UInt32;
-    using WORD = System.UInt16;
+    using _DWORD = System.UInt32;
+    using _WORD = System.UInt16;
 
     class CipherMacro
     {
-        public static DWORD[] SS0 = new DWORD[256]{
+        public static _DWORD[] SS0 = new _DWORD[256]{
 0x2989a1a8, 0x05858184, 0x16c6d2d4, 0x13c3d3d0, 0x14445054, 0x1d0d111c, 0x2c8ca0ac, 0x25052124,
 0x1d4d515c, 0x03434340, 0x18081018, 0x1e0e121c, 0x11415150, 0x3cccf0fc, 0x0acac2c8, 0x23436360,
 0x28082028, 0x04444044, 0x20002020, 0x1d8d919c, 0x20c0e0e0, 0x22c2e2e0, 0x08c8c0c8, 0x17071314,
@@ -49,7 +49,7 @@ namespace Cipher
 0x28c8e0e8, 0x1b0b1318, 0x05050104, 0x39497178, 0x10809090, 0x2a4a6268, 0x2a0a2228, 0x1a8a9298
 };
 
-        public static DWORD[] SS1 = new DWORD[256] {
+        public static _DWORD[] SS1 = new _DWORD[256] {
 0x38380830, 0xe828c8e0, 0x2c2d0d21, 0xa42686a2, 0xcc0fcfc3, 0xdc1eced2, 0xb03383b3, 0xb83888b0,
 0xac2f8fa3, 0x60204060, 0x54154551, 0xc407c7c3, 0x44044440, 0x6c2f4f63, 0x682b4b63, 0x581b4b53,
 0xc003c3c3, 0x60224262, 0x30330333, 0xb43585b1, 0x28290921, 0xa02080a0, 0xe022c2e2, 0xa42787a3,
@@ -84,7 +84,7 @@ namespace Cipher
 0xd819c9d1, 0x4c0c4c40, 0x80038383, 0x8c0f8f83, 0xcc0ecec2, 0x383b0b33, 0x480a4a42, 0xb43787b3
 };
 
-        public static DWORD[] SS2 = new DWORD[256]{
+        public static _DWORD[] SS2 = new _DWORD[256]{
 0xa1a82989, 0x81840585, 0xd2d416c6, 0xd3d013c3, 0x50541444, 0x111c1d0d, 0xa0ac2c8c, 0x21242505,
 0x515c1d4d, 0x43400343, 0x10181808, 0x121c1e0e, 0x51501141, 0xf0fc3ccc, 0xc2c80aca, 0x63602343,
 0x20282808, 0x40440444, 0x20202000, 0x919c1d8d, 0xe0e020c0, 0xe2e022c2, 0xc0c808c8, 0x13141707,
@@ -119,7 +119,7 @@ namespace Cipher
 0xe0e828c8, 0x13181b0b, 0x01040505, 0x71783949, 0x90901080, 0x62682a4a, 0x22282a0a, 0x92981a8a
 };
 
-        public static DWORD[] SS3 = new DWORD[256] {
+        public static _DWORD[] SS3 = new _DWORD[256] {
 0x08303838, 0xc8e0e828, 0x0d212c2d, 0x86a2a426, 0xcfc3cc0f, 0xced2dc1e, 0x83b3b033, 0x88b0b838,
 0x8fa3ac2f, 0x40606020, 0x45515415, 0xc7c3c407, 0x44404404, 0x4f636c2f, 0x4b63682b, 0x4b53581b,
 0xc3c3c003, 0x42626022, 0x03333033, 0x85b1b435, 0x09212829, 0x80a0a020, 0xc2e2e022, 0x87a3a427,
@@ -155,19 +155,19 @@ namespace Cipher
 };
 
 
-        public static byte GetB0(DWORD A)
+        public static byte GetB0(_DWORD A)
         {
             return (byte)A;
         }
-        public static byte GetB1(DWORD A)
+        public static byte GetB1(_DWORD A)
         {
             return (byte)(A >> 8);
         }
-        public static byte GetB2(DWORD A)
+        public static byte GetB2(_DWORD A)
         {
             return (byte)(A >> 16);
         }
-        public static byte GetB3(DWORD A)
+        public static byte GetB3(_DWORD A)
         {
             return (byte)(A >> 24);
         }
@@ -181,10 +181,10 @@ namespace Cipher
         /// <param name="R0"> right input values at each round </param>
         /// <param name="R1"> right input values at each round </param>
         /// <param name="roundKey"> round keys at each round </param>
-        public unsafe static void SEED_KeySched(ref DWORD L0, ref DWORD L1, ref DWORD R0, ref DWORD R1, DWORD* roundKey)
+        public unsafe static void SEED_KeySched(ref _DWORD L0, ref _DWORD L1, ref _DWORD R0, ref _DWORD R1, _DWORD* roundKey)
         {
-            DWORD T0 = R0 ^ roundKey[0];
-            DWORD T1 = R1 ^ roundKey[1];
+            _DWORD T0 = R0 ^ roundKey[0];
+            _DWORD T1 = R1 ^ roundKey[1];
             T1 ^= T0;
             T1 = SS0[GetB0(T1)] ^ SS1[GetB1(T1)] ^
                  SS2[GetB2(T1)] ^ SS3[GetB3(T1)];
@@ -200,22 +200,22 @@ namespace Cipher
         }
 
 
-        public static DWORD KC0 = 0x9e3779b9;
-        public static DWORD KC1 = 0x3c6ef373;
-        public static DWORD KC2 = 0x78dde6e6;
-        public static DWORD KC3 = 0xf1bbcdcc;
-        public static DWORD KC4 = 0xe3779b99;
-        public static DWORD KC5 = 0xc6ef3733;
-        public static DWORD KC6 = 0x8dde6e67;
-        public static DWORD KC7 = 0x1bbcdccf;
-        public static DWORD KC8 = 0x3779b99e;
-        public static DWORD KC9 = 0x6ef3733c;
-        public static DWORD KC10 = 0xdde6e678;
-        public static DWORD KC11 = 0xbbcdccf1;
-        public static DWORD KC12 = 0x779b99e3;
-        public static DWORD KC13 = 0xef3733c6;
-        public static DWORD KC14 = 0xde6e678d;
-        public static DWORD KC15 = 0xbcdccf1b;
+        public static _DWORD KC0 = 0x9e3779b9;
+        public static _DWORD KC1 = 0x3c6ef373;
+        public static _DWORD KC2 = 0x78dde6e6;
+        public static _DWORD KC3 = 0xf1bbcdcc;
+        public static _DWORD KC4 = 0xe3779b99;
+        public static _DWORD KC5 = 0xc6ef3733;
+        public static _DWORD KC6 = 0x8dde6e67;
+        public static _DWORD KC7 = 0x1bbcdccf;
+        public static _DWORD KC8 = 0x3779b99e;
+        public static _DWORD KC9 = 0x6ef3733c;
+        public static _DWORD KC10 = 0xdde6e678;
+        public static _DWORD KC11 = 0xbbcdccf1;
+        public static _DWORD KC12 = 0x779b99e3;
+        public static _DWORD KC13 = 0xef3733c6;
+        public static _DWORD KC14 = 0xde6e678d;
+        public static _DWORD KC15 = 0xbcdccf1b;
 
         //public static void RoundKeyUpdate0(ref DWORD T0, ref DWORD T1,
         //    ref DWORD[] K, ref DWORD A, ref DWORD B, ref DWORD C, ref DWORD D, DWORD KC)
@@ -245,8 +245,8 @@ namespace Cipher
         //    D = (D << 8) ^ (T0 >> 24);
         //}
 
-        public unsafe static void RoundKeyUpdate0(ref DWORD T0, ref DWORD T1,
-           DWORD* K, ref DWORD A, ref DWORD B, ref DWORD C, ref DWORD D, DWORD KC)
+        public unsafe static void RoundKeyUpdate0(ref _DWORD T0, ref _DWORD T1,
+           _DWORD* K, ref _DWORD A, ref _DWORD B, ref _DWORD C, ref _DWORD D, _DWORD KC)
         {
             T0 = A + C - KC;
             T1 = B + KC - D;
@@ -259,8 +259,8 @@ namespace Cipher
             B = (B >> 8) ^ (T0 << 24);
         }
 
-        public unsafe static void RoundKeyUpdate1(ref DWORD T0, ref DWORD T1,
-            DWORD* K, ref DWORD A, ref DWORD B, ref DWORD C, ref DWORD D, DWORD KC)
+        public unsafe static void RoundKeyUpdate1(ref _DWORD T0, ref _DWORD T1,
+            _DWORD* K, ref _DWORD A, ref _DWORD B, ref _DWORD C, ref _DWORD D, _DWORD KC)
         {
             T0 = A + C - KC;
             T1 = B + KC - D;
@@ -279,18 +279,18 @@ namespace Cipher
     {
 
 
-        public unsafe static void SEED_Encrtpy(byte* pbData, DWORD[] pdwRoundkey)
+        public unsafe static void SEED_Encrtpy(byte* pbData, _DWORD[] pdwRoundkey)
         {
-            DWORD L0, L1, R0, R1;       // Iuput/output values at each rounds
+            _DWORD L0, L1, R0, R1;       // Iuput/output values at each rounds
             //DWORD T0, T1;               // Temporary variables for round function F
-            DWORD[] K = pdwRoundkey;        // Pointer of round keys
+            _DWORD[] K = pdwRoundkey;        // Pointer of round keys
 
 
             // Set up input values for first round
-            L0 = ((DWORD)pbData[3] << 24) | ((DWORD)pbData[2] << 16) | ((DWORD)pbData[1] << 8) | ((DWORD)pbData[0]);
-            L1 = ((DWORD)pbData[7] << 24) | ((DWORD)pbData[6] << 16) | ((DWORD)pbData[5] << 8) | ((DWORD)pbData[4]);
-            R0 = ((DWORD)pbData[11] << 24) | ((DWORD)pbData[10] << 16) | ((DWORD)pbData[9] << 8) | ((DWORD)pbData[8]);
-            R1 = ((DWORD)pbData[15] << 24) | ((DWORD)pbData[14] << 16) | ((DWORD)pbData[13] << 8) | ((DWORD)pbData[12]);
+            L0 = ((_DWORD)pbData[3] << 24) | ((_DWORD)pbData[2] << 16) | ((_DWORD)pbData[1] << 8) | ((_DWORD)pbData[0]);
+            L1 = ((_DWORD)pbData[7] << 24) | ((_DWORD)pbData[6] << 16) | ((_DWORD)pbData[5] << 8) | ((_DWORD)pbData[4]);
+            R0 = ((_DWORD)pbData[11] << 24) | ((_DWORD)pbData[10] << 16) | ((_DWORD)pbData[9] << 8) | ((_DWORD)pbData[8]);
+            R1 = ((_DWORD)pbData[15] << 24) | ((_DWORD)pbData[14] << 16) | ((_DWORD)pbData[13] << 8) | ((_DWORD)pbData[12]);
 
             // endian convert
             if (BitConverter.IsLittleEndian)
@@ -313,22 +313,22 @@ namespace Cipher
             }          
 
             // round process       
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr);       // Round 1
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 2);       // Round 2
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 4);       // Round 3
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 6);       // Round 4
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 8);       // Round 5
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 10);       // Round 6
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 12);       // Round 7
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 14);       // Round 8
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 16);       // Round 9
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 18);       // Round 10
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 20);       // Round 11
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 22);       // Round 12
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 24);       // Round 13
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 26);       // Round 14
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 28);       // Round 15
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 30);       // Round 16
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr);       // Round 1
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 2);       // Round 2
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 4);       // Round 3
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 6);       // Round 4
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 8);       // Round 5
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 10);       // Round 6
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 12);       // Round 7
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 14);       // Round 8
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 16);       // Round 9
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 18);       // Round 10
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 20);       // Round 11
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 22);       // Round 12
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 24);       // Round 13
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 26);       // Round 14
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 28);       // Round 15
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 30);       // Round 16
             // round process end
 
             // endian convert
@@ -374,17 +374,17 @@ namespace Cipher
 
         }
 
-        public unsafe static void SEED_Decrypt(byte* pbData, DWORD[] pdwRoundkey)
+        public unsafe static void SEED_Decrypt(byte* pbData, _DWORD[] pdwRoundkey)
         {
-            DWORD L0, L1, R0, R1;        // Iuput/output values at each rounds
+            _DWORD L0, L1, R0, R1;        // Iuput/output values at each rounds
             //DWORD T0, T1;                // Temporary variables for round function F
-            DWORD[] K = pdwRoundkey;     // Pointer of round keys
+            _DWORD[] K = pdwRoundkey;     // Pointer of round keys
 
             // Set up input values for first round
-            L0 = ((DWORD)pbData[3] << 24) | ((DWORD)pbData[2] << 16) | ((DWORD)pbData[1] << 8) | ((DWORD)pbData[0]);
-            L1 = ((DWORD)pbData[7] << 24) | ((DWORD)pbData[6] << 16) | ((DWORD)pbData[5] << 8) | ((DWORD)pbData[4]);
-            R0 = ((DWORD)pbData[11] << 24) | ((DWORD)pbData[10] << 16) | ((DWORD)pbData[9] << 8) | ((DWORD)pbData[8]);
-            R1 = ((DWORD)pbData[15] << 24) | ((DWORD)pbData[14] << 16) | ((DWORD)pbData[13] << 8) | ((DWORD)pbData[12]);
+            L0 = ((_DWORD)pbData[3] << 24) | ((_DWORD)pbData[2] << 16) | ((_DWORD)pbData[1] << 8) | ((_DWORD)pbData[0]);
+            L1 = ((_DWORD)pbData[7] << 24) | ((_DWORD)pbData[6] << 16) | ((_DWORD)pbData[5] << 8) | ((_DWORD)pbData[4]);
+            R0 = ((_DWORD)pbData[11] << 24) | ((_DWORD)pbData[10] << 16) | ((_DWORD)pbData[9] << 8) | ((_DWORD)pbData[8]);
+            R1 = ((_DWORD)pbData[15] << 24) | ((_DWORD)pbData[14] << 16) | ((_DWORD)pbData[13] << 8) | ((_DWORD)pbData[12]);
 
             // endian convert
             if (BitConverter.IsLittleEndian)
@@ -404,31 +404,26 @@ namespace Cipher
                 var R1_bytes = BitConverter.GetBytes(R1);
                 Array.Reverse(R1_bytes);
                 R1 = BitConverter.ToUInt32(R1_bytes, 0);
-            }
-
-            int* ptr;
-
-           
+            }           
 
             //printf("%08X %08X %08X %08X\n",L0,L1,R0,R1);
 
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 30);      // Round 1
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 28);      // Round 2
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 26);      // Round 3
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 24);      // Round 4
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 22);      // Round 5
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 20);      // Round 6
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 18);      // Round 7
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 16);      // Round 8
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 14);      // Round 9
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 12);      // Round 10
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 10);      // Round 11
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 8);       // Round 12
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 6);       // Round 13
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 4);       // Round 14
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 2);       // Round 15
-            fixed (DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr);           // Round 16
-
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 30);      // Round 1
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 28);      // Round 2
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 26);      // Round 3
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 24);      // Round 4
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 22);      // Round 5
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 20);      // Round 6
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 18);      // Round 7
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 16);      // Round 8
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 14);      // Round 9
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 12);      // Round 10
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 10);      // Round 11
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 8);       // Round 12
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 6);       // Round 13
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr + 4);       // Round 14
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref L0, ref L1, ref R0, ref R1, kPtr + 2);       // Round 15
+            fixed (_DWORD* kPtr = K) CipherMacro.SEED_KeySched(ref R0, ref R1, ref L0, ref L1, kPtr);           // Round 16
 
 
             // endian convert
@@ -474,17 +469,17 @@ namespace Cipher
         }
 
 
-        public unsafe static void SEED_KeySchedKey(DWORD[] pbUserKey, DWORD[] pdwRoundKey)
+        public unsafe static void SEED_KeySchedKey(_DWORD[] pbUserKey, _DWORD[] pdwRoundKey)
         {
-            DWORD A, B, C, D;               // Iuput/output values at each rounds
-            DWORD T0, T1;                   // Temporary variable
-            DWORD[] K = pdwRoundKey;         // Pointer of round keys
+            _DWORD A, B, C, D;               // Iuput/output values at each rounds
+            _DWORD T0, T1;                   // Temporary variable
+            _DWORD[] K = pdwRoundKey;         // Pointer of round keys
 
             // Set up input values for Key Schedule	
-            A = ((DWORD)pbUserKey[3] << 24) | ((DWORD)pbUserKey[2] << 16) | ((DWORD)pbUserKey[1] << 8) | ((DWORD)pbUserKey[0]);
-            B = ((DWORD)pbUserKey[7] << 24) | ((DWORD)pbUserKey[6] << 16) | ((DWORD)pbUserKey[5] << 8) | ((DWORD)pbUserKey[4]);
-            C = ((DWORD)pbUserKey[11] << 24) | ((DWORD)pbUserKey[10] << 16) | ((DWORD)pbUserKey[9] << 8) | ((DWORD)pbUserKey[8]);
-            D = ((DWORD)pbUserKey[15] << 24) | ((DWORD)pbUserKey[14] << 16) | ((DWORD)pbUserKey[13] << 8) | ((DWORD)pbUserKey[12]);
+            A = ((_DWORD)pbUserKey[3] << 24) | ((_DWORD)pbUserKey[2] << 16) | ((_DWORD)pbUserKey[1] << 8) | ((_DWORD)pbUserKey[0]);
+            B = ((_DWORD)pbUserKey[7] << 24) | ((_DWORD)pbUserKey[6] << 16) | ((_DWORD)pbUserKey[5] << 8) | ((_DWORD)pbUserKey[4]);
+            C = ((_DWORD)pbUserKey[11] << 24) | ((_DWORD)pbUserKey[10] << 16) | ((_DWORD)pbUserKey[9] << 8) | ((_DWORD)pbUserKey[8]);
+            D = ((_DWORD)pbUserKey[15] << 24) | ((_DWORD)pbUserKey[14] << 16) | ((_DWORD)pbUserKey[13] << 8) | ((_DWORD)pbUserKey[12]);
 
             // Reorder for big endian 
             // endian convert
@@ -507,25 +502,25 @@ namespace Cipher
                 D = BitConverter.ToUInt32(D_bytes, 0);
             }
 
-            T0 = new DWORD();
-            T1 = new DWORD();
+            T0 = new _DWORD();
+            T1 = new _DWORD();
 
             // i-th round keys( K_i,0 and K_i,1 ) are denoted as K[2*(i-1)] and K[2*i-1], respectively
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr, ref A, ref B, ref C, ref D, CipherMacro.KC0);    // K_1,0 and K_1,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 2, ref A, ref B, ref C, ref D, CipherMacro.KC1);    // K_2,0 and K_2,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 4, ref A, ref B, ref C, ref D, CipherMacro.KC2);    // K_3,0 and K_3,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 6, ref A, ref B, ref C, ref D, CipherMacro.KC3);    // K_4,0 and K_4,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 8, ref A, ref B, ref C, ref D, CipherMacro.KC4);    // K_5,0 and K_5,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 10, ref A, ref B, ref C, ref D, CipherMacro.KC5);   // K_6,0 and K_6,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 12, ref A, ref B, ref C, ref D, CipherMacro.KC6);   // K_7,0 and K_7,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 14, ref A, ref B, ref C, ref D, CipherMacro.KC7);   // K_8,0 and K_8,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 16, ref A, ref B, ref C, ref D, CipherMacro.KC8);   // K_9,0 and K_9,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 18, ref A, ref B, ref C, ref D, CipherMacro.KC9);   // K_10,0 and K_10,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 20, ref A, ref B, ref C, ref D, CipherMacro.KC10);  // K_11,0 and K_11,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 22, ref A, ref B, ref C, ref D, CipherMacro.KC11);  // K_12,0 and K_12,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 24, ref A, ref B, ref C, ref D, CipherMacro.KC12);  // K_13,0 and K_13,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 26, ref A, ref B, ref C, ref D, CipherMacro.KC13);  // K_14,0 and K_14,1
-            fixed (DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 28, ref A, ref B, ref C, ref D, CipherMacro.KC14);  // K_15,0 and K_15,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr, ref A, ref B, ref C, ref D, CipherMacro.KC0);    // K_1,0 and K_1,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 2, ref A, ref B, ref C, ref D, CipherMacro.KC1);    // K_2,0 and K_2,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 4, ref A, ref B, ref C, ref D, CipherMacro.KC2);    // K_3,0 and K_3,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 6, ref A, ref B, ref C, ref D, CipherMacro.KC3);    // K_4,0 and K_4,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 8, ref A, ref B, ref C, ref D, CipherMacro.KC4);    // K_5,0 and K_5,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 10, ref A, ref B, ref C, ref D, CipherMacro.KC5);   // K_6,0 and K_6,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 12, ref A, ref B, ref C, ref D, CipherMacro.KC6);   // K_7,0 and K_7,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 14, ref A, ref B, ref C, ref D, CipherMacro.KC7);   // K_8,0 and K_8,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 16, ref A, ref B, ref C, ref D, CipherMacro.KC8);   // K_9,0 and K_9,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 18, ref A, ref B, ref C, ref D, CipherMacro.KC9);   // K_10,0 and K_10,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 20, ref A, ref B, ref C, ref D, CipherMacro.KC10);  // K_11,0 and K_11,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 22, ref A, ref B, ref C, ref D, CipherMacro.KC11);  // K_12,0 and K_12,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 24, ref A, ref B, ref C, ref D, CipherMacro.KC12);  // K_13,0 and K_13,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate1(ref T0, ref T1, kPtr + 26, ref A, ref B, ref C, ref D, CipherMacro.KC13);  // K_14,0 and K_14,1
+            fixed (_DWORD* kPtr = K) CipherMacro.RoundKeyUpdate0(ref T0, ref T1, kPtr + 28, ref A, ref B, ref C, ref D, CipherMacro.KC14);  // K_15,0 and K_15,1
 
             T0 = A + C - CipherMacro.KC15;
             T1 = B - D + CipherMacro.KC15;

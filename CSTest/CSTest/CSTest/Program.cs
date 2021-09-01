@@ -104,30 +104,30 @@ namespace CSTest
                     }
                     Console.WriteLine();
 #endif
-                    //var size = Program.Encryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
-                    //int total_size = sizeof(int) + Convert.ToInt32(size);
-
-                    //// total size
-                    //byte[] packet_size_bytes = BitConverter.GetBytes(total_size);
-                    //client.WriteToStream(packet_size_bytes, sizeof(int));
-                    //// id
-                    //byte[] id_bytes = BitConverter.GetBytes(packet_id);
-                    //client.WriteToStream(id_bytes, sizeof(int));
-
-                    //client.WriteToStream(combination, Convert.ToInt32(size));
+                    var size = Program.Encryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
+                    int total_size = sizeof(int) + Convert.ToInt32(size);
 
                     // total size
-                    byte[] total = BitConverter.GetBytes(sizeof(int) + sizeof(int) + str_size);
-                    client.WriteToStream(total,sizeof(int));
-                    // state
-                    client.WriteToStream(state_bytes, sizeof(int));
-                    // data
-                    client.WriteToStream(str_length_bytes, sizeof(int));
-                    client.WriteToStream(str_bytes, str_size);
+                    byte[] packet_size_bytes = BitConverter.GetBytes(total_size);
+                    client.WriteToStream(packet_size_bytes, sizeof(int));
+                    // id
+                    byte[] id_bytes = BitConverter.GetBytes(packet_id);
+                    client.WriteToStream(id_bytes, sizeof(int));
+
+                    client.WriteToStream(combination, Convert.ToInt32(size));
+
+                    //// total size
+                    //byte[] total = BitConverter.GetBytes(sizeof(int) + sizeof(int) + str_size);
+                    //client.WriteToStream(total,sizeof(int));
+                    //// state
+                    //client.WriteToStream(state_bytes, sizeof(int));
+                    //// data
+                    //client.WriteToStream(str_length_bytes, sizeof(int));
+                    //client.WriteToStream(str_bytes, str_size);
 
                     client.Send();
 
-                    //size =  Program.Decryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
+                    size =  Program.Decryption(combination, Convert.ToUInt32(sizeof(int) + sizeof(int) + str_size));
                 }
                 else if (keyInfo.Key == ConsoleKey.B)
                 {

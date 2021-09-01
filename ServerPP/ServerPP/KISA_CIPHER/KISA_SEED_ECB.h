@@ -66,8 +66,8 @@ typedef unsigned char       BYTE;		// unsigned 1-byte data type
 
 // macroses for converting endianess
 #define EndianChange(dwS)                       \
-    ( (ROTL((dwS),  8) & (DWORD)0x00ff00ff) |   \
-      (ROTL((dwS), 24) & (DWORD)0xff00ff00) )
+    ( (ROTL((dwS),  8) & (_DWORD)0x00ff00ff) |   \
+      (ROTL((dwS), 24) & (_DWORD)0xff00ff00) )
 
 
 /*************************** Function Declarations ****************************/
