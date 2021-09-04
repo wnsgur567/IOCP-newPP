@@ -3,10 +3,13 @@
 
 void IOCPSession::Initialze()
 {
-	// 첫 시작을 로그인 상태로 변경함
+	// TODO : 모든 state 할당
 	auto pSignState = SignState::Create();
-	m_current_state = pSignState;
 	m_state_map.insert({ ClientState::EState::Sign,pSignState });
+	 
+	
+	// 첫 시작을 로그인 상태로 변경함
+	m_current_state = pSignState;
 }
 
 IOCPSession::IOCPSession()

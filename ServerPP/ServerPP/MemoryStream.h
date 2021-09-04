@@ -5,6 +5,7 @@ using BYTE = unsigned char;
 #include<string>
 
 class InputMemoryStream;
+// recv buffer 용
 using InputMemoryStreamPtr = std::shared_ptr<InputMemoryStream>;
 
 // recv buffer 용
@@ -49,6 +50,7 @@ inline void InputMemoryStream::Read(T& outData)
 
 
 class OutputMemoryStream;
+// send buffer 용
 using OutputMemoryStreamPtr = std::shared_ptr<OutputMemoryStream>;
 
 // send buffer 용

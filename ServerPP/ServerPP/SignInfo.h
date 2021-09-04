@@ -13,12 +13,12 @@ public:
 public:
 	size_t id_len;
 	size_t pw_len;
-	char ID[MAX_IDSIZE];
-	char PW[MAX_PWSIZE];
+	wchar_t ID[MAX_IDSIZE];
+	wchar_t PW[MAX_PWSIZE];
 public:
 	SignInfo() : id_len(0), pw_len(0), ID(), PW() {}
-	SignInfo(const char* inID, const char* inPW);
-	SignInfo(std::string inID, std::string inPW);
+	SignInfo(const wchar_t* inID, const wchar_t* inPW);
+	SignInfo(std::wstring inID, std::wstring inPW);
 	bool operator == (const SignInfo& other);
 	bool operator != (const SignInfo& other);
 	bool operator > (const SignInfo& other);

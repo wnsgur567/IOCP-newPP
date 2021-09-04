@@ -1,26 +1,28 @@
 #include "base.h"
 
-SignInfo::SignInfo(const char* inID, const char* inPW)
+SignInfo::SignInfo(const wchar_t* inID, const wchar_t* inPW)
 	: id_len(0), pw_len(0), ID(), PW()
 {
-	strcpy_s(ID, SignManager::MAX_IDSIZE, inID);
-	id_len = strlen(ID);
-	strcpy_s(PW, SignManager::MAX_PWSIZE, inPW);
-	pw_len = strlen(PW);
+	wcscpy_s(ID, SignManager::MAX_IDSIZE, inID);
+	//strcpy_s(ID, SignManager::MAX_IDSIZE, inID);
+	id_len = wcslen(ID);
+	wcscpy_s(PW, SignManager::MAX_PWSIZE, inPW);
+	//strcpy_s(PW, SignManager::MAX_PWSIZE, inPW);
+	pw_len = wcslen(PW);
 }
 
-SignInfo::SignInfo(std::string inID, std::string inPW)
+SignInfo::SignInfo(std::wstring inID, std::wstring inPW)
 	: id_len(0), pw_len(0), ID(), PW()
 {
-	strcpy_s(ID, SignManager::MAX_IDSIZE, inID.c_str());
-	id_len = strlen(ID);
-	strcpy_s(PW, SignManager::MAX_PWSIZE, inPW.c_str());
-	pw_len = strlen(PW);
+	wcscpy_s(ID, SignManager::MAX_IDSIZE, inID.c_str());
+	id_len = wcslen(ID);
+	wcscpy_s(PW, SignManager::MAX_PWSIZE, inPW.c_str());
+	pw_len = wcslen(PW);
 }
 
 bool SignInfo::operator==(const SignInfo& other)
 {
-	if (strcmp(this->ID, other.ID) || strcmp(this->PW, other.PW))
+	if (wcscmp(this->ID, other.ID) || wcscmp(this->PW, other.PW))
 		return false;
 	return true;
 }
@@ -32,14 +34,14 @@ bool SignInfo::operator!=(const SignInfo& other)
 
 bool SignInfo::operator>(const SignInfo& other)
 {
-	if (strcmp(this->ID, other.ID) > 0)
+	if (wcscmp(this->ID, other.ID) > 0)
 		return true;
 	return false;
 }
 
 bool SignInfo::operator<(const SignInfo& other)
 {
-	if (strcmp(this->ID, other.ID) < 0)
+	if (wcscmp(this->ID, other.ID) < 0)
 		return true;
 	return false;
 }

@@ -9,6 +9,7 @@ class IOCPSession
 private:
 	friend class IOCPNetworkManager;
 public:
+	using Signal = __int64;
 	class ClientState;
 	using ClientStatePtr = std::shared_ptr<ClientState>;
 	class ClientState
@@ -30,7 +31,7 @@ public:
 		EState m_state;
 	public:
 		ClientState(EState inState) : m_state(inState) {}
-		virtual OutputMemoryStreamPtr OnRecvCompleted(InputMemoryStreamPtr) = 0;
+		virtual Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr) = 0;
 		virtual void OnSendCompleted(IOCPSessionPtr) = 0;
 		void ChangeState(IOCPSessionPtr pSession, EState inState, fpCreateState inFp)
 		{

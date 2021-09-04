@@ -1,12 +1,15 @@
 #include "base.h"
 
+//#define TESTING
 
-OutputMemoryStreamPtr SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream)
+IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, __out OutputMemoryStreamPtr)
 {
+
 	// ...
-#ifdef __DEBUG
+#ifdef TESTING
+
 	printf("테스트 시작\n");
-#endif
+
 	char msg[512];
 
 	int msg_length = 0;
@@ -14,21 +17,22 @@ OutputMemoryStreamPtr SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream)
 	inpStream->Read(&msg, static_cast<size_t>(msg_length));
 	msg[msg_length + 1] = NULL;
 
-#ifdef __DEBUG
+
 	printf("\n전송된 메시지 길이 : %d\n", msg_length);
 	printf("전송된 메세지 : %s", msg);
-#endif // __DEBUG
+
 
 	auto pSendStream = PacketManager::sInstance->GetSendStreamFromPool();
 
 	pSendStream->Write(&msg_length, sizeof(msg_length));
 	pSendStream->Write(msg, msg_length);
 
-#ifdef __DEBUG
 	printf("\n그대로 다시 전송...\n");
+	
+	return pSendStream;
 #endif
 
-	return pSendStream;
+	return 0;
 }
 
 void SignState::OnSendCompleted(IOCPSessionPtr inpSession)
@@ -44,9 +48,9 @@ IOCPSession::ClientStatePtr SignState::Create()
 	return retState;
 }
 
-OutputMemoryStreamPtr LobbyState::OnRecvCompleted(InputMemoryStreamPtr)
+IOCPSession::Signal LobbyState::OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr)
 {
-	return OutputMemoryStreamPtr();
+	return 0;
 }
 
 void LobbyState::OnSendCompleted(IOCPSessionPtr)
@@ -58,9 +62,9 @@ IOCPSession::ClientStatePtr LobbyState::Create()
 	return IOCPSession::ClientStatePtr();
 }
 
-OutputMemoryStreamPtr IdleState::OnRecvCompleted(InputMemoryStreamPtr)
+IOCPSession::Signal IdleState::OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr)
 {
-	return OutputMemoryStreamPtr();
+	return 0;
 }
 
 void IdleState::OnSendCompleted(IOCPSessionPtr)

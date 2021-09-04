@@ -3,12 +3,12 @@
 class IdleState : public IOCPSession::ClientState
 {
 private:
-	enum class EProtocol
+	enum class EProtocol : IOCPSession::Signal
 	{
 
 	};
 public:
-	virtual OutputMemoryStreamPtr OnRecvCompleted(InputMemoryStreamPtr) override;
+	virtual IOCPSession::Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr) override;
 	virtual void OnSendCompleted(IOCPSessionPtr) override;
 
 	static IOCPSession::ClientStatePtr Create();
@@ -17,7 +17,7 @@ public:
 class SignState : public IOCPSession::ClientState
 {
 private:
-	enum class EProtocol
+	enum class EProtocol : IOCPSession::Signal
 	{
 		None = 0,
 
@@ -26,10 +26,10 @@ private:
 		SignUp = 1 << 2,
 		DeleteAccount = 1 << 3,
 	};
-public:
+protected:
 	SignState() : IOCPSession::ClientState(EState::Sign) {}
 public:
-	virtual OutputMemoryStreamPtr OnRecvCompleted(InputMemoryStreamPtr) override;
+	virtual IOCPSession::Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr) override;
 	virtual void OnSendCompleted(IOCPSessionPtr) override;
 
 	static IOCPSession::ClientStatePtr Create();
@@ -38,12 +38,12 @@ public:
 class LobbyState : public IOCPSession::ClientState
 {
 private:
-	enum class EProtocol
+	enum class EProtocol : IOCPSession::Signal
 	{
 
 	};
 public:
-	virtual OutputMemoryStreamPtr OnRecvCompleted(InputMemoryStreamPtr) override;
+	virtual IOCPSession::Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr) override;
 	virtual void OnSendCompleted(IOCPSessionPtr) override;
 
 	static IOCPSession::ClientStatePtr Create();
