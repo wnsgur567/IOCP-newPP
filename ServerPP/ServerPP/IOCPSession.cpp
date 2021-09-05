@@ -4,8 +4,7 @@
 void IOCPSession::Initialze()
 {
 	// TODO : 모든 state 할당
-	auto pSignState = SignState::Create();
-	m_state_map.insert({ ClientState::EState::Sign,pSignState });
+	auto pSignState = SignState::Create(shared_from_this());
 	 
 	
 	// 첫 시작을 로그인 상태로 변경함
@@ -76,13 +75,14 @@ bool IOCPSession::OnCompleteRecv()
 	/*--------- data process     ----------*/
 
 	// for send stream
-	OutputMemoryStreamPtr pInuputStream = m_current_state->OnRecvCompleted(pStream);
+	OutputMemoryStreamPtr pOutputStream;
+	auto ret_signal = m_current_state->OnRecvCompleted(pStream,pOutputStream);
 
 #ifdef __DEBUG
 	printf("\nsend_id : (%lu)\n", m_newSendID);
 #endif // __DEBUG
 
-	if (Send(pInuputStream))
+	if (Send(pOutputStream))
 	{
 		// ...
 	}

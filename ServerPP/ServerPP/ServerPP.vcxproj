@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CharacterSelectState.cpp" />
     <ClCompile Include="CipherManager.cpp" />
     <ClCompile Include="ClientState.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -155,12 +156,14 @@
     <ClCompile Include="SessionManager.cpp" />
     <ClCompile Include="SignInfo.cpp" />
     <ClCompile Include="SignManager.cpp" />
+    <ClCompile Include="SignState.cpp" />
     <ClCompile Include="SocketAddress.cpp" />
     <ClCompile Include="SocketUtil.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h" />
+    <ClInclude Include="CharacterSelectState.h" />
     <ClInclude Include="CipherManager.h" />
     <ClInclude Include="ClientState.h" />
     <ClInclude Include="Engine.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="SessionStateSignalDefinitions.h" />
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
+    <ClInclude Include="SignState.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SocketAddress.h" />
     <ClInclude Include="SocketUtil.h" />
