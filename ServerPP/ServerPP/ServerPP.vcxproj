@@ -178,6 +178,7 @@
     <ClInclude Include="SessionBase.h" />
     <ClInclude Include="SessionManager.h" />
     <ClInclude Include="SessionManagerBase.h" />
+    <ClInclude Include="SessionStateSignalDefinitions.h" />
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
     <ClInclude Include="Singleton.h" />

@@ -2,11 +2,11 @@
 
 //#define TESTING
 
-IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, __out OutputMemoryStreamPtr)
+IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, __out OutputMemoryStreamPtr outpStream)
 {
 
-	// ...
 #ifdef TESTING
+	// ...
 
 	printf("테스트 시작\n");
 
@@ -28,17 +28,257 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, _
 	pSendStream->Write(msg, msg_length);
 
 	printf("\n그대로 다시 전송...\n");
-	
+
 	return pSendStream;
 #endif
 
-	return 0;
+#ifdef  __DEBUG
+	printf("---SignState OnRecvCompleted Process...\n");
+#endif //  __DEBUG
+
+	SignManager::EResult retResult;
+
+	EProtocol protocol;
+
+	inpStream->Read(&protocol, sizeof(EProtocol));
+
+	switch (protocol)
+	{
+	case SignState::EProtocol::SignIn:
+	{
+		/// Read from Input Stream
+		// get data from recv stream
+		SignInfo info;
+		// get id from stream
+		int id_length = 0;
+		inpStream->Read(&id_length, sizeof(int));
+		inpStream->Read(info.ID, id_length);
+		// get pw from stream
+		int pw_length = 0;
+		inpStream->Read(&pw_length, sizeof(int));
+		inpStream->Read(info.PW, pw_length);
+		/// Read end
+
+		// request sign in process
+		auto resultData = SignManager::sInstance->SignInProcess(info);
+		retResult = resultData.result;
+
+#ifdef __DEBUG
+		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
+		wprintf(L" msg : %s\n", resultData.msg);
+#endif // __DEBUG
+
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream (only data part)
+		// sendpacket is composed with (size + id + data)
+
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol
+		outpStream->Write(&protocol, sizeof(EProtocol));
+		// write result
+		outpStream->Write(&resultData.result, sizeof(resultData.result));
+		// write result msg
+		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		outpStream->Write(&msg_length, sizeof(int));
+		outpStream->Write(resultData.msg, msg_length);
+		/// write end
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n",
+			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+#endif // __DEBUG		
+	}
+	break;
+
+	case SignState::EProtocol::SignOut:
+	{
+		/// Read from Input Stream
+		// get data from recv stream
+		SignInfo info;
+		// get id from stream
+		int id_length = 0;
+		inpStream->Read(&id_length, sizeof(int));
+		inpStream->Read(info.ID, id_length);
+		// get pw from stream
+		int pw_length = 0;
+		inpStream->Read(&pw_length, sizeof(int));
+		inpStream->Read(info.PW, pw_length);
+		/// Read end
+
+		// request sign in process
+		auto resultData = SignManager::sInstance->SignOutProcess(info);
+		retResult = resultData.result;
+
+#ifdef __DEBUG
+		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
+		wprintf(L" msg : %s\n", resultData.msg);
+#endif // __DEBUG
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream (only data part)
+		// sendpacket is composed with (size + id + data)
+
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol
+		outpStream->Write(&protocol, sizeof(EProtocol));
+		// write result
+		outpStream->Write(&resultData.result, sizeof(resultData.result));
+		// write result msg
+		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		outpStream->Write(&msg_length, sizeof(int));
+		outpStream->Write(resultData.msg, msg_length);
+		/// write end
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n",
+			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+#endif // __DEBUG	
+	}
+	break;
+
+	case SignState::EProtocol::SignUp:
+	{
+		/// Read from Input Stream
+		// get data from recv stream
+		SignInfo info;
+		// get id from stream
+		int id_length = 0;
+		inpStream->Read(&id_length, sizeof(int));
+		inpStream->Read(info.ID, id_length);
+		// get pw from stream
+		int pw_length = 0;
+		inpStream->Read(&pw_length, sizeof(int));
+		inpStream->Read(info.PW, pw_length);
+		/// Read end
+
+		// request sign in process
+		auto resultData = SignManager::sInstance->SignOutProcess(info);
+		retResult = resultData.result;
+
+#ifdef __DEBUG
+		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
+		wprintf(L" msg : %s\n", resultData.msg);
+#endif // __DEBUG
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream (only data part)
+		// sendpacket is composed with (size + id + data)
+
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol
+		outpStream->Write(&protocol, sizeof(EProtocol));
+		// write result
+		outpStream->Write(&resultData.result, sizeof(resultData.result));
+		// write result msg
+		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		outpStream->Write(&msg_length, sizeof(int));
+		outpStream->Write(resultData.msg, msg_length);
+		/// write end
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n",
+			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+#endif // __DEBUG	
+	}
+	break;
+
+	case SignState::EProtocol::DeleteAccount:
+	{
+		/// Read from Input Stream
+		// get data from recv stream
+		SignInfo info;
+		// get id from stream
+		int id_length = 0;
+		inpStream->Read(&id_length, sizeof(int));
+		inpStream->Read(info.ID, id_length);
+		// get pw from stream
+		int pw_length = 0;
+		inpStream->Read(&pw_length, sizeof(int));
+		inpStream->Read(info.PW, pw_length);
+		/// Read end
+
+		// request sign in process
+		auto resultData = SignManager::sInstance->SignOutProcess(info);
+		retResult = resultData.result;
+
+#ifdef __DEBUG
+		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
+		wprintf(L" msg : %s\n", resultData.msg);
+#endif // __DEBUG
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// get new send stream
+		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream (only data part)
+		// sendpacket is composed with (size + id + data)
+
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol
+		outpStream->Write(&protocol, sizeof(EProtocol));
+		// write result
+		outpStream->Write(&resultData.result, sizeof(resultData.result));
+		// write result msg
+		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		outpStream->Write(&msg_length, sizeof(int));
+		outpStream->Write(resultData.msg, msg_length);
+		/// write end
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n",
+			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+#endif // __DEBUG	
+	}
+	break;
+
+	default:
+		break;
+	}
+
+
+	// apply result to session
+	switch (retResult)
+	{
+	case SignManager::EResult::Success_SingIn:
+	{
+		auto owner = m_ownerPtr.lock();
+		owner->m_isSigned = true;
+	}
+	break;
+	case SignManager::EResult::Success_SignOut:
+	case SignManager::EResult::Success_DeleteAccount:
+	{
+		auto owner = m_ownerPtr.lock();
+		owner->m_isSigned = false;
+	}
+	break;
+	}
+
+
+	return (__int32)retResult;
 }
 
-void SignState::OnSendCompleted(IOCPSessionPtr inpSession)
+void SignState::OnSendCompleted()
 {
-	// state가 변경되야할 경우 다음과 같이...
-	ChangeState(inpSession, EState::Lobby, LobbyState::Create);
+
 }
 
 IOCPSession::ClientStatePtr SignState::Create()
@@ -53,7 +293,7 @@ IOCPSession::Signal LobbyState::OnRecvCompleted(InputMemoryStreamPtr, __out Outp
 	return 0;
 }
 
-void LobbyState::OnSendCompleted(IOCPSessionPtr)
+void LobbyState::OnSendCompleted()
 {
 }
 
@@ -67,7 +307,7 @@ IOCPSession::Signal IdleState::OnRecvCompleted(InputMemoryStreamPtr, __out Outpu
 	return 0;
 }
 
-void IdleState::OnSendCompleted(IOCPSessionPtr)
+void IdleState::OnSendCompleted()
 {
 
 }

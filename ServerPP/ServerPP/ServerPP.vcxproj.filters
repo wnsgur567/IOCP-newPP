@@ -179,5 +179,8 @@
     <ClInclude Include="ClientState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SessionStateSignalDefinitions.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

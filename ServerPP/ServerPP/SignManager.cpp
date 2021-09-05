@@ -2,6 +2,15 @@
 
 Implementation_sInstance(SignManager);
 
+const wchar_t* SignManager::ResultMSG::SignInSuccessMsg = L"로그인 성공";
+const wchar_t* SignManager::ResultMSG::SignOutSuccessMsg = L"로그아웃 성공";
+const wchar_t* SignManager::ResultMSG::SignUpSuccessMsg = L"회원가입 성공";
+const wchar_t* SignManager::ResultMSG::DeleteSuccessMsg = L"회원탈퇴 성공";
+
+const wchar_t* SignManager::ResultMSG::IDExistMsg = L"이미 존재하는 아이디입니다";
+const wchar_t* SignManager::ResultMSG::NotExistIDMsg = L"일치하는 아이디가 없습니다";
+const wchar_t* SignManager::ResultMSG::WrongPWMsg = L"일치하는 패스워드가 없습니다";
+
 bool SignManager::Initialize(LPVOID)
 {
 	if (false == LoadInfo())
@@ -37,16 +46,17 @@ bool SignManager::SaveInfo()
 	return true;
 }
 
-SignManager::ResultInfo SignManager::SignUpProcess(const SignInfo inInfo)
-{
-	ResultInfo retData;
+
+SignManager::ResultData SignManager::SignUpProcess(const SignInfo inInfo)
+{	// 회원가입
+	ResultData retData;
 
 	for (const auto& item : m_info_list)
 	{
 		if (item->ID == inInfo.ID)
 		{
-			retData.result = ESignResult::Fail;
-			retData.failType = EFailType::ID_exist;
+			retData.result = EResult::ExistID;
+			retData.msg = ResultMSG::IDExistMsg;
 
 			return retData;
 		}
@@ -54,13 +64,14 @@ SignManager::ResultInfo SignManager::SignUpProcess(const SignInfo inInfo)
 
 	m_info_list.push_back(std::make_shared<SignInfo>(inInfo));
 
-	retData.result = ESignResult::Success;
+	retData.result = EResult::Success_SignUp;
+	retData.msg = ResultMSG::SignUpSuccessMsg;
 	return retData;
 }
 
-SignManager::ResultInfo SignManager::DeleteAccountProcess(const SignInfo inInfo)
+SignManager::ResultData SignManager::DeleteAccountProcess(const SignInfo inInfo)
 {
-	ResultInfo retData;
+	ResultData retData;
 
 	for (std::list<SignInfoPtr>::iterator it = m_info_list.begin();
 		it != m_info_list.end(); ++it)
@@ -70,26 +81,28 @@ SignManager::ResultInfo SignManager::DeleteAccountProcess(const SignInfo inInfo)
 		if (pInfo->ID == inInfo.ID)
 		{
 			if (pInfo->PW == inInfo.PW)
-			{	// success
-				retData.result = ESignResult::Success;
+			{	// delete success
+				retData.result = EResult::Success_DeleteAccount;
+				retData.msg = ResultMSG::DeleteSuccessMsg;
 				return retData;
 			}
 			// pw mismatch
-			retData.result = ESignResult::Fail;
-			retData.failType = EFailType::PW_mismatch;
+			retData.result = EResult::WrongPW;
+			retData.msg = ResultMSG::WrongPWMsg;
 			return retData;
 		}
 	}
 
-	// id mismatch
-	retData.result = ESignResult::Fail;
-	retData.failType = EFailType::ID_mismatch;
+	// NotExistID
+	retData.result = EResult::NotExistID;
+	retData.msg = ResultMSG::NotExistIDMsg;
+
 	return retData;
 }
 
-SignManager::ResultInfo SignManager::SignInProcess(const SignInfo inInfo)
+SignManager::ResultData SignManager::SignInProcess(const SignInfo inInfo)
 {
-	ResultInfo retData;
+	ResultData retData;
 
 	for (const auto& item : m_info_list)
 	{
@@ -97,118 +110,28 @@ SignManager::ResultInfo SignManager::SignInProcess(const SignInfo inInfo)
 		{
 			if (item->PW == inInfo.PW)
 			{	// success
-				retData.result = ESignResult::Success;
+				retData.result = EResult::Success_SingIn;
+				retData.msg = ResultMSG::SignInSuccessMsg;
 				return retData;
 			}
 			// pw mismatch
-			retData.result = ESignResult::Fail;
-			retData.failType = EFailType::PW_mismatch;
+			retData.result = EResult::WrongPW;
+			retData.msg = ResultMSG::WrongPWMsg;
 			return retData;
 		}
 	}
 	// id mismatch
-	retData.result = ESignResult::Fail;
-	retData.failType = EFailType::ID_mismatch;
+	retData.result = EResult::NotExistID;
+	retData.msg = ResultMSG::NotExistIDMsg;
 	return retData;
 }
 
-SignManager::ResultInfo SignManager::SignOutProcess(const SignInfo inInfo)
+SignManager::ResultData SignManager::SignOutProcess(const SignInfo inInfo)
 {
-	// .. login 된 상태면 바로 로그아웃 시키도록....
+	ResultData retData;
 
-	ResultInfo retData;
+	retData.result = EResult::Success_SignOut;
+	retData.msg = ResultMSG::SignOutSuccessMsg;	
 
 	return retData;
 }
-
-SignManager::ProcessResult SignManager::StreamProcess(InputMemoryStreamPtr inpStream, bool IsSignedIn)
-{
-	ProcessResult result;
-
-	EProtocol protocol;
-	SignInfo _signInfo;
-
-	inpStream->Read(&protocol, sizeof(EProtocol));
-
-	switch (protocol)
-	{
-	case SignManager::EProtocol::SignUp:
-	{	// id , pw
-		inpStream->Read(&_signInfo.id_len, sizeof(_signInfo.id_len));
-		inpStream->Read(_signInfo.ID, _signInfo.id_len);
-		inpStream->Read(&_signInfo.pw_len, sizeof(_signInfo.pw_len));
-		inpStream->Read(_signInfo.PW, _signInfo.pw_len);
-
-		result.resultInfo = SignUpProcess(_signInfo);
-
-		result.pStream = std::make_shared<OutputMemoryStream>(BUFSIZE);
-
-		switch (result.resultInfo.result)
-		{
-		case ESignResult::Success:
-		{	// success			
-			// stream = protocol + sign result + msg len + msg
-			protocol = EProtocol::SignResult;
-			size_t msg_len = strlen(SignUpSuccessMsg);
-
-			result.pStream->Write(&protocol, sizeof(EProtocol));
-			result.pStream->Write(&result.resultInfo.result, sizeof(result.resultInfo.result));
-			result.pStream->Write(&msg_len, sizeof(size_t));
-			result.pStream->Write(SignUpSuccessMsg, msg_len);
-		}
-		break;
-		case ESignResult::Fail:
-		{	// fail
-			// stream = protocol + Sign result + msg len + msg
-			result.pStream->Write(&protocol, sizeof(EProtocol));
-			result.pStream->Write(&result.resultInfo.result, sizeof(result.resultInfo.result));
-
-			switch (result.resultInfo.failType)
-			{
-			case EFailType::ID_exist:
-			{
-				size_t msg_len = strlen(IDExistMsg);
-				result.pStream->Write(&msg_len, sizeof(msg_len));
-				result.pStream->Write(IDExistMsg, msg_len);
-			}
-			break;
-			case EFailType::ID_mismatch:
-			{
-				size_t msg_len = strlen(IDMismatchMsg);
-				result.pStream->Write(&msg_len, sizeof(msg_len));
-				result.pStream->Write(IDMismatchMsg, msg_len);
-			}
-			break;
-			case EFailType::PW_mismatch:
-			{
-				size_t msg_len = strlen(PWMismatchMsg);
-				result.pStream->Write(&msg_len, sizeof(msg_len));
-				result.pStream->Write(PWMismatchMsg, msg_len);
-			}
-			break;
-			}
-		}
-		break;
-		}
-	}
-	break;
-	case SignManager::EProtocol::SignIn:
-	{	// id , pw
-		inpStream->Read(&_signInfo.id_len, sizeof(_signInfo.id_len));
-		inpStream->Read(_signInfo.ID, _signInfo.id_len);
-		inpStream->Read(&_signInfo.pw_len, sizeof(_signInfo.pw_len));
-		inpStream->Read(_signInfo.PW, _signInfo.pw_len);
-
-		result.resultInfo = SignInProcess(_signInfo);
-	}
-	break;
-	case SignManager::EProtocol::SignOut:
-	{
-		result.resultInfo = SignOutProcess(_signInfo);
-	}
-	break;
-	}
-
-	return result;
-}
-

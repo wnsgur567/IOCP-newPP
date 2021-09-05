@@ -7,50 +7,49 @@ public:
 	static constexpr size_t MAX_IDSIZE = SignInfo::MAX_IDSIZE;
 	static constexpr size_t MAX_PWSIZE = SignInfo::MAX_PWSIZE;
 
-	const char* SignUpSuccessMsg = "회원가입 성공";
-	const char* SignInSuccessMsg = "로그인 성공";
-	const char* SignOutSuccessMsg = "로그아웃 성공";
-	const char* IDExistMsg = "이미 존재하는 아이디입니다";
-	const char* IDMismatchMsg = "일치하는 아이디가 없습니다";
-	const char* PWMismatchMsg = "일치하는 패스워드가 없습니다";
-
-	enum class EProtocol
+	struct ResultMSG
 	{
-		None,
+	public:
+		static const wchar_t* SignInSuccessMsg;
+		static const wchar_t* SignOutSuccessMsg;
+		static const wchar_t* SignUpSuccessMsg;
+		static const wchar_t* DeleteSuccessMsg;
 
-		SignUp,
-		SignIn,
-		SignOut,
-		SignResult,
+		static const wchar_t* IDExistMsg;
+		static const wchar_t* NotExistIDMsg;
+		static const wchar_t* WrongPWMsg;
 	};
 
-	enum class ESignResult
+	enum class EProtocol : __int64
 	{
-		None,
-		Fail,
-		Success,
+		None = 0,
+
+		// flags...
+		SignIn = 1 << 0,
+		SignOut = 1 << 1,
+		SignUp = 1 << 2,
+		DeleteAccount = 1 << 3,
 	};
 
-	enum class EFailType
+	enum class EResult : __int32
 	{
-		None,
-		ID_exist,
-		ID_mismatch,
-		PW_mismatch,
+		None = 0,
+
+		// start 1000
+		ExistID = 1001,
+		NotExistID,
+		WrongPW,
+
+		Success_SingIn,
+		Success_SignOut,
+		Success_SignUp,
+		Success_DeleteAccount,
 	};
 
-	struct ResultInfo
+	struct ResultData
 	{
-		ESignResult result;
-		EFailType failType;
-		ResultInfo() : result(ESignResult::None), failType(EFailType::None) {}
-	};
-
-	struct ProcessResult
-	{
-		// ...
-		OutputMemoryStreamPtr pStream;
-		ResultInfo resultInfo;
+		EResult result;
+		const wchar_t* msg;
 	};
 
 protected:
@@ -64,11 +63,8 @@ private:
 	bool SaveInfo();	// 정보 변경사항을 저장
 	std::list<SignInfoPtr> m_info_list;
 public:
-	// process 관련
-	ResultInfo SignUpProcess(const SignInfo inInfo);
-	ResultInfo DeleteAccountProcess(const SignInfo inInfo);
-	ResultInfo SignInProcess(const SignInfo inInfo);
-	ResultInfo SignOutProcess(const SignInfo inInfo);
-
-	ProcessResult StreamProcess(InputMemoryStreamPtr inpStream, bool IsSignedIn);
+	SignManager::ResultData SignUpProcess(const SignInfo inInfo);
+	SignManager::ResultData DeleteAccountProcess(const SignInfo inInfo);
+	SignManager::ResultData SignInProcess(const SignInfo inInfo);
+	SignManager::ResultData SignOutProcess(const SignInfo inInfo);
 };

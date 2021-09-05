@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SessionStateSignalDefinitions.h"
+
 class IOCPSession;
 using IOCPSessionPtr = std::shared_ptr<IOCPSession>;
 
@@ -8,50 +10,33 @@ class IOCPSession
 {
 private:
 	friend class IOCPNetworkManager;
+	friend class SignState;
 public:
-	using Signal = __int64;
-	class ClientState;
-	using ClientStatePtr = std::shared_ptr<ClientState>;
+	using Signal = __int32;
+
 	class ClientState
 	{
 	public:
-		using fpCreateState = ClientStatePtr(*)();
-		enum class EState
-		{
-			None = 0,
-
-			Sign,
-			Lobby,
-			Village,
-			Dungeon,			
-
-			Chat,
-		};
+		using ProtocolSize_t = __int64;
+		using ResultSize_t = __int32;
 	protected:
-		EState m_state;
+		std::weak_ptr<IOCPSession> m_ownerPtr;
 	public:
-		ClientState(EState inState) : m_state(inState) {}
+		ClientState(IOCPSessionPtr inpOwnerSession)
+			: m_ownerPtr(inpOwnerSession) {}
+
+		// input read 시 protocol 부분 부터 읽음
 		virtual Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr) = 0;
-		virtual void OnSendCompleted(IOCPSessionPtr) = 0;
-		void ChangeState(IOCPSessionPtr pSession, EState inState, fpCreateState inFp)
-		{
-			auto pState = pSession->m_state_map.find(inState);
-			if (pSession->m_state_map.end() == pState)
-			{	// 없는 경우 
-				// 새 state 생성
-				ClientStatePtr newState = inFp();
-				pSession->m_state_map.insert({ inState, newState });
-				pSession->m_current_state = newState;
-			}
-			else
-			{	// 있는 경우 
-				pSession->m_current_state = pState->second;
-			}
-		}
+		virtual void OnSendCompleted() = 0;
 	};
+	using ClientStatePtr = std::shared_ptr<ClientState>;
+
+
 protected:
+	friend class ClientState;
 	ClientStatePtr m_current_state;	// 현재 state
-	std::unordered_map<ClientState::EState, ClientStatePtr> m_state_map;
+
+protected:
 	bool m_isSigned;
 	void Initialze() override;
 public:
