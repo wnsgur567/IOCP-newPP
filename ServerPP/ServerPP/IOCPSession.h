@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SessionStateSignalDefinitions.h"
-
 class IOCPSession;
 using IOCPSessionPtr = std::shared_ptr<IOCPSession>;
 
@@ -26,7 +24,7 @@ public:
 			: m_ownerPtr(inpOwnerSession) {}
 
 		// input read 시 protocol 부분 부터 읽음
-		virtual Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr) = 0;
+		virtual Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr&) = 0;
 		virtual void OnSendCompleted() = 0;
 	};
 	using ClientStatePtr = std::shared_ptr<ClientState>;

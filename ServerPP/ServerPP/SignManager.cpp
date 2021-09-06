@@ -30,11 +30,11 @@ SignManager::~SignManager()
 bool SignManager::LoadInfo()
 {
 	// 임시 값 셋팅
-	std::string s = "abcd";
+	std::wstring s = L"abcd";
 	for (size_t i = 0; i < 4; i++)
 	{
-		std::string ss = s + (char)('e' + i);
-		SignInfoPtr newInfo = std::make_shared<SignInfo>(ss.c_str(), "1234");
+		std::wstring ss = s + (wchar_t)('e' + i);
+		SignInfoPtr newInfo = std::make_shared<SignInfo>(ss.c_str(), L"1234");
 		m_info_list.push_back(newInfo);
 	}
 

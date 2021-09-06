@@ -37,6 +37,10 @@ using VoidPtr = std::shared_ptr<void>;
 #include "CriticalSection.h"
 #include "CipherManager.h"
 
+
+#include "SignInfo.h"
+#include "SignManager.h"
+
 // net base
 #include "MemoryStream.h"
 #include "SocketAddress.h"
@@ -61,10 +65,11 @@ using VoidPtr = std::shared_ptr<void>;
 // network
 #include "SessionManager.h"
 #include "IOCPSession.h"
+
 #include "ClientState.h"
+#include "SignState.h"
+
 #include "IOCPNetworkManager.h"
 #include "Engine.h"
 
 // app
-#include "SignInfo.h"
-#include "SignManager.h"

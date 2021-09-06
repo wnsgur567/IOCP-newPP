@@ -46,6 +46,9 @@
     <Filter Include="10_App">
       <UniqueIdentifier>{00d82061-e394-4ad3-9f99-a8347f9e6f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_Network\SessionState">
+      <UniqueIdentifier>{b6fa8f0d-544c-4579-8492-06b95f4a1989}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -104,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="ClientState.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SignState.cpp">
+      <Filter>03_Network\SessionState</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSelectState.cpp">
+      <Filter>03_Network\SessionState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +190,12 @@
     </ClInclude>
     <ClInclude Include="SessionStateSignalDefinitions.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SignState.h">
+      <Filter>03_Network\SessionState</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelectState.h">
+      <Filter>03_Network\SessionState</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
