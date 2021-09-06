@@ -24,14 +24,7 @@ int main()
 	queryResult_t results;
 	manager.Query("select * from signinfo", results);
 
-	for (size_t i = 0; i < results->size(); i++)
-	{
-		for (size_t j = 0; j < (*results)[i].size(); j++)
-		{
-			printf("%s ", (*results)[i][j].c_str());
-		}
-		printf("\n");
-	}
+	// results... 
 
 	manager.__Finalize();
 
