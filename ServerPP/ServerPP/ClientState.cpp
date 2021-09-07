@@ -1,7 +1,7 @@
 #include "base.h"
 
 
-IOCPSession::Signal LobbyState::OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr&)
+IOCPSession::Signal LobbyState::OnRecvCompleted(InputMemoryStreamPtr, OutputMemoryStreamPtr&)
 {
 	return 0;
 }
@@ -15,7 +15,7 @@ IOCPSession::ClientStatePtr LobbyState::Create()
 	return IOCPSession::ClientStatePtr();
 }
 
-IOCPSession::Signal IdleState::OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr&)
+IOCPSession::Signal IdleState::OnRecvCompleted(InputMemoryStreamPtr, OutputMemoryStreamPtr&)
 {
 	return 0;
 }

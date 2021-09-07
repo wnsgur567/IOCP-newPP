@@ -78,6 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files\MySQL\MySQL Server 8.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\MySQL\MySQL Server 8.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -116,6 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,15 +143,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CharacterSelectState.cpp" />
-    <ClCompile Include="CipherManager.cpp" />
     <ClCompile Include="ClientState.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="IOCPNetworkManager.cpp" />
     <ClCompile Include="IOCPSessionBase.cpp" />
-    <ClCompile Include="KISA_CIPHER\KISA_SEED_ECB.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IOCPSession.cpp" />
-    <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="MemoryStream.cpp" />
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="PacketManager.cpp" />
@@ -160,11 +160,16 @@
     <ClCompile Include="SocketAddress.cpp" />
     <ClCompile Include="SocketUtil.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
+    <ClCompile Include="Utils\CriticalSection.cpp" />
+    <ClCompile Include="Utils\FileUtil.cpp" />
+    <ClCompile Include="Utils\KISA_CIPHER\CipherManager.cpp" />
+    <ClCompile Include="Utils\KISA_CIPHER\KISA_SEED_ECB.cpp" />
+    <ClCompile Include="Utils\MySQL\SQLManager.cpp" />
+    <ClCompile Include="Utils\StringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h" />
     <ClInclude Include="CharacterSelectState.h" />
-    <ClInclude Include="CipherManager.h" />
     <ClInclude Include="ClientState.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineBase.h" />
@@ -172,8 +177,6 @@
     <ClInclude Include="IOCPNetworkManagerBase.h" />
     <ClInclude Include="IOCPSessionBase.h" />
     <ClInclude Include="IOCPSession.h" />
-    <ClInclude Include="CriticalSection.h" />
-    <ClInclude Include="KISA_CIPHER\KISA_SEED_ECB.h" />
     <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="NetworkManagerServer.h" />
     <ClInclude Include="Packet.h" />
@@ -185,10 +188,16 @@
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
     <ClInclude Include="SignState.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="SocketAddress.h" />
     <ClInclude Include="SocketUtil.h" />
     <ClInclude Include="TCPSocket.h" />
+    <ClInclude Include="Utils\CriticalSection.h" />
+    <ClInclude Include="Utils\FileUtil.h" />
+    <ClInclude Include="Utils\KISA_CIPHER\CipherManager.h" />
+    <ClInclude Include="Utils\KISA_CIPHER\KISA_SEED_ECB.h" />
+    <ClInclude Include="Utils\MySQL\SQLManager.h" />
+    <ClInclude Include="Utils\Singleton.h" />
+    <ClInclude Include="Utils\StringUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

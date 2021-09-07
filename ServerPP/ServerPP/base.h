@@ -33,9 +33,12 @@ using VoidPtr = std::shared_ptr<void>;
 #define __CIPHER_ON
 
 // base
-#include "Singleton.h"
-#include "CriticalSection.h"
-#include "CipherManager.h"
+#include "./Utils/FileUtil.h"
+#include "./Utils/StringUtil.h"
+#include "./Utils/Singleton.h"
+#include "./Utils/CriticalSection.h"
+#include "./Utils/KISA_CIPHER/CipherManager.h"
+
 
 
 #include "SignInfo.h"

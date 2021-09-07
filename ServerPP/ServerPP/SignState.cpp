@@ -2,7 +2,7 @@
 
 //#define TESTING
 
-IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, __out OutputMemoryStreamPtr& outpStream)
+IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, OutputMemoryStreamPtr& outpStream)
 {
 
 #ifdef TESTING
@@ -36,7 +36,7 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, _
 	printf("---SignState OnRecvCompleted Process...\n");
 #endif //  __DEBUG
 
-	SignManager::EResult retResult;
+	SignManager::EResult retResult = SignManager::EResult::None;
 
 	EProtocol protocol;
 
@@ -82,13 +82,13 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, _
 		// write result
 		outpStream->Write(&resultData.result, sizeof(resultData.result));
 		// write result msg
-		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
 		outpStream->Write(&msg_length, sizeof(int));
 		outpStream->Write(resultData.msg, msg_length);
 		/// write end
 
 #ifdef __DEBUG
-		printf("SignState write to stream : %dbytes\n",
+		printf("SignState write to stream : %llubytes\n",
 			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
 #endif // __DEBUG		
 	}
@@ -134,12 +134,12 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, _
 		// write result
 		outpStream->Write(&resultData.result, sizeof(resultData.result));
 		// write result msg
-		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
 		outpStream->Write(&msg_length, sizeof(int));
 		outpStream->Write(resultData.msg, msg_length);
 		/// write end
 #ifdef __DEBUG
-		printf("SignState write to stream : %dbytes\n",
+		printf("SignState write to stream : %llubytes\n",
 			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
 #endif // __DEBUG	
 	}
@@ -185,13 +185,13 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, _
 		// write result
 		outpStream->Write(&resultData.result, sizeof(resultData.result));
 		// write result msg
-		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
 		outpStream->Write(&msg_length, sizeof(int));
 		outpStream->Write(resultData.msg, msg_length);
 		/// write end
 
 #ifdef __DEBUG
-		printf("SignState write to stream : %dbytes\n",
+		printf("SignState write to stream : %llubytes\n",
 			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
 #endif // __DEBUG	
 	}
@@ -237,13 +237,13 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, _
 		// write result
 		outpStream->Write(&resultData.result, sizeof(resultData.result));
 		// write result msg
-		int msg_length = wcslen(resultData.msg) * sizeof(wchar_t);	// 2bytes per one wchar
+		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
 		outpStream->Write(&msg_length, sizeof(int));
 		outpStream->Write(resultData.msg, msg_length);
 		/// write end
 
 #ifdef __DEBUG
-		printf("SignState write to stream : %dbytes\n",
+		printf("SignState write to stream : %llubytes\n",
 			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
 #endif // __DEBUG	
 	}
@@ -284,7 +284,7 @@ void SignState::OnSendCompleted()
 IOCPSession::ClientStatePtr SignState::Create(IOCPSessionPtr pSession)
 {
 	std::shared_ptr<SignState> retState;
-	retState.reset(new SignState(pSession));		
+	retState.reset(new SignState(pSession));
 
 	return retState;
 }

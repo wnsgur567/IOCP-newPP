@@ -15,7 +15,7 @@ private:
 protected:
 	SignState(IOCPSessionPtr inpOwnerSession) : ClientState(inpOwnerSession) {}
 public:
-	virtual IOCPSession::Signal OnRecvCompleted(InputMemoryStreamPtr, __out OutputMemoryStreamPtr&) override;
+	virtual IOCPSession::Signal OnRecvCompleted(InputMemoryStreamPtr, OutputMemoryStreamPtr&) override;
 	virtual void OnSendCompleted() override;
 
 	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);

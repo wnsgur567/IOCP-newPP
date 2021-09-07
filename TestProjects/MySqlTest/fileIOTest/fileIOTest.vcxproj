@@ -116,6 +116,8 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,9 +141,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FileUtil.h" />
     <ClInclude Include="StringUtil.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StringUtil.cpp" />
   </ItemGroup>

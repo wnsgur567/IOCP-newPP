@@ -6,7 +6,7 @@
 
 int main()
 {
-
+	using namespace SQL;
 	using queryResult_t = SQLManager::queryResult_t;
 
 	SQLManager::InitArgs args;
