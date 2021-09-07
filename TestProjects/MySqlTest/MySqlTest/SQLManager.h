@@ -1,5 +1,7 @@
 #pragma once
 
+// c examples https://zetcode.com/db/mysqlc/
+
 #define __DEBUG
 
 #include <mysql.h>
@@ -126,6 +128,27 @@ public:
 #endif
 		}
 		mysql_free_result(pResult);
+
+#ifdef __DEBUG
+		printf("select query complete\n");
+#endif
+
+		return true;
+	}
+
+	bool Query(const char* inQuery)
+	{
+		int retval = mysql_query(m_handle, inQuery);
+		if (retval != 0)
+		{	// query fail
+			printf("MySql query error : %s", mysql_error(&m_conn));
+			return false;
+		}		
+
+
+#ifdef __DEBUG
+		printf("other query complete\n");
+#endif
 
 		return true;
 	}

@@ -23,8 +23,10 @@ int main()
 
 	queryResult_t results;
 	manager.Query("select * from signinfo", results);
+	
+	manager.Query("INSERT INTO signinfo VALUES(null , 'code1','1234', now() , 1)");
 
-	// results... 
+	manager.Query("select * from signinfo", results);
 
 	manager.__Finalize();
 
