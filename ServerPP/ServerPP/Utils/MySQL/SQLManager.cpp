@@ -1,5 +1,7 @@
 #include "SQLManager.h"
 
+Implementation_sInstance(SQL::SQLManager);
+
 namespace SQL
 {
 	bool SQLManager::Initialize(LPVOID args)

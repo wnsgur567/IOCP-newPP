@@ -16,7 +16,7 @@
 namespace SQL
 {
 
-	class SQLManager : public Singleton<SQLManager>
+	class SQLManager : public MyBase::Singleton<SQLManager>
 	{
 	public:
 		using queryResult_t = std::vector<std::vector<std::string>>;

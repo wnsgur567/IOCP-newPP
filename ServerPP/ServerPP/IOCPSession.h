@@ -7,7 +7,8 @@ class IOCPSession
 	: public IOCPSessionBase, public std::enable_shared_from_this<IOCPSession>
 {
 private:
-	friend class IOCPNetworkManager;
+	DERIVED_ENGINE_FRIEND_CODE;
+	
 	friend class SignState;
 public:
 	using Signal = __int32;
@@ -36,9 +37,10 @@ protected:
 
 protected:
 	bool m_isSigned;
-	void Initialze() override;
-public:
 	IOCPSession();
+	static IOCPSessionBasePtr CreateSession();
+public:
+	void Initialze() override;
 
 	bool IsSigned() const;
 	//void SetSigned(bool b);

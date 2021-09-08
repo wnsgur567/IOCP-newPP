@@ -3,23 +3,26 @@
 #include <Windows.h>
 #include "../Singleton.h"
 
-typedef unsigned __int32	_DWORD;		// unsigned 4-byte data type
-
-class CipherManager : public Singleton<CipherManager>
+namespace NetCipher
 {
-private:
-	static constexpr size_t m_block_size = 16;	// 16 byte ( 16 * 8 = 128bit)
-	_DWORD m_pdwRoundKey[32];
-	// 16 byte (128 bit)
-	BYTE m_pbUserKey[m_block_size] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 		// User secret key
-						0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	typedef unsigned __int32	_DWORD;		// unsigned 4-byte data type
 
-public:
-	CipherManager();
+	class CipherManager : public MyBase::Singleton<CipherManager>
+	{
+	private:
+		static constexpr size_t m_block_size = 16;	// 16 byte ( 16 * 8 = 128bit)
+		_DWORD m_pdwRoundKey[32];
+		// 16 byte (128 bit)
+		BYTE m_pbUserKey[m_block_size] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 		// User secret key
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	bool Initialize(LPVOID) override;
-	void Finalize() override;
-public:
-	size_t Encryption(BYTE*, size_t);
-	void Decryption(BYTE*, size_t);
-};
+	public:
+		CipherManager();
+
+		bool Initialize(LPVOID) override;
+		void Finalize() override;
+	public:
+		size_t Encryption(BYTE*, size_t);
+		void Decryption(BYTE*, size_t);
+	};
+}

@@ -1,11 +1,18 @@
 #include "base.h"
 
 
+IOCPSessionBasePtr IOCPSession::CreateSession()
+{
+	IOCPSessionBasePtr retPointer;
+	retPointer.reset(new IOCPSession());
+	retPointer->Initialze();
+	return retPointer;
+}
+
 void IOCPSession::Initialze()
 {
 	// TODO : 모든 state 할당
-	auto pSignState = SignState::Create(shared_from_this());
-	 
+	auto pSignState = SignState::Create(shared_from_this());	 
 	
 	// 첫 시작을 로그인 상태로 변경함
 	m_current_state = pSignState;
@@ -20,7 +27,7 @@ IOCPSession::IOCPSession()
 
 bool IOCPSession::Recv()
 {
-	if (false == IOCPNetworkManager::sInstance->RecvAsync(
+	if (false == NetIOCP::IOCPNetworkManager::sInstance->RecvAsync(
 		m_pSock->GetSock(),
 		m_pRecvPacket,
 		shared_from_this()))
@@ -43,7 +50,7 @@ bool IOCPSession::Send(OutputMemoryStreamPtr pStream)
 	// 현재 진행중인 send 작업이 없다면 (있다면 보류됨)
 	if (m_sendPacketQueue.size() == 1)
 	{	// 즉시 전송
-		if (false == IOCPNetworkManager::sInstance->SendAsync(
+		if (false == NetIOCP::IOCPNetworkManager::sInstance->SendAsync(
 			m_pSock->GetSock(),
 			m_sendPacketQueue.front(),
 			shared_from_this()))
@@ -90,7 +97,7 @@ bool IOCPSession::OnCompleteRecv()
 	/*--------- data process end ----------*/
 
 	// recv 날려놓기
-	if (false == IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
+	if (false == NetIOCP::IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
 	{
 		return false;
 	}
@@ -116,7 +123,7 @@ bool IOCPSession::OnCompleteSend()
 	if (false == m_sendPacketQueue.empty())
 	{
 		// 즉시 전송
-		if (false == IOCPNetworkManager::sInstance->SendAsync(
+		if (false == NetIOCP::IOCPNetworkManager::sInstance->SendAsync(
 			m_pSock->GetSock(),
 			m_sendPacketQueue.front(),
 			shared_from_this()))

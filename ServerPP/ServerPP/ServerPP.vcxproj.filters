@@ -13,33 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="00_Base">
-      <UniqueIdentifier>{5608dda5-d868-49b9-9543-6fec32bc7787}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00_Base\header">
-      <UniqueIdentifier>{d7bd36c2-fb37-4d56-b02a-29fd892ac7e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00_Base\source">
-      <UniqueIdentifier>{390627ef-04a4-4d4a-99de-2106fb65a4c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01_NetBase">
-      <UniqueIdentifier>{b23e86d8-c4ec-4932-b363-3a9274bb851f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01_NetBase\source">
-      <UniqueIdentifier>{88b8fe81-3336-4b5a-ad9d-f0a15939797e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01_NetBase\header">
-      <UniqueIdentifier>{84ea678f-6183-47c6-a2d4-76fded9f162a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_IOCPBase">
-      <UniqueIdentifier>{acd295a6-ffa0-4fee-a73c-c44c5dd09c00}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_IOCPBase\header">
-      <UniqueIdentifier>{c38388e9-b93a-4d6f-96e3-e4bb1a7c5b0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_IOCPBase\source">
-      <UniqueIdentifier>{a6976a02-2e91-401b-bd34-f76297e3e34c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03_Network">
       <UniqueIdentifier>{10202043-1e05-4cac-9515-2f736c6acd9c}</UniqueIdentifier>
     </Filter>
@@ -48,6 +21,27 @@
     </Filter>
     <Filter Include="03_Network\SessionState">
       <UniqueIdentifier>{b6fa8f0d-544c-4579-8492-06b95f4a1989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01_NetBase">
+      <UniqueIdentifier>{a07ee3f3-b4b5-4b39-a8a8-8f489a72906c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_IOCPBase">
+      <UniqueIdentifier>{214cf3a6-a0a8-47ad-a01f-35fc580a47bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00_Base">
+      <UniqueIdentifier>{42a241a1-bad1-4415-b78a-74d8d453ac25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01_NetBase\header">
+      <UniqueIdentifier>{5333e16e-ee67-4149-b76a-8313d985acff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01_NetBase\src">
+      <UniqueIdentifier>{764fac44-7570-4c55-93ac-b8f05e6575d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_IOCPBase\header">
+      <UniqueIdentifier>{35401a97-8e60-49be-a28d-cd296e97d8ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_IOCPBase\src">
+      <UniqueIdentifier>{1606eb07-d864-4b15-9de8-8e30e15b213c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -63,38 +57,8 @@
     <ClCompile Include="Engine.cpp">
       <Filter>03_Network</Filter>
     </ClCompile>
-    <ClCompile Include="IOCPNetworkManager.cpp">
-      <Filter>03_Network</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketAddress.cpp">
-      <Filter>01_NetBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPSocket.cpp">
-      <Filter>01_NetBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionManager.cpp">
-      <Filter>03_Network</Filter>
-    </ClCompile>
     <ClCompile Include="IOCPSession.cpp">
       <Filter>03_Network</Filter>
-    </ClCompile>
-    <ClCompile Include="SocketUtil.cpp">
-      <Filter>01_NetBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="IOCPSessionBase.cpp">
-      <Filter>02_IOCPBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="Packet.cpp">
-      <Filter>02_IOCPBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionBase.cpp">
-      <Filter>02_IOCPBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketManager.cpp">
-      <Filter>02_IOCPBase\source</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryStream.cpp">
-      <Filter>01_NetBase\source</Filter>
     </ClCompile>
     <ClCompile Include="ClientState.cpp">
       <Filter>소스 파일</Filter>
@@ -105,23 +69,53 @@
     <ClCompile Include="CharacterSelectState.cpp">
       <Filter>03_Network\SessionState</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\CriticalSection.cpp">
+      <Filter>00_Base</Filter>
+    </ClCompile>
     <ClCompile Include="Utils\FileUtil.cpp">
-      <Filter>00_Base\source</Filter>
+      <Filter>00_Base</Filter>
     </ClCompile>
     <ClCompile Include="Utils\StringUtil.cpp">
-      <Filter>00_Base\source</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils\CriticalSection.cpp">
-      <Filter>00_Base\source</Filter>
+      <Filter>00_Base</Filter>
     </ClCompile>
     <ClCompile Include="Utils\MySQL\SQLManager.cpp">
-      <Filter>00_Base\source</Filter>
+      <Filter>00_Base</Filter>
     </ClCompile>
     <ClCompile Include="Utils\KISA_CIPHER\CipherManager.cpp">
-      <Filter>00_Base\source</Filter>
+      <Filter>00_Base</Filter>
     </ClCompile>
     <ClCompile Include="Utils\KISA_CIPHER\KISA_SEED_ECB.cpp">
-      <Filter>00_Base\source</Filter>
+      <Filter>00_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\MemoryStream.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\Packet.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\PacketManager.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\SocketAddress.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\SocketUtil.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\TCPSocket.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPBase\IOCPNetworkManager.cpp">
+      <Filter>02_IOCPBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPBase\IOCPSessionBase.cpp">
+      <Filter>02_IOCPBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPBase\IOCPSessionManager.cpp">
+      <Filter>02_IOCPBase\src</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPBase\SessionBase.cpp">
+      <Filter>02_IOCPBase\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -134,58 +128,13 @@
     <ClInclude Include="SignInfo.h">
       <Filter>10_App</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkManagerServer.h">
-      <Filter>03_Network</Filter>
-    </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>03_Network</Filter>
-    </ClInclude>
-    <ClInclude Include="IOCPNetworkManager.h">
-      <Filter>03_Network</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketAddress.h">
-      <Filter>01_NetBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="SocketUtil.h">
-      <Filter>01_NetBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="TCPSocket.h">
-      <Filter>01_NetBase\header</Filter>
     </ClInclude>
     <ClInclude Include="IOCPSession.h">
       <Filter>03_Network</Filter>
     </ClInclude>
-    <ClInclude Include="SessionManager.h">
-      <Filter>03_Network</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionManagerBase.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionBase.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketManager.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Packet.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="IOCPSessionBase.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="IOCPNetworkManagerBase.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineBase.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryStream.h">
-      <Filter>01_NetBase\header</Filter>
-    </ClInclude>
     <ClInclude Include="ClientState.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionStateSignalDefinitions.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SignState.h">
@@ -194,26 +143,68 @@
     <ClInclude Include="CharacterSelectState.h">
       <Filter>03_Network\SessionState</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\CriticalSection.h">
+      <Filter>00_Base</Filter>
+    </ClInclude>
     <ClInclude Include="Utils\FileUtil.h">
-      <Filter>00_Base\header</Filter>
+      <Filter>00_Base</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Singleton.h">
-      <Filter>00_Base\header</Filter>
+      <Filter>00_Base</Filter>
     </ClInclude>
     <ClInclude Include="Utils\StringUtil.h">
-      <Filter>00_Base\header</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\CriticalSection.h">
-      <Filter>00_Base\header</Filter>
+      <Filter>00_Base</Filter>
     </ClInclude>
     <ClInclude Include="Utils\MySQL\SQLManager.h">
-      <Filter>00_Base\header</Filter>
+      <Filter>00_Base</Filter>
     </ClInclude>
     <ClInclude Include="Utils\KISA_CIPHER\CipherManager.h">
-      <Filter>00_Base\header</Filter>
+      <Filter>00_Base</Filter>
     </ClInclude>
     <ClInclude Include="Utils\KISA_CIPHER\KISA_SEED_ECB.h">
-      <Filter>00_Base\header</Filter>
+      <Filter>00_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\MemoryStream.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\Packet.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\PacketManager.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\SocketAddress.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\SocketUtil.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\TCPSocket.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\NetBase_RootHeader.h">
+      <Filter>01_NetBase</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\IOCPBase_RootHeader.h">
+      <Filter>02_IOCPBase</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\EngineBase.h">
+      <Filter>02_IOCPBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\IOCPNetworkManager.h">
+      <Filter>02_IOCPBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\IOCPSessionBase.h">
+      <Filter>02_IOCPBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\IOCPSessionManager.h">
+      <Filter>02_IOCPBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\NetworkManagerServer.h">
+      <Filter>02_IOCPBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\SessionBase.h">
+      <Filter>02_IOCPBase\header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
