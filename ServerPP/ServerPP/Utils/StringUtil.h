@@ -5,8 +5,10 @@
 // https://modoocode.com/249			std::string find function reference
 
 
-
+#ifndef _WINSOCK2API_
 #include <Windows.h>
+#endif // !_WINSOCK2API_
+
 #include <locale.h>
 #include <string>
 

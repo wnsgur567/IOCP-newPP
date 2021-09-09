@@ -168,7 +168,7 @@
     <ClCompile Include="Utils\StringUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base.h" />
+    <ClInclude Include="All.h" />
     <ClInclude Include="CharacterSelectState.h" />
     <ClInclude Include="ClientState.h" />
     <ClInclude Include="Engine.h" />
@@ -179,6 +179,7 @@
     <ClInclude Include="IOCPBase\IOCPSessionManager.h" />
     <ClInclude Include="IOCPBase\NetworkManagerServer.h" />
     <ClInclude Include="IOCPBase\SessionBase.h" />
+    <ClInclude Include="IOCPNet_RootHeader.h" />
     <ClInclude Include="IOCPSession.h" />
     <ClInclude Include="NetBase\MemoryStream.h" />
     <ClInclude Include="NetBase\NetBase_RootHeader.h" />

@@ -1,4 +1,4 @@
-#include "base.h"
+#include "IOCPNet_RootHeader.h"
 
 SignInfo::SignInfo(const wchar_t* inID, const wchar_t* inPW)
 	: id_len(0), pw_len(0), ID(), PW()

@@ -6,14 +6,15 @@ namespace IOCP_Base
 {
 
 	bool IOCPNetworkManager::Initialize(LPVOID arg)
-	{
+	{	
+
 		// iocp 입출력 포트 생성
 		m_pHcp = NetBase::SocketUtil::CreateIOCP(IOCPNetworkManager::WorkerThread, m_hWorkerThreads);
 		if (m_pHcp.get() == nullptr)
 			return false;
 
 		// parent init
-		if (false == NetworkManagerServer::Initialize(nullptr))
+		if (false == NetworkManagerServer::Initialize(arg))
 			return false;
 
 		return true;

@@ -1,6 +1,6 @@
 #pragma once
 
-class SignManager : public Singleton<SignManager>
+class SignManager : public MyBase::Singleton<SignManager>
 {
 	friend class Singleton;
 public:

@@ -1,9 +1,9 @@
-#include "base.h"
+#include "IOCPNet_RootHeader.h"
 
 
-IOCPSessionBasePtr IOCPSession::CreateSession()
+IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 {
-	IOCPSessionBasePtr retPointer;
+	IOCP_Base::IOCPSessionBasePtr retPointer;
 	retPointer.reset(new IOCPSession());
 	retPointer->Initialze();
 	return retPointer;
@@ -12,10 +12,10 @@ IOCPSessionBasePtr IOCPSession::CreateSession()
 void IOCPSession::Initialze()
 {
 	// TODO : 모든 state 할당
-	auto pSignState = SignState::Create(shared_from_this());	 
+	//auto pSignState = SignState::Create(shared_from_this());	 
 	
 	// 첫 시작을 로그인 상태로 변경함
-	m_current_state = pSignState;
+	//m_current_state = pSignState;
 }
 
 IOCPSession::IOCPSession()
@@ -27,7 +27,7 @@ IOCPSession::IOCPSession()
 
 bool IOCPSession::Recv()
 {
-	if (false == NetIOCP::IOCPNetworkManager::sInstance->RecvAsync(
+	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(
 		m_pSock->GetSock(),
 		m_pRecvPacket,
 		shared_from_this()))
@@ -36,9 +36,9 @@ bool IOCPSession::Recv()
 	return true;
 }
 
-bool IOCPSession::Send(OutputMemoryStreamPtr pStream)
+bool IOCPSession::Send(NetBase::OutputMemoryStreamPtr pStream)
 {
-	auto pSendPacket = PacketManager::sInstance->GetSendPacketFromPool();
+	auto pSendPacket = NetBase::PacketManager::sInstance->GetSendPacketFromPool();
 
 	//
 	pSendPacket->Packing(m_newSendID, pStream);
@@ -50,7 +50,7 @@ bool IOCPSession::Send(OutputMemoryStreamPtr pStream)
 	// 현재 진행중인 send 작업이 없다면 (있다면 보류됨)
 	if (m_sendPacketQueue.size() == 1)
 	{	// 즉시 전송
-		if (false == NetIOCP::IOCPNetworkManager::sInstance->SendAsync(
+		if (false == IOCP_Base::IOCPNetworkManager::sInstance->SendAsync(
 			m_pSock->GetSock(),
 			m_sendPacketQueue.front(),
 			shared_from_this()))
@@ -62,8 +62,8 @@ bool IOCPSession::Send(OutputMemoryStreamPtr pStream)
 
 bool IOCPSession::OnCompleteRecv()
 {
-	PacketBase::packetId_t packet_id;
-	InputMemoryStreamPtr pStream;
+	NetBase::PacketBase::packetId_t packet_id;
+	NetBase::InputMemoryStreamPtr pStream;
 
 	m_pRecvPacket->UnPackging(packet_id, pStream);
 
@@ -82,7 +82,7 @@ bool IOCPSession::OnCompleteRecv()
 	/*--------- data process     ----------*/
 
 	// for send stream
-	OutputMemoryStreamPtr pOutputStream;
+	NetBase::OutputMemoryStreamPtr pOutputStream;
 	auto ret_signal = m_current_state->OnRecvCompleted(pStream,pOutputStream);
 
 #ifdef __DEBUG
@@ -97,7 +97,7 @@ bool IOCPSession::OnCompleteRecv()
 	/*--------- data process end ----------*/
 
 	// recv 날려놓기
-	if (false == NetIOCP::IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
+	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
 	{
 		return false;
 	}
@@ -108,9 +108,9 @@ bool IOCPSession::OnCompleteRecv()
 bool IOCPSession::OnCompleteSend()
 {
 	// send packet 을 회수
-	SendPacketPtr pSendPacket = m_sendPacketQueue.front();
+	NetBase::SendPacketPtr pSendPacket = m_sendPacketQueue.front();
 	m_sendPacketQueue.pop();
-	PacketManager::sInstance->RetrieveSendPacket(pSendPacket);
+	NetBase::PacketManager::sInstance->RetrieveSendPacket(pSendPacket);
 
 	/*--------- change state process     ----------*/
 
@@ -123,7 +123,7 @@ bool IOCPSession::OnCompleteSend()
 	if (false == m_sendPacketQueue.empty())
 	{
 		// 즉시 전송
-		if (false == NetIOCP::IOCPNetworkManager::sInstance->SendAsync(
+		if (false == IOCP_Base::IOCPNetworkManager::sInstance->SendAsync(
 			m_pSock->GetSock(),
 			m_sendPacketQueue.front(),
 			shared_from_this()))

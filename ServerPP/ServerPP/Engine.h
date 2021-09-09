@@ -1,6 +1,6 @@
 #pragma once
 
-class Engine : public NetIOCP::EngineBase<Engine, IOCPSession>
+class Engine : public IOCP_Base::EngineBase<Engine, IOCPSession>
 {
 	friend class Singleton;
 protected:

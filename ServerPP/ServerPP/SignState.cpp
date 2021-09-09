@@ -1,8 +1,8 @@
-#include "base.h"
+#include "IOCPNet_RootHeader.h"
 
 //#define TESTING
 
-IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, OutputMemoryStreamPtr& outpStream)
+IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
 
 #ifdef TESTING
@@ -70,7 +70,7 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, O
 
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// write result to send stream (only data part)
 		// sendpacket is composed with (size + id + data)
@@ -119,10 +119,10 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, O
 #endif // __DEBUG
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// write result to send stream (only data part)
 		// sendpacket is composed with (size + id + data)
@@ -170,10 +170,10 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, O
 #endif // __DEBUG
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// write result to send stream (only data part)
 		// sendpacket is composed with (size + id + data)
@@ -222,10 +222,10 @@ IOCPSession::Signal SignState::OnRecvCompleted(InputMemoryStreamPtr inpStream, O
 #endif // __DEBUG
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// get new send stream
-		outpStream = PacketManager::sInstance->GetSendStreamFromPool();
+		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// write result to send stream (only data part)
 		// sendpacket is composed with (size + id + data)

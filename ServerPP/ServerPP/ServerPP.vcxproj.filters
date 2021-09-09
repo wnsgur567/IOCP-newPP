@@ -13,14 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="03_Network">
-      <UniqueIdentifier>{10202043-1e05-4cac-9515-2f736c6acd9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="10_App">
       <UniqueIdentifier>{00d82061-e394-4ad3-9f99-a8347f9e6f36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03_Network\SessionState">
-      <UniqueIdentifier>{b6fa8f0d-544c-4579-8492-06b95f4a1989}</UniqueIdentifier>
     </Filter>
     <Filter Include="01_NetBase">
       <UniqueIdentifier>{a07ee3f3-b4b5-4b39-a8a8-8f489a72906c}</UniqueIdentifier>
@@ -43,6 +37,18 @@
     <Filter Include="02_IOCPBase\src">
       <UniqueIdentifier>{1606eb07-d864-4b15-9de8-8e30e15b213c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_SessionState">
+      <UniqueIdentifier>{b6fa8f0d-544c-4579-8492-06b95f4a1989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_IOCPImple">
+      <UniqueIdentifier>{10202043-1e05-4cac-9515-2f736c6acd9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_IOCPImple\src">
+      <UniqueIdentifier>{df13e855-a36e-45c4-8a00-9ac2c8cf228e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_IOCPImple\header">
+      <UniqueIdentifier>{5becb5aa-daa6-413c-8ca3-de65e6b8d68f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,20 +60,11 @@
     <ClCompile Include="SignManager.cpp">
       <Filter>10_App</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>03_Network</Filter>
-    </ClCompile>
-    <ClCompile Include="IOCPSession.cpp">
-      <Filter>03_Network</Filter>
-    </ClCompile>
     <ClCompile Include="ClientState.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="SignState.cpp">
-      <Filter>03_Network\SessionState</Filter>
-    </ClCompile>
     <ClCompile Include="CharacterSelectState.cpp">
-      <Filter>03_Network\SessionState</Filter>
+      <Filter>03_SessionState</Filter>
     </ClCompile>
     <ClCompile Include="Utils\CriticalSection.cpp">
       <Filter>00_Base</Filter>
@@ -117,9 +114,18 @@
     <ClCompile Include="IOCPBase\SessionBase.cpp">
       <Filter>02_IOCPBase\src</Filter>
     </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>03_IOCPImple\src</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPSession.cpp">
+      <Filter>03_IOCPImple\src</Filter>
+    </ClCompile>
+    <ClCompile Include="SignState.cpp">
+      <Filter>10_App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base.h">
+    <ClInclude Include="All.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SignManager.h">
@@ -128,20 +134,11 @@
     <ClInclude Include="SignInfo.h">
       <Filter>10_App</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>03_Network</Filter>
-    </ClInclude>
-    <ClInclude Include="IOCPSession.h">
-      <Filter>03_Network</Filter>
-    </ClInclude>
     <ClInclude Include="ClientState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="SignState.h">
-      <Filter>03_Network\SessionState</Filter>
-    </ClInclude>
     <ClInclude Include="CharacterSelectState.h">
-      <Filter>03_Network\SessionState</Filter>
+      <Filter>03_SessionState</Filter>
     </ClInclude>
     <ClInclude Include="Utils\CriticalSection.h">
       <Filter>00_Base</Filter>
@@ -205,6 +202,18 @@
     </ClInclude>
     <ClInclude Include="IOCPBase\SessionBase.h">
       <Filter>02_IOCPBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPNet_RootHeader.h">
+      <Filter>03_IOCPImple</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>03_IOCPImple\header</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPSession.h">
+      <Filter>03_IOCPImple\header</Filter>
+    </ClInclude>
+    <ClInclude Include="SignState.h">
+      <Filter>10_App</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

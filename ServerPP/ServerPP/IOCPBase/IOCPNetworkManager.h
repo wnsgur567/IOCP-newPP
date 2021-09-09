@@ -9,6 +9,7 @@ namespace IOCP_Base
 		friend class Singleton;
 	public:
 		using packetSize_t = NetBase::PacketManager::packetSize_t;
+		using InitArgs = NetworkManagerServer::InitArgs;
 	protected:
 
 		HandlePtr	 m_pHcp;

@@ -1,12 +1,20 @@
 #pragma once
 
-#define DERIVED_ENGINE_FRIEND_CODE template<typename DerivedEngine, typename DerivedSession> friend class NetIOCP::EngineBase
+#define DERIVED_ENGINE_FRIEND_CODE template<typename DerivedEngine, typename DerivedSession> friend class IOCP_Base::EngineBase
 
 namespace IOCP_Base
 {
 	template <typename DerivedEngine, typename DerivedSession>
 	class EngineBase : public MyBase::Singleton<DerivedEngine>
 	{
+	public:
+		struct InitArgs
+		{
+			NetBase::PacketManager::packetSize_t stream_buf_size;
+			gsize64_t acptpacket_pool_size;
+			gsize64_t recvpacket_pool_size;
+			gsize64_t sendpacket_pool_size;
+		};
 	public:
 		virtual bool DoFrame() = 0;
 		bool DoLoop();
@@ -31,10 +39,12 @@ namespace IOCP_Base
 	}
 
 	template<typename DerivedEngine, typename DerivedSession>
-	inline bool EngineBase<DerivedEngine, DerivedSession>::Initialize(LPVOID)
+	inline bool EngineBase<DerivedEngine, DerivedSession>::Initialize(LPVOID agrs)
 	{
+		InitArgs* pArgs = (InitArgs*)agrs;
+
 		if (false == IOCPSessionManager::StaticInit())
-			return false;		
+			return false;
 
 		IOCPSessionManager::sInstance->Initialize(nullptr);
 		IOCPSessionManager::sInstance->RegistCreationFunction(DerivedSession::CreateSession);
@@ -46,13 +56,14 @@ namespace IOCP_Base
 		// 암호 매니저
 		if (false == NetCipher::CipherManager::StaticInit())
 			return false;
-
 		NetCipher::CipherManager::sInstance->Initialize(nullptr);
 
 		// 패킷 매니저
 		NetBase::PacketManager::InitializeArgs packetArgs;
-		packetArgs.capacityOfRecvBuffer = packetArgs.capacityOfSendBuffer = BUFSIZE;
-		packetArgs.numberOfAcptPacket = packetArgs.numberOfRecvPacket = packetArgs.numberOfSendPacket = 1024;
+		packetArgs.capacityOfRecvBuffer = packetArgs.capacityOfSendBuffer = pArgs->stream_buf_size;
+		packetArgs.numberOfAcptPacket = pArgs->acptpacket_pool_size;
+		packetArgs.numberOfRecvPacket = pArgs->recvpacket_pool_size;
+		packetArgs.numberOfSendPacket = pArgs->sendpacket_pool_size;
 		if (false == NetBase::PacketManager::StaticInit())
 			return false;
 		NetBase::PacketManager::sInstance->Initialize(&packetArgs);

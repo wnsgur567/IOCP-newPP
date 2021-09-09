@@ -1,4 +1,3 @@
-
 #include "NetBase_RootHeader.h"
 #include "../Utils/KISA_CIPHER/CipherManager.h"
 

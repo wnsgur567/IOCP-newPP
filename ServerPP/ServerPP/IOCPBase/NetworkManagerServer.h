@@ -5,11 +5,17 @@ namespace IOCP_Base
 	template <typename T>
 	class NetworkManagerServer : public MyBase::Singleton<T>
 	{
+	public:
+		struct InitArgs
+		{
+			std::string ip;
+			u_short port;
+		};
 	protected:
 		NetBase::TCPSocketPtr m_pListenSock;
 		u_short m_port;
 	protected:
-		NetworkManagerServer() : m_port(SERVERPORT) {}
+		NetworkManagerServer() : m_port(0) {}
 	public:
 		NetworkManagerServer(const NetworkManagerServer&) = delete;
 		NetworkManagerServer& operator=(const NetworkManagerServer&) = delete;
@@ -29,8 +35,13 @@ namespace IOCP_Base
 	}
 
 	template<typename T>
-	bool NetworkManagerServer<T>::Initialize(LPVOID)
+	bool NetworkManagerServer<T>::Initialize(LPVOID args)
 	{
+		InitArgs* pArgs = (InitArgs*)args;
+		// ip...
+		m_port = pArgs->port;
+
+
 		// wsa init
 		if (false == NetBase::SocketUtil::Init())
 			return false;

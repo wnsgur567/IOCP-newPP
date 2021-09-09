@@ -1,6 +1,9 @@
 #pragma once
 
+#ifndef _WINSOCK2API_
 #include <Windows.h>
+#endif // !_WINSOCK2API_
+
 
 namespace MyBase
 {
