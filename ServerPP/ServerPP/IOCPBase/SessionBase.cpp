@@ -11,6 +11,7 @@ namespace IOCP_Base
 
 	SessionBase::~SessionBase()
 	{
+		printf("!Session\n");
 	}
 
 	NetBase::TCPSocketPtr SessionBase::GetSockPtr()

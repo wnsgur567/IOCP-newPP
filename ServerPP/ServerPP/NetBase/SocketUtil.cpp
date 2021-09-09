@@ -56,9 +56,11 @@ namespace NetBase
 	// 
 	HandlePtr SocketUtil::CreateIOCP(LPTHREAD_START_ROUTINE inWorkThreadPtr, std::vector<HandlePtr>& outWorkerThreads)
 	{
+		HANDLE hcp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+
 		HandlePtr hcpPtr;
-		hcpPtr = std::make_shared<HANDLE>(
-			CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0));
+		hcpPtr = std::make_shared<HANDLE>(hcp);
+			
 		if (*hcpPtr == nullptr)
 			return nullptr;
 

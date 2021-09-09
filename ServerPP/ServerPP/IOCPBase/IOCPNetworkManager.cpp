@@ -1,13 +1,14 @@
 #include "IOCPBase_RootHeader.h"
 
+#include <handleapi.h>
+
 Implementation_sInstance(IOCP_Base::IOCPNetworkManager);
 
 namespace IOCP_Base
 {
 
 	bool IOCPNetworkManager::Initialize(LPVOID arg)
-	{	
-
+	{
 		// iocp 입출력 포트 생성
 		m_pHcp = NetBase::SocketUtil::CreateIOCP(IOCPNetworkManager::WorkerThread, m_hWorkerThreads);
 		if (m_pHcp.get() == nullptr)
@@ -174,6 +175,7 @@ namespace IOCP_Base
 				case  NetBase::OverlappedEx::EOverlappedType::Accept:
 				{
 					NetBase::AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<NetBase::AcceptPacket>(pPacket.lock());
+					
 					// OnAccept
 					IOCPNetworkManager::sInstance->OnAccepted(pAcceptPacket);
 				}
@@ -302,10 +304,12 @@ namespace IOCP_Base
 	{
 		// 새로운 클라이언트 세션 생성
 		IOCPSessionBasePtr pSession = IOCPSessionManager::sInstance->CreateSession();
+
 		pSession->SetEndPoint(inpPacket->GetPSock(), inpPacket->GetAddr());
 
 		// thread 연결
-		NetBase::SocketUtil::LinkIOCPThread(inpPacket->GetPSock()->GetSock(), *m_pHcp);
+		if (nullptr == NetBase::SocketUtil::LinkIOCPThread(inpPacket->GetPSock()->GetSock(), *m_pHcp))
+			printf("thread 연결 오류 LinkIOCPThread\n");
 
 		// accept 패킷 회수
 		NetBase::PacketManager::sInstance->RetrieveAcceptPacket(inpPacket);

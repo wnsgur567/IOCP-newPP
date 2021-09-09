@@ -7,4 +7,5 @@ protected:
 	Engine() {}
 public:
 	bool DoFrame() override;
+	bool Initialize(LPVOID args);
 };

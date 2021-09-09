@@ -1,5 +1,6 @@
 #pragma once
 
+#define __DEBUG
 
 #include "../NetBase/NetBase_RootHeader.h"
 #include "../Utils/KISA_CIPHER/CipherManager.h"

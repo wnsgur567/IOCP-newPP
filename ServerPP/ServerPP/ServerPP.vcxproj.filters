@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="10_App">
-      <UniqueIdentifier>{00d82061-e394-4ad3-9f99-a8347f9e6f36}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01_NetBase">
       <UniqueIdentifier>{a07ee3f3-b4b5-4b39-a8a8-8f489a72906c}</UniqueIdentifier>
     </Filter>
@@ -37,9 +34,6 @@
     <Filter Include="02_IOCPBase\src">
       <UniqueIdentifier>{1606eb07-d864-4b15-9de8-8e30e15b213c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03_SessionState">
-      <UniqueIdentifier>{b6fa8f0d-544c-4579-8492-06b95f4a1989}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03_IOCPImple">
       <UniqueIdentifier>{10202043-1e05-4cac-9515-2f736c6acd9c}</UniqueIdentifier>
     </Filter>
@@ -49,22 +43,25 @@
     <Filter Include="03_IOCPImple\header">
       <UniqueIdentifier>{5becb5aa-daa6-413c-8ca3-de65e6b8d68f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="10_Sign">
+      <UniqueIdentifier>{00d82061-e394-4ad3-9f99-a8347f9e6f36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="11_CharacterSelect">
+      <UniqueIdentifier>{6c8408e1-a16e-43b8-9cff-e6e4076fa3c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SignInfo.cpp">
-      <Filter>10_App</Filter>
+      <Filter>10_Sign</Filter>
     </ClCompile>
     <ClCompile Include="SignManager.cpp">
-      <Filter>10_App</Filter>
+      <Filter>10_Sign</Filter>
     </ClCompile>
     <ClCompile Include="ClientState.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterSelectState.cpp">
-      <Filter>03_SessionState</Filter>
     </ClCompile>
     <ClCompile Include="Utils\CriticalSection.cpp">
       <Filter>00_Base</Filter>
@@ -121,7 +118,10 @@
       <Filter>03_IOCPImple\src</Filter>
     </ClCompile>
     <ClCompile Include="SignState.cpp">
-      <Filter>10_App</Filter>
+      <Filter>10_Sign</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSelectState.cpp">
+      <Filter>11_CharacterSelect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,16 +129,13 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SignManager.h">
-      <Filter>10_App</Filter>
+      <Filter>10_Sign</Filter>
     </ClInclude>
     <ClInclude Include="SignInfo.h">
-      <Filter>10_App</Filter>
+      <Filter>10_Sign</Filter>
     </ClInclude>
     <ClInclude Include="ClientState.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterSelectState.h">
-      <Filter>03_SessionState</Filter>
     </ClInclude>
     <ClInclude Include="Utils\CriticalSection.h">
       <Filter>00_Base</Filter>
@@ -213,7 +210,10 @@
       <Filter>03_IOCPImple\header</Filter>
     </ClInclude>
     <ClInclude Include="SignState.h">
-      <Filter>10_App</Filter>
+      <Filter>10_Sign</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelectState.h">
+      <Filter>11_CharacterSelect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

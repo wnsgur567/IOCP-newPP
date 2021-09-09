@@ -1,5 +1,5 @@
 #include "IOCPNet_RootHeader.h"
-
+#include <handleapi.h>
 
 IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 {
@@ -12,10 +12,10 @@ IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 void IOCPSession::Initialze()
 {
 	// TODO : 모든 state 할당
-	//auto pSignState = SignState::Create(shared_from_this());	 
+	auto pSignState = SignState::Create(shared_from_this());	 
 	
 	// 첫 시작을 로그인 상태로 변경함
-	//m_current_state = pSignState;
+	m_current_state = pSignState;
 }
 
 IOCPSession::IOCPSession()
@@ -27,6 +27,35 @@ IOCPSession::IOCPSession()
 
 bool IOCPSession::Recv()
 {
+	int flag;
+	socklen_t size = sizeof(flag);
+	int retval = getsockopt(m_pSock->GetSock(), SOL_SOCKET, SO_REUSEADDR, (char*)&flag, &size);
+	if (retval == EBADF)
+	{
+		printf("EBADF\n");
+	}
+	else if (retval == EFAULT)
+	{
+		printf("EFAULT\n");
+	}
+	else if (retval == EINVAL)
+	{
+		printf("EINVAL\n");
+	}
+	else if (ENOPROTOOPT)
+	{
+		printf("ENOPROTOOPT\n");
+	}
+	else if (ENOTSOCK)
+	{
+		printf("ENOTSOCK\n");
+	}
+	else
+	{
+		printf("정상\n");
+	}
+
+
 	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(
 		m_pSock->GetSock(),
 		m_pRecvPacket,

@@ -9,7 +9,7 @@ namespace IOCP_Base
 		struct InitArgs
 		{
 			std::string ip;
-			u_short port;
+			u_short port = 0;
 		};
 	protected:
 		NetBase::TCPSocketPtr m_pListenSock;
@@ -54,7 +54,7 @@ namespace IOCP_Base
 		}
 
 		// binding
-		NetBase::SocketAddress myAddress(htonl(INADDR_ANY), htons(m_port));
+		NetBase::SocketAddress myAddress(INADDR_ANY, htons(m_port));
 		if (false == m_pListenSock->Bind(myAddress))
 			return false;
 

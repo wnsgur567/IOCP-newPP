@@ -28,7 +28,7 @@ namespace IOCP_Base
 	{
 		while (true)
 		{
-			if (IOCPNetworkManager::sInstance->DoFrame())
+			if (false == IOCPNetworkManager::sInstance->DoFrame())
 				break;
 
 			if (false == DoFrame())
@@ -49,9 +49,12 @@ namespace IOCP_Base
 		IOCPSessionManager::sInstance->Initialize(nullptr);
 		IOCPSessionManager::sInstance->RegistCreationFunction(DerivedSession::CreateSession);
 
+		IOCPNetworkManager::InitArgs netArgs;
+		netArgs.ip = "";
+		netArgs.port = 9000;
 		if (false == IOCPNetworkManager::StaticInit())
 			return false;
-		IOCPNetworkManager::sInstance->Initialize(nullptr);
+		IOCPNetworkManager::sInstance->Initialize(&netArgs);
 
 		// 암호 매니저
 		if (false == NetCipher::CipherManager::StaticInit())
