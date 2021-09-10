@@ -1,6 +1,4 @@
-1. IOCPSessionManager 를 Base 에 통합 (final 로 관리하는 기능 선에서 확장없이 끝낼 것)
-1.1. IOCPNetworkManager 를 Base 에 통합 (final)
-    -> 그러면 Session 만 상속받아서 확장하면 됨!!
+
 
 2. 최종 상속받은 Engine 수준에서 SQLManager 초기화 , SignManager 초기화
 
@@ -41,12 +39,3 @@
 1000. 클라이언트 send thread 에 event 로 send 하도록 변경
 // 타이밍 안재고
 // send recv 바로바로 하도록
-
-
-//////////////////
-1.Unpacking 만들고 Unpacking에서 CipherManager Decryption 호출하도록 변경 // 현재 일관성이 없음
-2.SessionBase -> IOCPSessionBase 그냥 통합시키기 / 고려 안하겟음
-
-현재 NetBase 까지 수정된 상태임 ... Netbase 한번더 확인하고
-
-나머지 실제 Impletmetation 부분부터 확인해 보기

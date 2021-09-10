@@ -1,47 +1,41 @@
 #include "IOCPNet_RootHeader.h"
 
-SignInfo::SignInfo(const wchar_t* inID, const wchar_t* inPW)
-	: id_len(0), pw_len(0), ID(), PW()
+namespace Sign
 {
-	wcscpy_s(ID, SignManager::MAX_IDSIZE, inID);
-	//strcpy_s(ID, SignManager::MAX_IDSIZE, inID);
-	id_len = wcslen(ID);
-	wcscpy_s(PW, SignManager::MAX_PWSIZE, inPW);
-	//strcpy_s(PW, SignManager::MAX_PWSIZE, inPW);
-	pw_len = wcslen(PW);
-}
 
-SignInfo::SignInfo(std::wstring inID, std::wstring inPW)
-	: id_len(0), pw_len(0), ID(), PW()
-{
-	wcscpy_s(ID, SignManager::MAX_IDSIZE, inID.c_str());
-	id_len = wcslen(ID);
-	wcscpy_s(PW, SignManager::MAX_PWSIZE, inPW.c_str());
-	pw_len = wcslen(PW);
-}
+	SignInfo::SignInfo(signid_t inSignID, const wchar_t* inID, const wchar_t* inPW)
+		: sign_id(inSignID), ID(inID), PW(inPW)
+	{
 
-bool SignInfo::operator==(const SignInfo& other)
-{
-	if (wcscmp(this->ID, other.ID) || wcscmp(this->PW, other.PW))
+	}
+
+	SignInfo::SignInfo(signid_t inSignID, std::wstring inID, std::wstring inPW)
+		: sign_id(inSignID), ID(inID), PW(inPW)
+	{
+
+	}
+
+	bool SignInfo::operator==(const SignInfo& other)
+	{
+		if (sign_id == other.sign_id)
+			return true;
 		return false;
-	return true;
-}
+	}
 
-bool SignInfo::operator!=(const SignInfo& other)
-{
-	return !(*this == other);
-}
+	bool SignInfo::operator!=(const SignInfo& other)
+	{
+		return !(*this == other);
+	}
 
-bool SignInfo::operator>(const SignInfo& other)
-{
-	if (wcscmp(this->ID, other.ID) > 0)
-		return true;
-	return false;
-}
+	// ID 기준
+	bool SignInfo::operator>(const SignInfo& other)
+	{
+		return (ID > other.ID);
+	}
 
-bool SignInfo::operator<(const SignInfo& other)
-{
-	if (wcscmp(this->ID, other.ID) < 0)
-		return true;
-	return false;
+	// ID 기준
+	bool SignInfo::operator<(const SignInfo& other)
+	{
+		return (ID < other.ID);
+	}
 }

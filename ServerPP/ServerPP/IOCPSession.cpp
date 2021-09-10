@@ -27,34 +27,6 @@ IOCPSession::IOCPSession()
 
 bool IOCPSession::Recv()
 {
-	int flag;
-	socklen_t size = sizeof(flag);
-	int retval = getsockopt(m_pSock->GetSock(), SOL_SOCKET, SO_REUSEADDR, (char*)&flag, &size);
-	if (retval == EBADF)
-	{
-		printf("EBADF\n");
-	}
-	else if (retval == EFAULT)
-	{
-		printf("EFAULT\n");
-	}
-	else if (retval == EINVAL)
-	{
-		printf("EINVAL\n");
-	}
-	else if (ENOPROTOOPT)
-	{
-		printf("ENOPROTOOPT\n");
-	}
-	else if (ENOTSOCK)
-	{
-		printf("ENOTSOCK\n");
-	}
-	else
-	{
-		printf("Á¤»ó\n");
-	}
-
 
 	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(
 		m_pSock->GetSock(),

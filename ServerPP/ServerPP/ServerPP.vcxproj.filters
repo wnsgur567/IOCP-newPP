@@ -108,9 +108,6 @@
     <ClCompile Include="IOCPBase\IOCPSessionManager.cpp">
       <Filter>02_IOCPBase\src</Filter>
     </ClCompile>
-    <ClCompile Include="IOCPBase\SessionBase.cpp">
-      <Filter>02_IOCPBase\src</Filter>
-    </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>03_IOCPImple\src</Filter>
     </ClCompile>
@@ -195,9 +192,6 @@
       <Filter>02_IOCPBase\header</Filter>
     </ClInclude>
     <ClInclude Include="IOCPBase\NetworkManagerServer.h">
-      <Filter>02_IOCPBase\header</Filter>
-    </ClInclude>
-    <ClInclude Include="IOCPBase\SessionBase.h">
       <Filter>02_IOCPBase\header</Filter>
     </ClInclude>
     <ClInclude Include="IOCPNet_RootHeader.h">

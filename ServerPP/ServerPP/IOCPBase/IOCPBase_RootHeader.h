@@ -7,11 +7,6 @@
 
 #include <unordered_set>
 
-//constexpr unsigned __int16	SERVERPORT = 9000;
-//constexpr unsigned __int32	BUFSIZE = 512;
-//constexpr unsigned __int32	STREAMPOOLCAPACITY = 128;
-
-#include "SessionBase.h"
 #include "IOCPSessionBase.h"
 #include "IOCPSessionManager.h"
 

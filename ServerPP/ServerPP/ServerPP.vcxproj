@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +148,6 @@
     <ClCompile Include="IOCPBase\IOCPNetworkManager.cpp" />
     <ClCompile Include="IOCPBase\IOCPSessionBase.cpp" />
     <ClCompile Include="IOCPBase\IOCPSessionManager.cpp" />
-    <ClCompile Include="IOCPBase\SessionBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IOCPSession.cpp" />
     <ClCompile Include="NetBase\MemoryStream.cpp" />
@@ -178,7 +177,6 @@
     <ClInclude Include="IOCPBase\IOCPSessionBase.h" />
     <ClInclude Include="IOCPBase\IOCPSessionManager.h" />
     <ClInclude Include="IOCPBase\NetworkManagerServer.h" />
-    <ClInclude Include="IOCPBase\SessionBase.h" />
     <ClInclude Include="IOCPNet_RootHeader.h" />
     <ClInclude Include="IOCPSession.h" />
     <ClInclude Include="NetBase\MemoryStream.h" />

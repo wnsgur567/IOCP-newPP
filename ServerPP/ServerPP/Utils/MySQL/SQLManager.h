@@ -18,6 +18,7 @@ namespace SQL
 
 	class SQLManager : public MyBase::Singleton<SQLManager>
 	{
+		friend class Singleton;
 	public:
 		using queryResult_t = std::vector<std::vector<std::string>>;
 		constexpr static int STR_SIZE = 20;
@@ -36,9 +37,9 @@ namespace SQL
 		InitArgs m_args;
 		MYSQL m_conn;
 		MYSQL* m_handle;		// sql handle	
-	public:
-		SQLManager() : m_args(), m_conn(), m_handle(nullptr) {}
 
+		SQLManager() : m_args(), m_conn(), m_handle(nullptr) {}
+	public:
 
 		bool Initialize(LPVOID args) override;
 		void Finalize() override;

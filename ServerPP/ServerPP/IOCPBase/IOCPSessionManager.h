@@ -8,7 +8,7 @@ namespace IOCP_Base
 	public:
 		using SessionCreationFunc = IOCPSessionBasePtr(*)();
 	protected:
-		std::unordered_set<SessionBasePtr> m_session_set;
+		std::unordered_set<IOCPSessionBasePtr> m_session_set;
 		SessionCreationFunc fpCreateSession;
 		IOCPSessionManager() :
 			m_session_set(), fpCreateSession() {}

@@ -36,7 +36,7 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	printf("---SignState OnRecvCompleted Process...\n");
 #endif //  __DEBUG
 
-	SignManager::EResult retResult = SignManager::EResult::None;
+	Sign::SignManager::EResult retResult = Sign::SignManager::EResult::None;
 
 	EProtocol protocol;
 
@@ -48,24 +48,28 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	{
 		/// Read from Input Stream
 		// get data from recv stream
-		SignInfo info;
+		Sign::SignInfo info;
 		// get id from stream
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(info.ID, id_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.ID.c_str()),
+			id_length);
 		// get pw from stream
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(info.PW, pw_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_length);
 		/// Read end
 
 		// request sign in process
-		auto resultData = SignManager::sInstance->SignInProcess(info);
+		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
 		retResult = resultData.result;
 
 #ifdef __DEBUG
-		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
-		wprintf(L" msg : %s\n", resultData.msg);
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+		wprintf(L" msg : %ws\n", resultData.msg);
 #endif // __DEBUG
 
 
@@ -98,28 +102,30 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	{
 		/// Read from Input Stream
 		// get data from recv stream
-		SignInfo info;
+		Sign::SignInfo info;
 		// get id from stream
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(info.ID, id_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.ID.c_str()),
+			id_length);
 		// get pw from stream
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(info.PW, pw_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_length);
 		/// Read end
 
 		// request sign in process
-		auto resultData = SignManager::sInstance->SignOutProcess(info);
+		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
 		retResult = resultData.result;
 
 #ifdef __DEBUG
-		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
-		wprintf(L" msg : %s\n", resultData.msg);
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+		wprintf(L" msg : %ws\n", resultData.msg);
 #endif // __DEBUG
 
-		// get new send stream
-		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// get new send stream
 		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
@@ -138,6 +144,7 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 		outpStream->Write(&msg_length, sizeof(int));
 		outpStream->Write(resultData.msg, msg_length);
 		/// write end
+
 #ifdef __DEBUG
 		printf("SignState write to stream : %llubytes\n",
 			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
@@ -149,28 +156,30 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	{
 		/// Read from Input Stream
 		// get data from recv stream
-		SignInfo info;
+		Sign::SignInfo info;
 		// get id from stream
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(info.ID, id_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.ID.c_str()),
+			id_length);
 		// get pw from stream
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(info.PW, pw_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_length);
 		/// Read end
 
 		// request sign in process
-		auto resultData = SignManager::sInstance->SignOutProcess(info);
+		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
 		retResult = resultData.result;
 
 #ifdef __DEBUG
-		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
-		wprintf(L" msg : %s\n", resultData.msg);
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+		wprintf(L" msg : %ws\n", resultData.msg);
 #endif // __DEBUG
 
-		// get new send stream
-		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// get new send stream
 		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
@@ -193,7 +202,7 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 #ifdef __DEBUG
 		printf("SignState write to stream : %llubytes\n",
 			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
-#endif // __DEBUG	
+#endif // __DEBUG		
 	}
 	break;
 
@@ -201,28 +210,30 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	{
 		/// Read from Input Stream
 		// get data from recv stream
-		SignInfo info;
+		Sign::SignInfo info;
 		// get id from stream
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(info.ID, id_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.ID.c_str()),
+			id_length);
 		// get pw from stream
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(info.PW, pw_length);
+		inpStream->Read(
+			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_length);
 		/// Read end
 
 		// request sign in process
-		auto resultData = SignManager::sInstance->SignOutProcess(info);
+		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
 		retResult = resultData.result;
 
 #ifdef __DEBUG
-		wprintf(L" [id : %s] , [pw : %s]\n ", info.ID, info.PW);
-		wprintf(L" msg : %s\n", resultData.msg);
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+		wprintf(L" msg : %ws\n", resultData.msg);
 #endif // __DEBUG
 
-		// get new send stream
-		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 		// get new send stream
 		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
@@ -257,14 +268,14 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	// apply result to session
 	switch (retResult)
 	{
-	case SignManager::EResult::Success_SingIn:
+	case Sign::SignManager::EResult::Success_SingIn:
 	{
 		auto owner = m_ownerPtr.lock();
 		owner->m_isSigned = true;
 	}
 	break;
-	case SignManager::EResult::Success_SignOut:
-	case SignManager::EResult::Success_DeleteAccount:
+	case Sign::SignManager::EResult::Success_SignOut:
+	case Sign::SignManager::EResult::Success_DeleteAccount:
 	{
 		auto owner = m_ownerPtr.lock();
 		owner->m_isSigned = false;
