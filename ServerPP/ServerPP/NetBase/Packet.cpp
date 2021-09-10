@@ -1,6 +1,8 @@
 #include "NetBase_RootHeader.h"
 #include "../Utils/KISA_CIPHER/CipherManager.h"
 
+
+
 namespace NetBase
 {
 
@@ -111,12 +113,12 @@ namespace NetBase
 		// id
 		m_pStream->Read(&outID, sizeof(packetId_t));
 
-#ifdef __CIPHER_ON
+
 		// decryption
-		CipherManager::sInstance->Decryption(
+		NetCipher::CipherManager::sInstance->Decryption(
 			m_pStream->GetBufferPtr() + sizeof(packetId_t),
 			m_pStream->GetLength() - sizeof(packetId_t));
-#endif
+
 
 		// stream
 		outpStream = m_pStream;

@@ -9,6 +9,10 @@ namespace IOCP_Base
 
 	bool IOCPNetworkManager::Initialize(LPVOID arg) noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- IOCPNetworkManager::Initialize() -----\n");
+#endif //  __DEBUG
+
 		// iocp 입출력 포트 생성
 		m_pHcp = NetBase::SocketUtil::CreateIOCP(IOCPNetworkManager::WorkerThread, m_hWorkerThreads);
 		if (m_pHcp.get() == nullptr)
@@ -18,12 +22,21 @@ namespace IOCP_Base
 		if (false == NetworkManagerServer::Initialize(arg))
 			return false;
 
+#ifdef  __DEBUG
+		printf("----- IOCPNetworkManager::Initialize() end -----\n");
+#endif //  __DEBUG
 		return true;
 	}
 
 	void IOCPNetworkManager::Finalize() noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- IOCPNetworkManager::Finalize() -----\n");
+#endif //  __DEBUG
 
+#ifdef  __DEBUG
+		printf("----- IOCPNetworkManager::Finalize() Complete -----\n");
+#endif //  __DEBUG
 	}
 
 

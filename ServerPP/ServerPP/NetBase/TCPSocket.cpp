@@ -55,40 +55,6 @@ namespace NetBase
 		socklen_t len = sizeof(sockaddr_in);
 		SOCKET _new_sock = accept(m_socket, (sockaddr*)&(outFromAddress.GetSockAddr()), &len);
 
-		int flag;
-		socklen_t size = sizeof(flag);
-		int retval = getsockopt(_new_sock, SOL_SOCKET, SO_REUSEADDR, (char*)&flag, &size);
-		if (retval == EBADF)
-		{
-			printf("EBADF\n");
-		}
-		else if (retval == EFAULT)
-		{
-			printf("EFAULT\n");
-		}
-		else if (retval == EINVAL)
-		{
-			printf("EINVAL\n");
-		}
-		else if (ENOPROTOOPT)
-		{
-			printf("ENOPROTOOPT\n");
-		}
-		else if (ENOTSOCK)
-		{
-			printf("ENOTSOCK\n");
-		}
-		else
-		{
-			printf("Á¤»ó\n");
-		}
-
-		if (EWOULDBLOCK == _new_sock)
-		{
-			SocketUtil::ReportError("TCPSocket::Accept Nonblock");
-			return nullptr;
-		}
-
 		if (_new_sock == INVALID_SOCKET)
 		{
 			SocketUtil::ReportError("TCPSocket::Accept");

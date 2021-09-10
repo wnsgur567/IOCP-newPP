@@ -1,10 +1,13 @@
-#define __DEBUG
+
 #define __CIPHER_ON
 
 #include "IOCPNet_RootHeader.h"
 
 int main()
 {
+	if (false == Utils::StringUtil::SetLocale())
+		return 1;
+
 	if (false == Engine::StaticInit())
 		return 1;
 

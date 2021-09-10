@@ -12,14 +12,27 @@ namespace NetCipher
 
 	bool CipherManager::Initialize(LPVOID) noexcept
 	{
+#ifdef  __DEBUG
+		printf("----- CipherManager::Initialize() -----\n");
+#endif //  __DEBUG
+
 		// Derive roundkeys from user secret key
 		SEED_KeySchedKey(m_pdwRoundKey, m_pbUserKey);
+
+#ifdef  __DEBUG
+		printf("----- CipherManager::Initialize() end -----\n");
+#endif //  __DEBUG
 		return true;
 	}
 
 	void CipherManager::Finalize() noexcept
 	{
-
+#ifdef  __DEBUG
+		printf("----- CipherManager::Finalize() -----\n");
+#endif //  __DEBUG
+#ifdef  __DEBUG
+		printf("----- CipherManager::Finalize() end -----\n");
+#endif //  __DEBUG
 	}
 
 	size_t CipherManager::Encryption(BYTE* inpData, size_t inSize)

@@ -7,6 +7,10 @@ namespace NetBase
 
 	bool PacketManager::Initialize(LPVOID inArgs) noexcept
 	{
+#ifdef  __DEBUG
+		printf("----- PacketManager::Initialize() -----\n");
+#endif //  __DEBUG
+
 		InitializeArgs* pArgs = (InitializeArgs*)inArgs;
 
 		for (size_t i = 0; i < pArgs->numberOfAcptPacket; i++)
@@ -32,11 +36,19 @@ namespace NetBase
 			m_sendStream_queue.push(pStream);
 			m_sendStream_container.push_back(pStream);
 		}
+
+#ifdef  __DEBUG
+		printf("----- PacketManager::Initialize() end -----\n");
+#endif //  __DEBUG
+
 		return true;
 	}
 
 	void PacketManager::Finalize() noexcept
 	{
+#ifdef  __DEBUG
+		printf("----- PacketManager::Finalize() -----\n");
+#endif //  __DEBUG
 		m_acceptpacket_container.clear();
 		while (false == m_acceptpacket_pool.empty())
 		{
@@ -54,7 +66,9 @@ namespace NetBase
 		{
 			m_sendpacket_pool.pop();
 		}
-
+#ifdef  __DEBUG
+		printf("----- PacketManager::Finalize() -----\n");
+#endif //  __DEBUG
 	}
 
 

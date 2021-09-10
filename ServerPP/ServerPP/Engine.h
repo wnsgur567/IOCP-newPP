@@ -7,5 +7,6 @@ protected:
 	Engine() {}
 public:
 	bool DoFrame() override;
-	bool Initialize(LPVOID args) noexcept;
+	bool Initialize(LPVOID args) noexcept override;
+	void Finalize() noexcept override;
 };

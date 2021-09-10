@@ -2,7 +2,6 @@
 
 namespace NetBase
 {
-
 	bool SocketUtil::Init()
 	{
 		WSADATA _wsa;
@@ -76,6 +75,10 @@ namespace NetBase
 			outWorkerThreads.push_back(std::make_shared<HANDLE>(hThread));
 			CloseHandle(hThread);
 		}
+
+#ifdef __DEBUG
+		printf("Completion port is created...\n ");
+#endif // __DEBUG
 
 		return hcpPtr;
 	}

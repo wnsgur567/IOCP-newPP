@@ -2,8 +2,6 @@
 
 // c examples https://zetcode.com/db/mysqlc/
 
-#define __DEBUG
-
 #include <mysql.h>
 #pragma comment(lib,"libmysql.lib")
 

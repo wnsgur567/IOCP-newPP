@@ -14,5 +14,4 @@
 #include<chrono>
 
 
-#define __DEBUG
 #define __CIPHER_ON

@@ -2,7 +2,12 @@
 
 namespace Sign
 {
-
+	void SignInfo::Flush()
+	{
+		sign_id = 0;		
+		ID.clear();
+		PW.clear();
+	}
 	SignInfo::SignInfo(signid_t inSignID, const wchar_t* inID, const wchar_t* inPW)
 		: sign_id(inSignID), ID(inID), PW(inPW)
 	{

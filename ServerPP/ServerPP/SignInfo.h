@@ -18,6 +18,7 @@ namespace Sign
 		signid_t sign_id;
 		std::wstring ID;
 		std::wstring PW;
+		void Flush();
 	public:
 		SignInfo() : sign_id(0), ID(), PW() {}
 		SignInfo(signid_t inSignID, const wchar_t* inID, const wchar_t* inPW);

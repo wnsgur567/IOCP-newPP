@@ -18,14 +18,30 @@ namespace Sign
 
 	bool SignManager::Initialize(LPVOID) noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- SignManager::Initialize() -----\n");
+#endif //  __DEBUG
+
 		if (false == LoadInfo())
 			return false;
+
+
+#ifdef  __DEBUG
+		printf("----- SignManager::Initialize() Complete -----\n");
+#endif //  __DEBUG
 
 		return true;
 	}
 
 	void SignManager::Finalize() noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- SignManager::Finalize() -----\n");
+#endif //  __DEBUG
+
+#ifdef  __DEBUG
+		printf("----- SignManager::Finalize() Complete -----\n");
+#endif //  __DEBUG
 	}
 
 	SignManager::~SignManager()
@@ -34,6 +50,7 @@ namespace Sign
 
 	bool SignManager::LoadInfo()
 	{
+		printf("\t- SignManager::LoadInfo() -\n");
 		SQL::SQLManager::queryResult_t results;
 		if (false == SQL::SQLManager::sInstance->Query("select * from signinfo", results))
 			return false;
@@ -56,7 +73,8 @@ namespace Sign
 #endif
 		}
 #ifdef __DEBUG
-		printf("SignManager::LoadInfo() Complete!!\n%llu info are loaded...\n", m_info_map.size());
+		printf("%llu info are loaded...\n", m_info_map.size());
+		printf("\t- SignManager::LoadInfo() end -\n");
 #endif
 
 		return true;

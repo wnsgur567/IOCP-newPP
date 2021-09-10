@@ -41,6 +41,12 @@ namespace IOCP_Base
 	template<typename DerivedEngine, typename DerivedSession>
 	inline bool EngineBase<DerivedEngine, DerivedSession>::Initialize(LPVOID agrs) noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- EngineBase::Initialize() -----\n");
+#endif //  __DEBUG
+
+
+		
 		InitArgs* pArgs = (InitArgs*)agrs;
 
 		if (false == IOCPSessionManager::StaticInit())
@@ -71,11 +77,22 @@ namespace IOCP_Base
 			return false;
 		NetBase::PacketManager::sInstance->Initialize(&packetArgs);
 
+#ifdef  __DEBUG
+		printf("----- EngineBase::Initialize() Complete -----\n");
+#endif //  __DEBUG
+
 		return true;
 	}
 
 	template<typename DerivedEngine, typename DerivedSession>
 	inline void EngineBase<DerivedEngine, DerivedSession>::Finalize() noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- EngineBase::Finalize() -----\n");
+#endif //  __DEBUG
+
+#ifdef  __DEBUG
+		printf("----- EngineBase::Finalize() Complete -----\n");
+#endif //  __DEBUG
 	}
 }

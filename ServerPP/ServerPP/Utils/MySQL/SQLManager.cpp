@@ -6,6 +6,10 @@ namespace SQL
 {
 	bool SQLManager::Initialize(LPVOID args) noexcept
 	{
+#ifdef  __DEBUG
+		printf("----- SQLManager::Initilize() -----\n");
+#endif //  __DEBUG
+
 		m_args = *((InitArgs*)args);
 
 		mysql_init(&m_conn);		
@@ -39,6 +43,7 @@ namespace SQL
 
 #ifdef __DEBUG
 		printf("SQL character_set euckr\n");
+		printf("----- SQLManager::Initilize() Complete -----\n");
 #endif
 
 		return true;
@@ -46,17 +51,20 @@ namespace SQL
 
 	void SQLManager::Finalize() noexcept
 	{
+#ifdef  __DEBUG
+		printf("----- SQLManager::Finalize() -----\n");
+#endif //  __DEBUG
 		mysql_close(m_handle);
 
-#ifdef  _DEBUG
-		printf("MySql Close\n");
-#endif
+#ifdef  __DEBUG
+		printf("----- SQLManager::Finalize() end -----\n");
+#endif //  __DEBUG
 	}
 
 	bool SQLManager::Query(const char* inQuery, queryResult_t& outVec)
 	{
 #ifdef __DEBUG
-		printf("\n----- SQLManager::Query() for select -----\n");
+		printf("\t- SQLManager::Query() for select -\n");
 #endif
 
 		outVec.clear();
@@ -103,7 +111,7 @@ namespace SQL
 		mysql_free_result(pResult);
 
 #ifdef __DEBUG		
-		printf("----- SQLManager::Query() end -----\n");
+		printf("\t- SQLManager::Query() end -\n");
 #endif
 
 		return true;
@@ -112,7 +120,7 @@ namespace SQL
 	bool SQLManager::Query(const char* inQuery)
 	{
 #ifdef __DEBUG	
-		printf("\n----- SQLManager::Query() end -----\n");
+		printf("\t- SQLManager::Query() end -\n");
 #endif 
 		int retval = mysql_query(m_handle, inQuery);
 		if (retval != 0)
@@ -123,7 +131,7 @@ namespace SQL
 
 
 #ifdef __DEBUG
-		printf("----- SQLManager::Query() end -----\n");
+		printf("\t- SQLManager::Query() end -\n");
 #endif
 
 		return true;

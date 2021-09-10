@@ -1,5 +1,6 @@
 #include "IOCPNet_RootHeader.h"
 
+#pragma warning (disable : 6054)
 //#define TESTING
 
 void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
@@ -49,18 +50,30 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 		/// Read from Input Stream
 		// get data from recv stream
 		Sign::SignInfo info;
+		info.Flush();
+
 		// get id from stream
-		int id_length = 0;
+		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
+		int id_length = 0;	// byte length...
 		inpStream->Read(&id_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.ID.c_str()),
+			id_from_stream,
 			id_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		id_from_stream[id_length / 2] = L'\0'; 
+		info.ID = id_from_stream;
 		// get pw from stream
+		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_from_stream,
 			pw_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		pw_from_stream[pw_length / 2] = L'\0';
+		info.PW = pw_from_stream;
 		/// Read end
 
 		// request sign in process
@@ -103,18 +116,29 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 		/// Read from Input Stream
 		// get data from recv stream
 		Sign::SignInfo info;
+		info.Flush();
 		// get id from stream
+		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.ID.c_str()),
+			id_from_stream,
 			id_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		id_from_stream[id_length / 2] = L'\0';
+		info.ID = id_from_stream;
 		// get pw from stream
+		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_from_stream,
 			pw_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		pw_from_stream[pw_length / 2] = L'\0';
+		info.PW = pw_from_stream;
 		/// Read end
 
 		// request sign in process
@@ -157,18 +181,29 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 		/// Read from Input Stream
 		// get data from recv stream
 		Sign::SignInfo info;
+		info.Flush();
 		// get id from stream
+		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.ID.c_str()),
+			id_from_stream,
 			id_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		id_from_stream[id_length / 2] = L'\0';
+		info.ID = id_from_stream;
 		// get pw from stream
+		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_from_stream,
 			pw_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		pw_from_stream[pw_length / 2] = L'\0';
+		info.PW = pw_from_stream;
 		/// Read end
 
 		// request sign in process
@@ -212,17 +247,27 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 		// get data from recv stream
 		Sign::SignInfo info;
 		// get id from stream
+		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
 		int id_length = 0;
 		inpStream->Read(&id_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.ID.c_str()),
+			id_from_stream,
 			id_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		id_from_stream[id_length / 2] = L'\0';
+		info.ID = id_from_stream;
 		// get pw from stream
+		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
 		int pw_length = 0;
 		inpStream->Read(&pw_length, sizeof(int));
 		inpStream->Read(
-			const_cast<wchar_t*>(info.PW.c_str()),
+			pw_from_stream,
 			pw_length);
+		// after last word must be \0
+		// unicode is 2bytes per word
+		pw_from_stream[pw_length / 2] = L'\0';
+		info.PW = pw_from_stream;
 		/// Read end
 
 		// request sign in process
