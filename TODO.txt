@@ -1,12 +1,6 @@
 
 
-2. 최종 상속받은 Engine 수준에서 SQLManager 초기화 , SignManager 초기화
 
-3. SignManager 초기화 시 SQLmanager 를 통해 query 날림
-4. list -> map // id , shared_ptr(info) 로 변경
-5. string , id map 하나 생성
-
-6. signinfo 를 wchar_t -> wstring 으로 변경
 
 7. class serialize , deserialize
 
@@ -45,3 +39,5 @@ signal 을 줘서 이쪽에서 처리 하는거면
 signal 에 대한값을 모두 다 알고 있어야 되고
 각 signal 별로 function 이 대응되야되는데
 이게 마즘?
+
+아니래 ㅇㅇ
