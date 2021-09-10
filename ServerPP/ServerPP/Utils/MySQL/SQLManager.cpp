@@ -4,10 +4,11 @@ Implementation_sInstance(SQL::SQLManager);
 
 namespace SQL
 {
-	bool SQLManager::Initialize(LPVOID args)
+	bool SQLManager::Initialize(LPVOID args) noexcept
 	{
 		m_args = *((InitArgs*)args);
-		mysql_init(&m_conn);
+
+		mysql_init(&m_conn);		
 
 		m_handle = mysql_real_connect(
 			&m_conn,
@@ -43,23 +44,27 @@ namespace SQL
 		return true;
 	}
 
-	void SQLManager::Finalize()
+	void SQLManager::Finalize() noexcept
 	{
 		mysql_close(m_handle);
 
 #ifdef  _DEBUG
-		printf("MySql Close");
+		printf("MySql Close\n");
 #endif
 	}
 
 	bool SQLManager::Query(const char* inQuery, queryResult_t& outVec)
 	{
+#ifdef __DEBUG
+		printf("\n----- SQLManager::Query() for select -----\n");
+#endif
+
 		outVec.clear();
 
 		int retval = mysql_query(m_handle, inQuery);
 		if (retval != 0)
 		{	// query fail
-			printf("MySql query error : %s", mysql_error(&m_conn));
+			printf("MySql query error : %s\n", mysql_error(&m_conn));
 			return false;
 		}
 
@@ -97,8 +102,8 @@ namespace SQL
 		}
 		mysql_free_result(pResult);
 
-#ifdef __DEBUG
-		printf("select query complete\n");
+#ifdef __DEBUG		
+		printf("----- SQLManager::Query() end -----\n");
 #endif
 
 		return true;
@@ -106,6 +111,9 @@ namespace SQL
 
 	bool SQLManager::Query(const char* inQuery)
 	{
+#ifdef __DEBUG	
+		printf("\n----- SQLManager::Query() end -----\n");
+#endif 
 		int retval = mysql_query(m_handle, inQuery);
 		if (retval != 0)
 		{	// query fail
@@ -115,7 +123,7 @@ namespace SQL
 
 
 #ifdef __DEBUG
-		printf("other query complete\n");
+		printf("----- SQLManager::Query() end -----\n");
 #endif
 
 		return true;

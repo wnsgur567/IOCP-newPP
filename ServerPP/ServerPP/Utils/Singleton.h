@@ -26,7 +26,7 @@ namespace MyBase
 	public:
 		Singleton(const Singleton&) = delete;
 		Singleton& operator=(const Singleton&) = delete;
-		static bool StaticInit()
+		static bool StaticInit() noexcept
 		{
 			sInstance.reset(new T());
 			return true;
@@ -37,9 +37,9 @@ namespace MyBase
 		}
 	public:
 		// class 초기화
-		virtual bool Initialize(LPVOID) = 0;
+		virtual bool Initialize(LPVOID) noexcept = 0;
 		// class 정리
-		virtual void Finalize() = 0;
+		virtual void Finalize() noexcept  = 0;
 	};
 }
 

@@ -29,8 +29,8 @@ namespace NetBase
 			packetSize_t capacityOfSendBuffer;	// SendPacket 의 buffer 최대 용량
 		};
 
-		bool Initialize(LPVOID) override;
-		void Finalize() override;
+		bool Initialize(LPVOID) noexcept override;
+		void Finalize() noexcept override;
 	private:
 
 		// 풀링한 패킷이 사라지지 않도록 hold 할 보관 컨테이너임...

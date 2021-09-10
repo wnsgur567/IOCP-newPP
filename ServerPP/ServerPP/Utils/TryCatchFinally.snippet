@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- try_catch_finally code resource stack overflow :  https://stackoverflow.com/questions/161177/does-c-support-finally-blocks-and-whats-this-raii-i-keep-hearing-about -->
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>try-catch-finally</Title>
+			<Author>Myself</Author>
+			<Description> lamda function for try-catch-finally </Description>
+			<Shortcut> withfinally </Shortcut>
+		</Header>
+		<Snippet>
+			<Code Language="CPP">
+				<![CDATA[with_finally(
+    [&]()
+    {
+        try
+        {
+            // Doing some stuff that may throw an exception
+        }
+        catch (const exception1 &)
+        {
+            // Handling first class of exceptions
+        }
+        catch (const exception2 &)
+        {
+            // Handling another class of exceptions
+        }
+        // Some classes of exceptions can be still unhandled
+    },
+    [&]() // finally
+    {
+        // This code will be executed in all three cases:
+        //   1) exception was not thrown at all
+        //   2) exception was handled by one of the "catch" blocks above
+        //   3) exception was not handled by any of the "catch" block above
+    }
+);]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

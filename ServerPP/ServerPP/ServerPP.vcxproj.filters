@@ -209,5 +209,13 @@
     <ClInclude Include="CharacterSelectState.h">
       <Filter>11_CharacterSelect</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\TryCatchFinally.h">
+      <Filter>00_Base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Utils\TryCatchFinally.snippet">
+      <Filter>00_Base</Filter>
+    </None>
   </ItemGroup>
 </Project>

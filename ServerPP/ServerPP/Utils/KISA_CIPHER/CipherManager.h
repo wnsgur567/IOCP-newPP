@@ -23,8 +23,8 @@ namespace NetCipher
 	public:
 		CipherManager();
 
-		bool Initialize(LPVOID) override;
-		void Finalize() override;
+		bool Initialize(LPVOID) noexcept override;
+		void Finalize() noexcept override;
 	public:
 		size_t Encryption(BYTE*, size_t);
 		void Decryption(BYTE*, size_t);

@@ -26,5 +26,8 @@ namespace Sign
 		bool operator != (const SignInfo& other);
 		bool operator > (const SignInfo& other);
 		bool operator < (const SignInfo& other);
+		
+		static signid_t StringToSignid(const std::string& inStr);
+		static signid_t WStringToSignid(const std::wstring& inStr);
 	};
 }

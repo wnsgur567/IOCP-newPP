@@ -7,7 +7,7 @@ Implementation_sInstance(IOCP_Base::IOCPNetworkManager);
 namespace IOCP_Base
 {
 
-	bool IOCPNetworkManager::Initialize(LPVOID arg)
+	bool IOCPNetworkManager::Initialize(LPVOID arg) noexcept
 	{
 		// iocp 입출력 포트 생성
 		m_pHcp = NetBase::SocketUtil::CreateIOCP(IOCPNetworkManager::WorkerThread, m_hWorkerThreads);
@@ -21,7 +21,7 @@ namespace IOCP_Base
 		return true;
 	}
 
-	void IOCPNetworkManager::Finalize()
+	void IOCPNetworkManager::Finalize() noexcept
 	{
 
 	}

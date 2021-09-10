@@ -21,8 +21,8 @@ namespace IOCP_Base
 		NetworkManagerServer& operator=(const NetworkManagerServer&) = delete;
 		virtual ~NetworkManagerServer();
 	public:
-		virtual bool Initialize(LPVOID) override;
-		virtual void Finalize() override;
+		virtual bool Initialize(LPVOID) noexcept override;
+		virtual void Finalize() noexcept override;
 
 		NetBase::TCPSocketPtr GetListenSockPtr() const;
 	};
@@ -35,7 +35,7 @@ namespace IOCP_Base
 	}
 
 	template<typename T>
-	bool NetworkManagerServer<T>::Initialize(LPVOID args)
+	bool NetworkManagerServer<T>::Initialize(LPVOID args) noexcept
 	{
 		InitArgs* pArgs = (InitArgs*)args;
 		// ip...
@@ -69,7 +69,7 @@ namespace IOCP_Base
 	}
 
 	template<typename T>
-	void NetworkManagerServer<T>::Finalize()
+	void NetworkManagerServer<T>::Finalize() noexcept
 	{
 		NetBase::SocketUtil::CleanUp();
 	}

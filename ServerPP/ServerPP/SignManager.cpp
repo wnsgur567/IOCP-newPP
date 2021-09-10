@@ -2,6 +2,8 @@
 
 Implementation_sInstance(Sign::SignManager);
 
+#include <string>
+
 namespace Sign
 {
 
@@ -14,7 +16,7 @@ namespace Sign
 	const wchar_t* SignManager::ResultMSG::NotExistIDMsg = L"일치하는 아이디가 없습니다";
 	const wchar_t* SignManager::ResultMSG::WrongPWMsg = L"일치하는 패스워드가 없습니다";
 
-	bool SignManager::Initialize(LPVOID)
+	bool SignManager::Initialize(LPVOID) noexcept
 	{
 		if (false == LoadInfo())
 			return false;
@@ -22,7 +24,7 @@ namespace Sign
 		return true;
 	}
 
-	void SignManager::Finalize()
+	void SignManager::Finalize() noexcept
 	{
 	}
 
@@ -32,15 +34,30 @@ namespace Sign
 
 	bool SignManager::LoadInfo()
 	{
-		// 임시 값 셋팅
-		/*std::wstring s = L"abcd";
-		for (size_t i = 0; i < 4; i++)
-		{
-			std::wstring ss = s + (wchar_t)('e' + i);
-			SignInfoPtr newInfo = std::make_shared<SignInfo>(ss.c_str(), L"1234");
+		SQL::SQLManager::queryResult_t results;
+		if (false == SQL::SQLManager::sInstance->Query("select * from signinfo", results))
+			return false;
 
-			m_info_list.push_back(newInfo);
-		}*/
+		for (auto& item : results)
+		{
+			SignInfoPtr pInfo = std::make_shared<SignInfo>();
+
+			pInfo->sign_id = SignInfo::StringToSignid(item[0]);		// sign id			
+			pInfo->ID.assign(item[1].begin(), item[1].end());		// ID
+			pInfo->PW.assign(item[2].begin(), item[2].end());		// PW
+
+			m_info_map.insert({ pInfo->sign_id, pInfo });
+
+#ifdef __DEBUG
+			printf("Load / %llu : (%ws , %ws)\n",
+				pInfo->sign_id,
+				pInfo->ID.c_str(),
+				pInfo->PW.c_str());
+#endif
+		}
+#ifdef __DEBUG
+		printf("SignManager::LoadInfo() Complete!!\n%llu info are loaded...\n", m_info_map.size());
+#endif
 
 		return true;
 	}

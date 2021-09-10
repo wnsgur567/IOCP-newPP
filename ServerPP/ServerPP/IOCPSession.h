@@ -3,15 +3,16 @@
 class IOCPSession;
 using IOCPSessionPtr = std::shared_ptr<IOCPSession>;
 
+
 class IOCPSession
 	: public IOCP_Base::IOCPSessionBase, public std::enable_shared_from_this<IOCPSession>
 {
 private:
 	DERIVED_ENGINE_FRIEND_CODE;
-	
 	friend class SignState;
-public:
-	using Signal = __int32;
+	friend class CharacterSelectState;
+	
+public:	
 
 	class ClientState
 	{
@@ -22,10 +23,10 @@ public:
 		std::weak_ptr<IOCPSession> m_ownerPtr;
 	public:
 		ClientState(IOCPSessionPtr inpOwnerSession)
-			: m_ownerPtr(inpOwnerSession) {}
+			: m_ownerPtr(inpOwnerSession) {	}
 
 		// input read 시 protocol 부분 부터 읽음
-		virtual Signal OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) = 0;
+		virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) = 0;
 		virtual void OnSendCompleted() = 0;
 	};
 	using ClientStatePtr = std::shared_ptr<ClientState>;
@@ -35,15 +36,22 @@ protected:
 	friend class ClientState;
 	ClientStatePtr m_current_state;	// 현재 state
 
+	ClientStatePtr m_sign_state;
+	ClientStatePtr m_characterSelect_state;
+	ClientStatePtr m_village_state;
+	ClientStatePtr m_dungeoun_state;
+	ClientStatePtr m_chat_state;
+	
+	void ChangeState(ClientStatePtr pNextState);
+protected:
+	static IOCP_Base::IOCPSessionBasePtr CreateSession();
 protected:
 	bool m_isSigned;
 	IOCPSession();
-	static IOCP_Base::IOCPSessionBasePtr CreateSession();
 public:
 	void Initialze() override;
 
 	bool IsSigned() const;
-	//void SetSigned(bool b);
 
 	bool Recv() override;
 	bool Send(NetBase::OutputMemoryStreamPtr pStream) override;

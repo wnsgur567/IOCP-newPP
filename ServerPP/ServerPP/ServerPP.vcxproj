@@ -196,6 +196,10 @@
     <ClInclude Include="Utils\MySQL\SQLManager.h" />
     <ClInclude Include="Utils\Singleton.h" />
     <ClInclude Include="Utils\StringUtil.h" />
+    <ClInclude Include="Utils\TryCatchFinally.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Utils\TryCatchFinally.snippet" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

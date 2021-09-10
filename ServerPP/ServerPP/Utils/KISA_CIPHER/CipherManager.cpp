@@ -10,14 +10,14 @@ namespace NetCipher
 	{
 	}
 
-	bool CipherManager::Initialize(LPVOID)
+	bool CipherManager::Initialize(LPVOID) noexcept
 	{
 		// Derive roundkeys from user secret key
 		SEED_KeySchedKey(m_pdwRoundKey, m_pbUserKey);
 		return true;
 	}
 
-	void CipherManager::Finalize()
+	void CipherManager::Finalize() noexcept
 	{
 
 	}

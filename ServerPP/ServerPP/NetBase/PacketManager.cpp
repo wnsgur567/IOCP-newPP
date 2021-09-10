@@ -5,7 +5,7 @@ Implementation_sInstance(NetBase::PacketManager);
 namespace NetBase
 {
 
-	bool PacketManager::Initialize(LPVOID inArgs)
+	bool PacketManager::Initialize(LPVOID inArgs) noexcept
 	{
 		InitializeArgs* pArgs = (InitializeArgs*)inArgs;
 
@@ -35,7 +35,7 @@ namespace NetBase
 		return true;
 	}
 
-	void PacketManager::Finalize()
+	void PacketManager::Finalize() noexcept
 	{
 		m_acceptpacket_container.clear();
 		while (false == m_acceptpacket_pool.empty())

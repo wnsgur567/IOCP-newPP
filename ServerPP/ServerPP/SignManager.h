@@ -59,8 +59,8 @@ namespace Sign
 	protected:
 		SignManager() {}
 	public:
-		bool Initialize(LPVOID) override;
-		void Finalize() override;
+		bool Initialize(LPVOID) noexcept override;
+		void Finalize() noexcept override;
 		~SignManager();
 	private:
 		bool LoadInfo();	// 정보를 읽어 list 에 셋팅

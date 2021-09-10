@@ -38,4 +38,12 @@ namespace Sign
 	{
 		return (ID < other.ID);
 	}
+	SignInfo::signid_t SignInfo::StringToSignid(const std::string& inStr)
+	{
+		return std::stoull(inStr, 0);
+	}
+	SignInfo::signid_t SignInfo::WStringToSignid(const std::wstring& inStr)
+	{
+		return std::stoull(inStr, 0);
+	}
 }

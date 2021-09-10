@@ -1,5 +1,6 @@
 #pragma once
 
+
 class SignState : public IOCPSession::ClientState
 {
 private:
@@ -15,7 +16,7 @@ private:
 protected:
 	SignState(IOCPSessionPtr inpOwnerSession) : ClientState(inpOwnerSession) {}
 public:
-	virtual IOCPSession::Signal OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
+	virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
 	virtual void OnSendCompleted() override;
 
 	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);

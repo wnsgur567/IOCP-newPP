@@ -19,7 +19,7 @@ namespace IOCP_Base
 		void DestroySession(IOCPSessionBasePtr inpSession);
 
 	public:
-		bool Initialize(LPVOID) override;
-		void Finalize() override;
+		bool Initialize(LPVOID) noexcept override;
+		void Finalize() noexcept override;
 	};
 }

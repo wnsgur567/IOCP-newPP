@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "../Singleton.h"
+#include "../TryCatchFinally.h"
 
 namespace SQL
 {
@@ -41,8 +42,8 @@ namespace SQL
 		SQLManager() : m_args(), m_conn(), m_handle(nullptr) {}
 	public:
 
-		bool Initialize(LPVOID args) override;
-		void Finalize() override;
+		bool Initialize(LPVOID args) noexcept override;
+		void Finalize() noexcept override;
 
 		// for select results
 		bool Query(

@@ -2,7 +2,7 @@
 
 //#define TESTING
 
-IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
+void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
 
 #ifdef TESTING
@@ -272,6 +272,8 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	{
 		auto owner = m_ownerPtr.lock();
 		owner->m_isSigned = true;
+
+		owner->ChangeState(owner->m_characterSelect_state);
 	}
 	break;
 	case Sign::SignManager::EResult::Success_SignOut:
@@ -284,7 +286,6 @@ IOCPSession::Signal SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inp
 	}
 
 
-	return (__int32)retResult;
 }
 
 void SignState::OnSendCompleted()

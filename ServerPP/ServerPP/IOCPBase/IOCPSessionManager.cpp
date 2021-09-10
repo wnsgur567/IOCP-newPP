@@ -4,12 +4,12 @@ Implementation_sInstance(IOCP_Base::IOCPSessionManager);
 
 namespace IOCP_Base
 {
-	bool IOCPSessionManager::Initialize(LPVOID)
+	bool IOCPSessionManager::Initialize(LPVOID) noexcept
 	{
 		return true;
 	}
 	
-	void IOCPSessionManager::Finalize()
+	void IOCPSessionManager::Finalize() noexcept
 	{
 	}
 

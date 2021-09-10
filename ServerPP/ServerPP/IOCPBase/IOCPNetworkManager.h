@@ -19,8 +19,8 @@ namespace IOCP_Base
 		IOCPNetworkManager() {}
 	public:
 		~IOCPNetworkManager() {}
-		bool Initialize(LPVOID) override;
-		void Finalize() override;
+		bool Initialize(LPVOID) noexcept override;
+		void Finalize() noexcept override;
 
 		HandlePtr GetHCPPtr() const;
 	public:

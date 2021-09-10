@@ -18,8 +18,8 @@ namespace IOCP_Base
 	public:
 		virtual bool DoFrame() = 0;
 		bool DoLoop();
-		bool Initialize(LPVOID) override;
-		void Finalize() override;
+		bool Initialize(LPVOID) noexcept override;
+		void Finalize() noexcept override;
 	};
 
 
@@ -39,7 +39,7 @@ namespace IOCP_Base
 	}
 
 	template<typename DerivedEngine, typename DerivedSession>
-	inline bool EngineBase<DerivedEngine, DerivedSession>::Initialize(LPVOID agrs)
+	inline bool EngineBase<DerivedEngine, DerivedSession>::Initialize(LPVOID agrs) noexcept
 	{
 		InitArgs* pArgs = (InitArgs*)agrs;
 
@@ -75,7 +75,7 @@ namespace IOCP_Base
 	}
 
 	template<typename DerivedEngine, typename DerivedSession>
-	inline void EngineBase<DerivedEngine, DerivedSession>::Finalize()
+	inline void EngineBase<DerivedEngine, DerivedSession>::Finalize() noexcept
 	{
 	}
 }

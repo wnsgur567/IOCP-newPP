@@ -9,13 +9,21 @@ IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 	return retPointer;
 }
 
+void IOCPSession::ChangeState(ClientStatePtr pNextState)
+{
+	m_current_state;
+}
+
 void IOCPSession::Initialze()
 {
 	// TODO : 모든 state 할당
-	auto pSignState = SignState::Create(shared_from_this());	 
+	m_sign_state = SignState::Create(shared_from_this());
+	m_characterSelect_state = CharacterSelectState::Create(shared_from_this());
+
 	
+
 	// 첫 시작을 로그인 상태로 변경함
-	m_current_state = pSignState;
+	m_current_state = m_sign_state;
 }
 
 IOCPSession::IOCPSession()
@@ -84,7 +92,7 @@ bool IOCPSession::OnCompleteRecv()
 
 	// for send stream
 	NetBase::OutputMemoryStreamPtr pOutputStream;
-	auto ret_signal = m_current_state->OnRecvCompleted(pStream,pOutputStream);
+	m_current_state->OnRecvCompleted(pStream, pOutputStream);
 
 #ifdef __DEBUG
 	printf("\nsend_id : (%lu)\n", m_newSendID);
