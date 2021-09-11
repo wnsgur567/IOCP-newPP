@@ -113,12 +113,14 @@ namespace NetBase
 		// id
 		m_pStream->Read(&outID, sizeof(packetId_t));
 
-
+#ifdef __CIPHER_ON
 		// decryption
 		NetCipher::CipherManager::sInstance->Decryption(
 			m_pStream->GetBufferPtr() + sizeof(packetId_t),
 			m_pStream->GetLength() - sizeof(packetId_t));
+#else
 
+#endif
 
 		// stream
 		outpStream = m_pStream;
@@ -167,11 +169,19 @@ namespace NetBase
 	// total size + packetid + data
 	void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
 	{
+		
+#ifdef __CIPHER_ON
 		// data encryption
 		// ret bits 는 패딩 비트가 포함된 크기임
 		size_t retBits = NetCipher::CipherManager::sInstance->Encryption(
 			inStream->GetBufferPtr(),
 			inStream->GetLength());
+#else
+		size_t retBits = inStream->GetLength();
+#endif
+			
+
+
 
 		// total size = id size + data size
 		packetSize_t total_size = sizeof(packetId_t) + static_cast<packetSize_t>(retBits);
