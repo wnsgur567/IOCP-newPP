@@ -4,9 +4,6 @@
 
 7. class serialize , deserialize
 
-8. stl container 직렬화
-// https://bab2min.tistory.com/613
-
 9. ISerializable interface 정의 // abstract serialize deserialize  //  param referenct stream
     -> stream 에 write 혹은 read 할 경우 parma 을 그냥 ISerializable 로 주고 알아서 쓰도록 설정
 
