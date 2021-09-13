@@ -7,6 +7,7 @@
 #include <map>
 #include <set>
 #include <type_traits>
+#include "ByteUtils.h"
 
 // 참고 : https://bab2min.tistory.com/613
 
@@ -39,24 +40,79 @@ namespace Utils
 	template<class _Ty1, class _Ty2, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v);
 	template<class _Ty1, class _Ty2, typename _StreamElem = char>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);	
-#pragma endregion
+	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);
+#pragma endregion	
 
+	// character type 은 실제 유니코드가 어떻게 serialize 되는지 확인하고  할 예정임
+	// unicode 는 big endian 기준이라 아마 안하는게 맞을 거 같은데...
 
+	// integral type
 	template<class _Ty, typename _StreamElem>
-	inline typename std::enable_if<std::is_fundamental<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const _Ty& v)
-	{
-		if (!os.write((const _StreamElem*)&v, sizeof(_Ty)))
+	inline typename std::enable_if<std::is_integral<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const _Ty& v)
+	{		
+		byte outBytes[sizeof(_Ty)];
+		Utils::BitConverter::GetBytes(v, outBytes);
+
+		if (!os.write((const _StreamElem*)outBytes, sizeof(_Ty)))
 			// 읽기 실패시 throw
 			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(_Ty).name() + "' failed");
+	}	
+	
+	// float 
+	template<typename _StreamElem>
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const float_t& v)
+	{
+		byte outBytes[sizeof(float_t)];
+		Utils::BitConverter::GetBytes(v, outBytes);
+
+		if (!os.write((const _StreamElem*)outBytes, sizeof(float_t)))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(float_t).name() + "' failed");
+	}
+	// double
+	template<typename _StreamElem>
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const double_t& v)
+	{
+		byte outBytes[sizeof(double_t)];
+		Utils::BitConverter::GetBytes(v, outBytes);
+
+		if (!os.write((const _StreamElem*)outBytes, sizeof(double_t)))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(double_t).name() + "' failed");
 	}
 
+	// integral type
 	template<class _Ty, typename _StreamElem>
-	inline typename std::enable_if<std::is_fundamental<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, _Ty& v)
+	inline typename std::enable_if<std::is_integral<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, _Ty& v)
 	{
-		if (!is.read((_StreamElem*)&v, sizeof(_Ty)))
+		
+		byte inBytes[sizeof(_Ty)];
+		if (!is.read((_StreamElem*)inBytes, sizeof(_Ty)))
 			// 읽기 실패시 throw
 			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(_Ty).name() + "' failed");
+		v = Utils::BitConverter::BytesToVal<_Ty>(inBytes);		
+	}
+
+	// float
+	template<typename _StreamElem>
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, float_t& v)
+	{
+		byte inBytes[sizeof(float_t)];
+		if (!is.read((_StreamElem*)inBytes, sizeof(float_t)))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(float_t).name() + "' failed");
+		v = Utils::BitConverter::BytesToFloat(inBytes);
+	}
+
+	// double
+	template<typename _StreamElem>
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, double_t& v)
+	{
+		byte inBytes[sizeof(double_t)];
+		if (!is.read((_StreamElem*)inBytes, sizeof(double_t)))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(double_t).name() + "' failed");
+		v = Utils::BitConverter::BytesToDouble(inBytes);
 	}
 
 #pragma region Write (Serialization)
@@ -196,7 +252,7 @@ namespace Utils
 		l.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
 		for (auto& item : l)
 		{
-			ReadFromBinStream<_Ty, _StreamElem>(is, item);
+			ReadFromBinStream(is, item);
 		}
 	}
 

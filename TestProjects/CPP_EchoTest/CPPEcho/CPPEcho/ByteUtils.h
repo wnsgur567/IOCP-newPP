@@ -13,7 +13,7 @@
 namespace Utils
 {
 	// net : big endian
-	// output 값은 big 으로 통일함
+	// output 값은 big 으로 통double_t일함
 	// little endian 일 경우 교차시키기
 
 	class BitConverter
