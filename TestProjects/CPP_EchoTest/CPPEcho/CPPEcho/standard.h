@@ -37,7 +37,7 @@ namespace Utils
 
 	// for pair
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::pair<_Ty1, _Ty2>& v);
+	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v);
 	template<class _Ty1, class _Ty2, typename _StreamElem = char>
 	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);	
 #pragma endregion
@@ -94,7 +94,7 @@ namespace Utils
 		// string 을 저장
 		for (auto& e : v)
 		{
-			WriteToBinStream<_Ty, _StreamElem>(os, e);
+			WriteToBinStream(os, e);
 		}
 	}
 
@@ -107,54 +107,54 @@ namespace Utils
 		// 그리고 각 요소를 저장
 		for (auto& e : v)
 		{
-			WriteToBinStream<_Ty, _StreamElem>(os, e);
+			WriteToBinStream(os, e);
 		}
 	}
 
 	// for list
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::list<_Ty>& l)
+	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::list<_Ty>& l)
 	{
 		// list의 크기를 저장
 		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(l.size()));
 		// 각 요소를 저장
 		for (auto& item : l)
 		{
-			WriteToBinStream<_Ty, _StreamElem>(os, item);
+			WriteToBinStream(os, item);
 		}
 	}
 
 	// for pair
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::pair<_Ty1, _Ty2>& v)
+	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v)
 	{
-		WriteToBinStream<_Ty1, _StreamElem>(os, v.first);
-		WriteToBinStream<_Ty2, _StreamElem>(os, v.second);
+		WriteToBinStream(os, v.first);
+		WriteToBinStream(os, v.second);
 	}
 
 	// for map
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::map<_Ty1, _Ty2>& v)
+	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::map<_Ty1, _Ty2>& v)
 	{
 		// map의 크기를 저장하시고
 		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(v.size()));
 		// 그리고 각 요소를 저장
 		for (auto& p : v)
 		{
-			WriteToBinStream<_Ty1, _Ty2, _StreamElem>(os, p);
+			WriteToBinStream(os, p);
 		}
 	}
 
 	// for set
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::set<_Ty>& v)
+	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::set<_Ty>& v)
 	{
 		// 크기를 저장합니다
 		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(v.size()));
 		// 그리고 각 요소를 저장
 		for (auto& e : v)
 		{
-			WriteToBinStream<_Ty, _StreamElem>(os, e);
+			WriteToBinStream(os, e);
 		}
 	}
 
@@ -174,7 +174,7 @@ namespace Utils
 		v.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
 		for (auto& e : v)
 		{
-			ReadFromBinStream<_Ty, _StreamElem>(is, e);
+			ReadFromBinStream(is, e);
 		}
 	}
 
@@ -185,7 +185,7 @@ namespace Utils
 		v.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
 		for (auto& e : v)
 		{
-			ReadFromBinStream <_Ty, _StreamElem>(is, e);
+			ReadFromBinStream(is, e);
 		}
 	}
 
