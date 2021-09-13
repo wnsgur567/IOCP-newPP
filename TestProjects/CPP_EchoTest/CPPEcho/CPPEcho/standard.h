@@ -28,17 +28,30 @@ namespace Utils
 {
 	using byte = unsigned char;
 
-	// is_fundamental이 true일때만 이 함수가 정의됩니다.
+#pragma region forward Declaration
+	// for string
+	template<class _Ty, typename _StreamElem>
+	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::basic_string<_Ty>& v);
 	template<class _Ty, typename _StreamElem = char>
+	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v);
+
+	// for pair
+	template<class _Ty1, class _Ty2, typename _StreamElem>
+	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::pair<_Ty1, _Ty2>& v);
+	template<class _Ty1, class _Ty2, typename _StreamElem = char>
+	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);	
+#pragma endregion
+
+
+	template<class _Ty, typename _StreamElem>
 	inline typename std::enable_if<std::is_fundamental<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const _Ty& v)
 	{
 		if (!os.write((const _StreamElem*)&v, sizeof(_Ty)))
-			// write 실패한 경우엔 exception을 던져주는걸로
+			// 읽기 실패시 throw
 			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(_Ty).name() + "' failed");
 	}
 
-
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline typename std::enable_if<std::is_fundamental<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, _Ty& v)
 	{
 		if (!is.read((_StreamElem*)&v, sizeof(_Ty)))
@@ -48,32 +61,32 @@ namespace Utils
 
 #pragma region Write (Serialization)
 	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
-	template <class _Ty, typename _StreamElem = char>
+	template <class _Ty, typename _StreamElem>
 	inline void WriteToBinStream(std::basic_ostream<_StreamElem>& os, const _Ty& v)
 	{
-		WriteToBinStreamImpl<_Ty, _StreamElem>(os, v);
+		WriteToBinStreamImpl(os, v);
 	}
 
 	// 바이너리 스트림으로부터 _Ty 타입을 역직렬화하는 함수입니다
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void ReadFromBinStream(std::basic_istream<_StreamElem>& is, _Ty& v)
 	{
-		ReadFromBinStreamImpl<_Ty, _StreamElem>(is, v);
+		ReadFromBinStreamImpl(is, v);
 	}
 
 	// 위 함수와 같은데 결과 값을 리턴해주는 형태
-	template <class _Ty, typename _StreamElem = char>
+	template <class _Ty, typename _StreamElem>
 	inline _Ty ReadFromBinStream(std::basic_istream<_StreamElem>& is)
 	{
 		_Ty v;
-		ReadFromBinStreamImpl<_Ty, _StreamElem>(is, v);
+		ReadFromBinStreamImpl(is, v);
 		return v;
 	}
 
 	//////////////// container 
 
 	// for string
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::basic_string<_Ty>& v)
 	{
 		// 크기를 저장합니다
@@ -86,7 +99,7 @@ namespace Utils
 	}
 
 	// for vector
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::vector<_Ty>& v)
 	{
 		// 먼저 vector의 크기를 저장합니다
@@ -99,7 +112,7 @@ namespace Utils
 	}
 
 	// for list
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::list<_Ty>& l)
 	{
 		// list의 크기를 저장
@@ -112,7 +125,7 @@ namespace Utils
 	}
 
 	// for pair
-	template<class _Ty1, class _Ty2, typename _StreamElem = char>
+	template<class _Ty1, class _Ty2, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::pair<_Ty1, _Ty2>& v)
 	{
 		WriteToBinStream<_Ty1, _StreamElem>(os, v.first);
@@ -120,7 +133,7 @@ namespace Utils
 	}
 
 	// for map
-	template<class _Ty1, class _Ty2, typename _StreamElem = char>
+	template<class _Ty1, class _Ty2, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::map<_Ty1, _Ty2>& v)
 	{
 		// map의 크기를 저장하시고
@@ -133,7 +146,7 @@ namespace Utils
 	}
 
 	// for set
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void WriteToBinStreamImpl(std::ostream& os, const typename std::set<_Ty>& v)
 	{
 		// 크기를 저장합니다
@@ -155,7 +168,7 @@ namespace Utils
 	//////////////// container 
 
 	// for string
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v)
 	{
 		v.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
@@ -166,7 +179,7 @@ namespace Utils
 	}
 
 	// for vector
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::vector<_Ty>& v)
 	{
 		v.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
@@ -177,7 +190,7 @@ namespace Utils
 	}
 
 	// for list
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::list<_Ty>& l)
 	{
 		l.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
@@ -188,7 +201,7 @@ namespace Utils
 	}
 
 	// for pair
-	template<class _Ty1, class _Ty2, typename _StreamElem = char>
+	template<class _Ty1, class _Ty2, typename _StreamElem>
 	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v)
 	{
 		v.first = ReadFromBinStream<_Ty1, _StreamElem>(is);
@@ -208,7 +221,7 @@ namespace Utils
 	}
 
 	// for set
-	template<class _Ty, typename _StreamElem = char>
+	template<class _Ty, typename _StreamElem>
 	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::set<_Ty>& v)
 	{
 		size_t len = ReadFromBinStream<uint32_t, _StreamElem>(is);
@@ -221,4 +234,9 @@ namespace Utils
 
 #pragma endregion
 
+	void StringTest();
+	void VectorTest();
+	void ListTest();
+	void SetTest();
+	void MapTest();
 }
