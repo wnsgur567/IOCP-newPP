@@ -7,9 +7,13 @@
 #include <map>
 #include <set>
 #include <type_traits>
+#include <sstream>
 #include "ByteUtils.h"
 
 // 참고 : https://bab2min.tistory.com/613
+
+// character 타입은 byte 대응되는 int 로 호출됨
+// ex ) wchar_t -> int16
 
 // --------------------- std::basic_string<T> -------------------------//
 // c++ string 은 char , wchar 등 여러개의 타입에 대응될 필요가 있는데 이를 위해 basic_string 템플릿을 사용하여 정의함
@@ -28,190 +32,175 @@
 namespace Utils
 {
 	using byte = unsigned char;
+	using byte_string = std::basic_string<byte>;
 
 #pragma region forward Declaration
+	template <class _Ty, typename _StreamElem>
+	inline int32_t WriteToBinStream(std::basic_ostream<_StreamElem>& os, const _Ty& v);
+	template<class _Ty, typename _StreamElem>
+	inline int32_t ReadFromBinStream(std::basic_istream<_StreamElem>& is, _Ty& v);
+
 	// for string
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::basic_string<_Ty>& v);
-	template<class _Ty, typename _StreamElem = char>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v);
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::basic_string<_Ty>& v);
+	template<class _Ty, typename _StreamElem>
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v);
 
 	// for pair
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v);
-	template<class _Ty1, class _Ty2, typename _StreamElem = char>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v);
+	template<class _Ty1, class _Ty2, typename _StreamElem>
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);
 #pragma endregion	
 
 	// character type 은 실제 유니코드가 어떻게 serialize 되는지 확인하고  할 예정임
 	// unicode 는 big endian 기준이라 아마 안하는게 맞을 거 같은데...
-
+#pragma region Write (Serialization)
 	// integral type
 	template<class _Ty, typename _StreamElem>
-	inline typename std::enable_if<std::is_integral<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const _Ty& v)
-	{		
-		byte outBytes[sizeof(_Ty)];
+	inline typename std::enable_if<std::is_integral<_Ty>::value&& std::_Is_character<_StreamElem>::value, int32_t>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const _Ty& v)
+	{
+		constexpr size_t write_size = sizeof(_Ty);
+
+		byte outBytes[write_size];
 		Utils::BitConverter::GetBytes(v, outBytes);
 
-		if (!os.write((const _StreamElem*)outBytes, sizeof(_Ty)))
+		if (!os.write((const _StreamElem*)outBytes, write_size))
 			// 읽기 실패시 throw
 			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(_Ty).name() + "' failed");
-	}	
-	
+
+		return static_cast<int32_t>(write_size);
+	}
+
 	// float 
 	template<typename _StreamElem>
-	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const float_t& v)
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value, int32_t>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const float_t& v)
 	{
+		constexpr size_t write_size = sizeof(float_t);
+
 		byte outBytes[sizeof(float_t)];
 		Utils::BitConverter::GetBytes(v, outBytes);
 
-		if (!os.write((const _StreamElem*)outBytes, sizeof(float_t)))
+		if (!os.write((const _StreamElem*)outBytes, write_size))
 			// 읽기 실패시 throw
 			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(float_t).name() + "' failed");
+
+		return static_cast<int32_t>(write_size);
 	}
 	// double
 	template<typename _StreamElem>
-	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const double_t& v)
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value, int32_t>::type WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const double_t& v)
 	{
-		byte outBytes[sizeof(double_t)];
+		constexpr size_t write_size = sizeof(double_t);
+
+		byte outBytes[write_size];
 		Utils::BitConverter::GetBytes(v, outBytes);
 
-		if (!os.write((const _StreamElem*)outBytes, sizeof(double_t)))
+		if (!os.write((const _StreamElem*)outBytes, write_size))
 			// 읽기 실패시 throw
 			throw std::ios_base::failure(std::string{ "writing type '" } + typeid(double_t).name() + "' failed");
+
+		return static_cast<int32_t>(write_size);
 	}
 
-	// integral type
-	template<class _Ty, typename _StreamElem>
-	inline typename std::enable_if<std::is_integral<_Ty>::value&& std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, _Ty& v)
-	{
-		
-		byte inBytes[sizeof(_Ty)];
-		if (!is.read((_StreamElem*)inBytes, sizeof(_Ty)))
-			// 읽기 실패시 throw
-			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(_Ty).name() + "' failed");
-		v = Utils::BitConverter::BytesToVal<_Ty>(inBytes);		
-	}
 
-	// float
-	template<typename _StreamElem>
-	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, float_t& v)
-	{
-		byte inBytes[sizeof(float_t)];
-		if (!is.read((_StreamElem*)inBytes, sizeof(float_t)))
-			// 읽기 실패시 throw
-			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(float_t).name() + "' failed");
-		v = Utils::BitConverter::BytesToFloat(inBytes);
-	}
 
-	// double
-	template<typename _StreamElem>
-	inline typename std::enable_if<std::_Is_character<_StreamElem>::value>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, double_t& v)
-	{
-		byte inBytes[sizeof(double_t)];
-		if (!is.read((_StreamElem*)inBytes, sizeof(double_t)))
-			// 읽기 실패시 throw
-			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(double_t).name() + "' failed");
-		v = Utils::BitConverter::BytesToDouble(inBytes);
-	}
-
-#pragma region Write (Serialization)
-	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
-	template <class _Ty, typename _StreamElem>
-	inline void WriteToBinStream(std::basic_ostream<_StreamElem>& os, const _Ty& v)
-	{
-		WriteToBinStreamImpl(os, v);
-	}
-
-	// 바이너리 스트림으로부터 _Ty 타입을 역직렬화하는 함수입니다
-	template<class _Ty, typename _StreamElem>
-	inline void ReadFromBinStream(std::basic_istream<_StreamElem>& is, _Ty& v)
-	{
-		ReadFromBinStreamImpl(is, v);
-	}
-
-	// 위 함수와 같은데 결과 값을 리턴해주는 형태
-	template <class _Ty, typename _StreamElem>
-	inline _Ty ReadFromBinStream(std::basic_istream<_StreamElem>& is)
-	{
-		_Ty v;
-		ReadFromBinStreamImpl(is, v);
-		return v;
-	}
 
 	//////////////// container 
 
 	// for string
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::basic_string<_Ty>& v)
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::basic_string<_Ty>& v)
 	{
+		int32_t write_size = 0;
+
 		// 크기를 저장합니다
-		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(v.size()));
+		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(v.size()));
 		// string 을 저장
 		for (auto& e : v)
 		{
-			WriteToBinStream(os, e);
+			write_size += WriteToBinStream(os, e);
 		}
+
+		return write_size;
 	}
 
 	// for vector
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::vector<_Ty>& v)
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::vector<_Ty>& v)
 	{
+		int32_t write_size = 0;
+
 		// 먼저 vector의 크기를 저장합니다
-		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(v.size()));
+		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(v.size()));
 		// 그리고 각 요소를 저장
 		for (auto& e : v)
 		{
-			WriteToBinStream(os, e);
+			write_size += WriteToBinStream(os, e);
 		}
+
+		return write_size;
 	}
 
 	// for list
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::list<_Ty>& l)
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::list<_Ty>& l)
 	{
+		int32_t write_size = 0;
+
 		// list의 크기를 저장
-		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(l.size()));
+		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(l.size()));
 		// 각 요소를 저장
 		for (auto& item : l)
 		{
-			WriteToBinStream(os, item);
+			write_size += WriteToBinStream(os, item);
 		}
+
+		return write_size;
 	}
 
 	// for pair
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v)
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v)
 	{
-		WriteToBinStream(os, v.first);
-		WriteToBinStream(os, v.second);
+		int32_t write_size = 0;
+
+		write_size += WriteToBinStream(os, v.first);
+		write_size += WriteToBinStream(os, v.second);
+
+		return write_size;
 	}
 
 	// for map
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::map<_Ty1, _Ty2>& v)
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::map<_Ty1, _Ty2>& v)
 	{
+		int32_t write_size = 0;
+
 		// map의 크기를 저장하시고
-		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(v.size()));
+		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(v.size()));
 		// 그리고 각 요소를 저장
 		for (auto& p : v)
 		{
-			WriteToBinStream(os, p);
+			write_size += WriteToBinStream(os, p);
 		}
+
+		return write_size;
 	}
 
 	// for set
 	template<class _Ty, typename _StreamElem>
-	inline void WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::set<_Ty>& v)
+	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::set<_Ty>& v)
 	{
+		int32_t write_size = 0;
 		// 크기를 저장합니다
-		WriteToBinStream<uint32_t, _StreamElem>(os, static_cast<uint32_t>(v.size()));
+		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(v.size()));
 		// 그리고 각 요소를 저장
 		for (auto& e : v)
 		{
-			WriteToBinStream(os, e);
+			write_size += WriteToBinStream(os, e);
 		}
+		return write_size;
 	}
 
 
@@ -219,77 +208,165 @@ namespace Utils
 
 #pragma region Read (DeSerialization)
 
+	// integral type
+	template<class _Ty, typename _StreamElem>
+	inline typename std::enable_if<std::is_integral<_Ty>::value&& std::_Is_character<_StreamElem>::value, int32_t>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, _Ty& v)
+	{
+		constexpr size_t read_size = sizeof(_Ty);
 
+		byte inBytes[read_size];
+		if (!is.read((_StreamElem*)inBytes, read_size))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(_Ty).name() + "' failed");
+		v = Utils::BitConverter::BytesToVal<_Ty>(inBytes);
+
+		return static_cast<int32_t>(read_size);
+	}
+
+	// float
+	template<typename _StreamElem>
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value, int32_t>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, float_t& v)
+	{
+		constexpr size_t read_size = sizeof(float_t);
+
+		byte inBytes[read_size];
+		if (!is.read((_StreamElem*)inBytes, read_size))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(float_t).name() + "' failed");
+		v = Utils::BitConverter::BytesToFloat(inBytes);
+
+		return static_cast<int32_t>(read_size);
+	}
+
+	// double
+	template<typename _StreamElem>
+	inline typename std::enable_if<std::_Is_character<_StreamElem>::value, int32_t>::type ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, double_t& v)
+	{
+		constexpr size_t read_size = sizeof(double_t);
+
+		byte inBytes[read_size];
+		if (!is.read((_StreamElem*)inBytes, read_size))
+			// 읽기 실패시 throw
+			throw std::ios_base::failure(std::string{ "reading type '" } + typeid(double_t).name() + "' failed");
+		v = Utils::BitConverter::BytesToDouble(inBytes);
+
+		return static_cast<int32_t>(read_size);
+	}
 
 	//////////////// container 
 
 	// for string
 	template<class _Ty, typename _StreamElem>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v)
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v)
 	{
-		v.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
+		int32_t read_size = 0;
+		int32_t string_size = 0;
+		ReadFromBinStream<int32_t, _StreamElem>(is, string_size);
+		read_size += sizeof(int32_t);
+		v.resize(string_size);
 		for (auto& e : v)
 		{
-			ReadFromBinStream(is, e);
+			read_size += ReadFromBinStream(is, e);
 		}
+		return read_size;
 	}
 
 	// for vector
 	template<class _Ty, typename _StreamElem>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::vector<_Ty>& v)
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::vector<_Ty>& v)
 	{
-		v.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
+		int32_t read_size = 0;
+		int32_t vector_size;
+		ReadFromBinStream<int32_t, _StreamElem>(is, vector_size);
+		read_size += sizeof(int32_t);
+		v.resize(vector_size);
 		for (auto& e : v)
 		{
-			ReadFromBinStream(is, e);
+			read_size += ReadFromBinStream(is, e);
 		}
+		return read_size;
 	}
 
 	// for list
 	template<class _Ty, typename _StreamElem>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::list<_Ty>& l)
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::list<_Ty>& l)
 	{
-		l.resize(ReadFromBinStream<uint32_t, _StreamElem>(is));
+		int32_t read_size = 0;
+		int32_t list_size;
+		ReadFromBinStream<int32_t, _StreamElem>(is, list_size);
+		read_size += sizeof(int32_t);
+		l.resize(list_size);
 		for (auto& item : l)
 		{
-			ReadFromBinStream(is, item);
+			read_size += ReadFromBinStream(is, item);
 		}
+		return read_size;
 	}
 
 	// for pair
 	template<class _Ty1, class _Ty2, typename _StreamElem>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v)
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v)
 	{
-		v.first = ReadFromBinStream<_Ty1, _StreamElem>(is);
-		v.second = ReadFromBinStream<_Ty2, _StreamElem>(is);
+		int32_t first_read_size = ReadFromBinStream<_Ty1, _StreamElem>(is, v.first);
+		int32_t second_read_size = ReadFromBinStream<_Ty2, _StreamElem>(is, v.second);
+		return first_read_size + second_read_size;
 	}
 
 	// for map
 	template<class _Ty1, class _Ty2, typename _StreamElem = char>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::map<_Ty1, _Ty2>& v)
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::map<_Ty1, _Ty2>& v)
 	{
-		size_t len = ReadFromBinStream<uint32_t, _StreamElem>(is);
-		v.clear();
-		for (size_t i = 0; i < len; ++i)
+		int32_t read_size = 0;
+		int32_t map_size;
+		ReadFromBinStream<int32_t, _StreamElem>(is, map_size);
+		read_size += sizeof(int32_t);
+		v.clear();		
+		for (size_t i = 0; i < map_size; ++i)
 		{
-			v.emplace(ReadFromBinStream<std::pair<_Ty1, _Ty2>, _StreamElem>(is));
+			std::pair<_Ty1, _Ty2> item;
+			read_size += ReadFromBinStream<std::pair<_Ty1, _Ty2>, _StreamElem>(is, item);
+			v.insert(item);
 		}
+		return read_size;
 	}
 
 	// for set
 	template<class _Ty, typename _StreamElem>
-	inline void ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::set<_Ty>& v)
+	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::set<_Ty>& v)
 	{
-		size_t len = ReadFromBinStream<uint32_t, _StreamElem>(is);
-		v.clear();
-		for (size_t i = 0; i < len; ++i)
+		int32_t read_size = 0;
+		int32_t set_size;
+		ReadFromBinStream<int32_t, _StreamElem>(is, set_size);
+		read_size += sizeof(int32_t);
+		v.clear();		
+		for (int32_t i = 0; i < set_size; ++i)
 		{
-			v.emplace(ReadFromBinStream<_Ty, _StreamElem>(is));
+			_Ty item;
+			read_size += ReadFromBinStream<_Ty, _StreamElem>(is, item);
+			v.insert(item);
 		}
+		return read_size;
 	}
 
 #pragma endregion
 
+	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
+	template <class _Ty, typename _StreamElem>
+	inline int32_t WriteToBinStream(std::basic_ostream<_StreamElem>& os, const _Ty& v)
+	{
+		return WriteToBinStreamImpl(os, v);
+	}
+
+	// 바이너리 스트림으로부터 _Ty 타입을 역직렬화하는 함수입니다
+	template<class _Ty, typename _StreamElem>
+	inline int32_t ReadFromBinStream(std::basic_istream<_StreamElem>& is, _Ty& v)
+	{
+		return ReadFromBinStreamImpl(is, v);
+	}
+
+	void SerializationIntegralTest();
+	void SerializationFloatingTest();
+	void characterTest();
 	void StringTest();
 	void VectorTest();
 	void ListTest();

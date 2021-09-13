@@ -141,12 +141,16 @@
   <ItemGroup>
     <ClInclude Include="buffer.h" />
     <ClInclude Include="ByteUtils.h" />
+    <ClInclude Include="ISerializable.h" />
     <ClInclude Include="standard.h" />
+    <ClInclude Include="TestSignInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ByteUtils.cpp" />
+    <ClCompile Include="ISerializable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="standard.cpp" />
+    <ClCompile Include="TestSignInfo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
