@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <sstream>
 #include "ByteUtils.h"
+#include "ISerializable.h"
+#include <cassert>
 
 // 참고 : https://bab2min.tistory.com/613
 
@@ -51,6 +53,7 @@ namespace Utils
 	inline int32_t WriteToBinStreamImpl(std::basic_ostream<_StreamElem>& os, const typename std::pair<_Ty1, _Ty2>& v);
 	template<class _Ty1, class _Ty2, typename _StreamElem>
 	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::pair<_Ty1, _Ty2>& v);
+
 #pragma endregion	
 
 	// character type 은 실제 유니코드가 어떻게 serialize 되는지 확인하고  할 예정임
@@ -320,8 +323,8 @@ namespace Utils
 		int32_t map_size;
 		ReadFromBinStream<int32_t, _StreamElem>(is, map_size);
 		read_size += sizeof(int32_t);
-		v.clear();		
-		for (size_t i = 0; i < map_size; ++i)
+		v.clear();
+		for (int32_t i = 0; i < map_size; ++i)
 		{
 			std::pair<_Ty1, _Ty2> item;
 			read_size += ReadFromBinStream<std::pair<_Ty1, _Ty2>, _StreamElem>(is, item);
@@ -338,7 +341,7 @@ namespace Utils
 		int32_t set_size;
 		ReadFromBinStream<int32_t, _StreamElem>(is, set_size);
 		read_size += sizeof(int32_t);
-		v.clear();		
+		v.clear();
 		for (int32_t i = 0; i < set_size; ++i)
 		{
 			_Ty item;
@@ -349,6 +352,24 @@ namespace Utils
 	}
 
 #pragma endregion
+
+	// write for ISerializable Class Ptr 
+	template<typename _StreamElem>
+	inline int32_t WriteToBinStreamImpl(
+		std::basic_ostream<_StreamElem>& os,
+		ISerializable* class_ptr)
+	{
+		return class_ptr->Serialize(os);
+	}
+
+	// read for ISerializable Class Ptr
+	template<typename _StreamElem>
+	inline int32_t ReadFromBinStreamImpl(
+		std::basic_istream<_StreamElem>& is,
+		ISerializable* class_ptr)
+	{	
+		return class_ptr->DeSerialize(is);
+	}	
 
 	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
 	template <class _Ty, typename _StreamElem>

@@ -41,8 +41,12 @@ public:
 	}
 };
 
+
+
 void ObjTest()
 {
+	
+
 	TestSignInfo sign_info;
 	sign_info.SetInfo(10, L"code1", L"1234");
 
@@ -66,9 +70,9 @@ int main()
 	//Utils::VectorTest();
 	//Utils::ListTest();
 	//Utils::SetTest();
-	Utils::MapTest();
+	//Utils::MapTest();
 
-	//ObjTest();
+	ObjTest();
 	//ObjTest();
 	//ObjTest();
 	//ObjTest();
