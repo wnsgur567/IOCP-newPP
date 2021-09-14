@@ -29,8 +29,6 @@ namespace CSEchoClient
 
     class MyConverter
     {
-
-
         // write for iconvertable
         // can int... float .. double etc
         public static int WriteToBinStream<TItem>(MemoryStream writestream, TItem item) where TItem : IConvertible
@@ -511,5 +509,14 @@ namespace CSEchoClient
             return read_size;
         }
         #endregion
+
+        public static int WriteToBinStream(MemoryStream writestream, ISerializable serializable) 
+        {
+            return serializable.Serialize(writestream);
+        }
+        public static int ReadFromBinStream(MemoryStream readstream, ISerializable serializable)
+        {
+            return serializable.DeSerialize(readstream);           
+        }
     }
 }

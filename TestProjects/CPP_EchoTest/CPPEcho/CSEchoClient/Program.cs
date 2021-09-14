@@ -24,47 +24,94 @@ namespace ConsoleTest
 
             //SerializeLinkedListTest();
             //SerializeSetTest();
-            SerializeMapTest();
+            //SerializeMapTest();
+
+            //TestNetObject obj = new TestNetObject();
+            //obj.SetInfo();
+
+            //byte[] bytes = new byte[512];
+
+            //MemoryStream stream = new MemoryStream();
+
+            //stream.Position = sizeof(int);
+            //int size = MyConverter.WriteToBinStream(stream, obj);
+            //stream.Position = 0;
+            //MyConverter.WriteToBinStream(stream, size);
+            //stream.Position = 0;
+
+            //MemoryStream read_stream = new MemoryStream();
+            //read_stream.Write(stream.GetBuffer(), 0, size + sizeof(int));
+            //read_stream.Position = 0;
+            //int read_size;
+            //MyConverter.ReadFromBinStream(read_stream, out read_size);
+            //Console.WriteLine(read_size);
+
+            //TestNetObject read_obj = new TestNetObject();            
+            //MyConverter.ReadFromBinStream(read_stream, read_obj);
+
+            //read_obj.Print();
+
+            int PORT = 3500;
+            string IP = "localhost";
+
+            NetworkStream NS = null;
+            StreamReader SR = null;
+            StreamWriter SW = null;
+            TcpClient client = null;
+            try
+            {
+                client = new TcpClient(IP, PORT); //client 연결
+                Console.WriteLine("{0}:{1}에 접속하였습니다.", IP, PORT);
+                NS = client.GetStream(); // 소켓에서 메시지를 가져오는 스트림
+                SR = new StreamReader(NS, Encoding.UTF8); // Get message
+                SW = new StreamWriter(NS, Encoding.UTF8); // Send message
 
 
-            //int PORT = 3500;
-            //string IP = "localhost";
+                string SendMessage = string.Empty;
+                string GetMessage = string.Empty;
 
-            //NetworkStream NS = null;
-            //StreamReader SR = null;
-            //StreamWriter SW = null;
-            //TcpClient client = null;
-            //try
-            //{
-            //    client = new TcpClient(IP, PORT); //client 연결
-            //    Console.WriteLine("{0}:{1}에 접속하였습니다.", IP, PORT);
-            //    NS = client.GetStream(); // 소켓에서 메시지를 가져오는 스트림
-            //    SR = new StreamReader(NS, Encoding.UTF8); // Get message
-            //    SW = new StreamWriter(NS, Encoding.UTF8); // Send message
+                while (true)
+                {
+                    TestNetObject obj = new TestNetObject();
+                    obj.SetInfo();                    
+
+                    MemoryStream stream = new MemoryStream();
+
+                    stream.Position = sizeof(int);
+                    int size = MyConverter.WriteToBinStream(stream, obj);
+                    stream.Position = 0;
+                    MyConverter.WriteToBinStream(stream, size);
+                    stream.Position = 0;
+
+                    var aa = stream.GetBuffer();
+                    NS.Write(stream.GetBuffer(), 0, sizeof(int) + size);
+
+                    byte[] read_bytes = new byte[4];
+                    NS.Read(read_bytes, 0, sizeof(int));
+                    int read_size = BitConverter.ToInt32(read_bytes);
 
 
-            //    string SendMessage = string.Empty;
-            //    string GetMessage = string.Empty;
+                    MemoryStream read_stream = new MemoryStream();
+                    NS.Read(read_stream.GetBuffer(), 0, read_size);
+                    read_stream.Write(read_stream.GetBuffer(), 0, read_size);
+                    read_stream.Position = 0;
 
-            //    while ((SendMessage = Console.ReadLine()) != null)
-            //    {
-            //        SW.WriteLine(SendMessage); // 메시지 보내기
-            //        SW.Flush();
+                    TestNetObject read_obj = new TestNetObject();
+                    MyConverter.ReadFromBinStream(read_stream,read_obj);
 
-            //        GetMessage = SR.ReadLine();
-            //        Console.WriteLine(GetMessage);
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    System.Console.WriteLine(e.Message);
-            //}
-            //finally
-            //{
-            //    if (SW != null) SW.Close();
-            //    if (SR != null) SR.Close();
-            //    if (client != null) client.Close();
-            //}
+                    read_obj.Print();
+                }
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                if (SW != null) SW.Close();
+                if (SR != null) SR.Close();
+                if (client != null) client.Close();
+            }
         }
 
 
@@ -290,7 +337,7 @@ namespace ConsoleTest
             Console.WriteLine();
         }
 
-        
+
 
         static void SerializeIntegerTest()
         {

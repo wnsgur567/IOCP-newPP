@@ -15,7 +15,6 @@ void TestNetObject::SetInfo()
 	int_to_wstr_map.insert({ 4,L"icicicicicicic oc" });
 	int_to_wstr_map.insert({ 111,L"pipipipipipipip" });
 
-	class_ptr = new TestMemeberClass();
 	class_ptr->x = 1213.8f;
 	class_ptr->y = -0.021f;
 	class_ptr->z = 111.f;
@@ -41,6 +40,8 @@ void TestNetObject::Print() const
 		printf("[ %d , %ws ]\n", item.first, item.second.c_str());
 	}
 	printf("\n");
+
+	class_ptr->Print();
 
 	printf("==== print end\n");
 }

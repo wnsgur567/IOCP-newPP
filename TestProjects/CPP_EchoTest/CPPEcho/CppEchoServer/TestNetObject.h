@@ -27,7 +27,7 @@ private:
 	std::map<int, std::wstring> int_to_wstr_map;
 	TestMemeberClass* class_ptr;
 public:
-	TestNetObject() : class_ptr(nullptr) {}
+	TestNetObject() : class_ptr(new TestMemeberClass()) {}
 	void SetInfo();
 	void Print() const;
 
