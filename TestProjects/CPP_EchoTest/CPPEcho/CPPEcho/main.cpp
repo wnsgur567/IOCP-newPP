@@ -66,12 +66,12 @@ int main()
 	//Utils::VectorTest();
 	//Utils::ListTest();
 	//Utils::SetTest();
-	//Utils::MapTest();
+	Utils::MapTest();
 
-	ObjTest();
-	ObjTest();
-	ObjTest();
-	ObjTest();
-	ObjTest();
+	//ObjTest();
+	//ObjTest();
+	//ObjTest();
+	//ObjTest();
+	//ObjTest();
 }
 

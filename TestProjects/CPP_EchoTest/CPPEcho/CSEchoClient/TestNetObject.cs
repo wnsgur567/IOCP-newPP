@@ -29,7 +29,7 @@ namespace CSEchoClient
         {
             int size = 0;
 
-            size += MyConverter.WriteToBinStream(ref stream,ref sign_id);
+            size += MyConverter.WriteToBinStream(stream ,sign_id);
 
             //stream.Write(BitConverter.GetBytes(sign_id));
             //stream.Write(Encoding.Unicode.GetBytes(id));

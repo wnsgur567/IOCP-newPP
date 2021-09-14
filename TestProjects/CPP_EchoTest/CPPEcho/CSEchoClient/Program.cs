@@ -17,8 +17,15 @@ namespace ConsoleTest
         {
             //SerializeIntegerTest();
             //SerializeFloatingTest();
-            SerializeCharacterTest();
-            SerializeStringTest();
+            //SerializeCharacterTest();
+            //SerializeStringTest();
+            //SerializeGenericTest();
+
+
+            //SerializeLinkedListTest();
+            //SerializeSetTest();
+            SerializeMapTest();
+
 
             //int PORT = 3500;
             //string IP = "localhost";
@@ -61,6 +68,230 @@ namespace ConsoleTest
         }
 
 
+        static void SerializeGenericTest()
+        {
+            int write_size = 0;
+            int read_size = 0;
+
+            MemoryStream write_stream = new MemoryStream();
+            MemoryStream read_stream = new MemoryStream();
+
+
+            float x = 10.8546f;
+            float x_out;
+
+            write_size = MyConverter.WriteToBinStream(write_stream, x);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, sizeof(float));
+            read_stream.Position = 0;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out x_out);
+
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("input : {0}", x);
+            Console.WriteLine("output : {0}", x_out);
+        }
+
+        static void ListTest()
+        {
+            int write_size = 0;
+            int read_size = 0;
+
+            MemoryStream write_stream = new MemoryStream();
+            MemoryStream read_stream = new MemoryStream();
+
+            // int
+            List<int> int_list = new List<int>();
+            int_list.Add(10);
+            int_list.Add(22);
+            int_list.Add(-973621);
+            int_list.Add(6421);
+            int_list.Add(892582);
+
+            write_stream.Position = 0;
+            write_size = MyConverter.WriteToBinStream(write_stream, int_list);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, write_size);
+            read_stream.Position = 0;
+
+            List<int> int_list_out = null;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out int_list_out);
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("int_list : ");
+            foreach (var item in int_list_out)
+            {
+                Console.Write("{0} ", item);
+            }
+            Console.WriteLine();
+
+            // string
+            List<string> string_list = new List<string>();
+            string_list.Add("asdfsdfsd");
+            string_list.Add("7897987987");
+            string_list.Add("876546546xcdvdfvxgrfsgsgrse4r6t5rs4d6f8y7sdty");
+
+            write_stream.Position = 0;
+            write_size = MyConverter.WriteToBinStream(write_stream, string_list);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, write_size);
+            read_stream.Position = 0;
+
+            List<string> string_list_out = null;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out string_list_out);
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("string_list : ");
+            foreach (var item in string_list_out)
+            {
+                Console.Write("{0} ", item);
+            }
+            Console.WriteLine();
+
+            // float
+            List<float> float_list = new List<float>();
+            float_list.Add(1.25167f);
+            float_list.Add(0.00274f);
+            float_list.Add(87654.3f);
+
+            write_stream.Position = 0;
+            write_size = MyConverter.WriteToBinStream(write_stream, float_list);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, write_size);
+            read_stream.Position = 0;
+
+            List<float> float_list_out = null;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out float_list_out);
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("float_list : ");
+            foreach (var item in float_list_out)
+            {
+                Console.Write("{0} ", item);
+            }
+            Console.WriteLine();
+        }
+
+        static void SerializeLinkedListTest()
+        {
+            int write_size = 0;
+            int read_size = 0;
+
+            MemoryStream write_stream = new MemoryStream();
+            MemoryStream read_stream = new MemoryStream();
+
+            // int
+            LinkedList<int> int_list = new LinkedList<int>();
+            int_list.AddLast(10);
+            int_list.AddLast(22);
+            int_list.AddLast(-973621);
+            int_list.AddLast(6421);
+            int_list.AddLast(892582);
+
+            write_stream.Position = 0;
+            write_size = MyConverter.WriteToBinStream(write_stream, int_list);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, write_size);
+            read_stream.Position = 0;
+
+            LinkedList<int> int_list_out = null;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out int_list_out);
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("int_list : ");
+            foreach (var item in int_list_out)
+            {
+                Console.Write("{0} ", item);
+            }
+            Console.WriteLine();
+        }
+        static void SerializeSetTest()
+        {
+            int write_size = 0;
+            int read_size = 0;
+
+            MemoryStream write_stream = new MemoryStream();
+            MemoryStream read_stream = new MemoryStream();
+
+            // int
+            HashSet<int> int_set = new HashSet<int>();
+            int_set.Add(103099348);
+            int_set.Add(22);
+            int_set.Add(-973621);
+            int_set.Add(6421);
+            int_set.Add(892582);
+
+            write_stream.Position = 0;
+            write_size = MyConverter.WriteToBinStream(write_stream, int_set);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, write_size);
+            read_stream.Position = 0;
+
+            LinkedList<int> int_set_out = null;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out int_set_out);
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("int_list : ");
+            foreach (var item in int_set_out)
+            {
+                Console.Write("{0} ", item);
+            }
+            Console.WriteLine();
+        }
+
+        static void SerializeMapTest()
+        {
+            int write_size = 0;
+            int read_size = 0;
+
+            MemoryStream write_stream = new MemoryStream();
+            MemoryStream read_stream = new MemoryStream();
+
+
+            // pair
+
+            // double string
+            Dictionary<double, string> dic = new Dictionary<double, string>();
+            dic.Add(123.584, "ttetestsetset");
+            dic.Add(9832.5445649, "popopopop");
+            dic.Add(0.00215, "serializeserializeserializeserializeserializeserialize");
+            dic.Add(-0.654, "00");
+            dic.Add(0.0001, "dfdf\tdfo\t");
+
+            write_stream.Position = 0;
+            write_size = MyConverter.WriteToBinStream(write_stream, dic);
+            Console.WriteLine("Write bytes : {0}", write_size);
+
+            read_stream.Position = 0;
+            read_stream.Write(write_stream.GetBuffer(), 0, write_size);
+            read_stream.Position = 0;
+
+            Dictionary<double, string> dic_out;
+            read_size = MyConverter.ReadFromBinStream(read_stream, out dic_out);
+            Console.WriteLine("Read bytes : {0}", read_size);
+
+            Console.WriteLine("map : ");
+            foreach (var item in dic_out)
+            {
+                Console.WriteLine("({0}, {1}) ", item.Key, item.Value);
+            }
+            Console.WriteLine();
+        }
+
+        
+
         static void SerializeIntegerTest()
         {
             Int16 integer16 = Convert.ToInt16(-56);
@@ -84,14 +315,14 @@ namespace ConsoleTest
 
 
             // int 16
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref integer16);
+            write_size = MyConverter.WriteToBinStream(write_stream, integer16);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(Int16));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out integer16_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out integer16_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", integer16);
@@ -101,14 +332,14 @@ namespace ConsoleTest
             // uint 16
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref uinteger16);
+            write_size = MyConverter.WriteToBinStream(write_stream, uinteger16);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(UInt16));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out uinteger16_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out uinteger16_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", uinteger16);
@@ -118,14 +349,14 @@ namespace ConsoleTest
             // int 32
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref integer32);
+            write_size = MyConverter.WriteToBinStream(write_stream, integer32);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(Int32));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out integer32_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out integer32_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", integer32);
@@ -135,14 +366,14 @@ namespace ConsoleTest
             // uint 32   
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref uinteger32);
+            write_size = MyConverter.WriteToBinStream(write_stream, uinteger32);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(UInt32));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out uinteger32_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out uinteger32_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", uinteger32);
@@ -152,14 +383,14 @@ namespace ConsoleTest
             // int 64
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref integer64);
+            write_size = MyConverter.WriteToBinStream(write_stream, integer64);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(Int64));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out integer64_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out integer64_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", integer64);
@@ -170,14 +401,14 @@ namespace ConsoleTest
             write_stream.Position = 0;
 
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref uinteger64);
+            write_size = MyConverter.WriteToBinStream(write_stream, uinteger64);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(Int64));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out uinteger64_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out uinteger64_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", uinteger64);
@@ -208,14 +439,14 @@ namespace ConsoleTest
             // float 1 
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref float_1);
+            write_size = MyConverter.WriteToBinStream(write_stream, float_1);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(float));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out float_1_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out float_1_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", float_1);
@@ -225,14 +456,14 @@ namespace ConsoleTest
             // float 2
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref float_2);
+            write_size = MyConverter.WriteToBinStream(write_stream, float_2);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(float));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out float_2_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out float_2_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", float_2);
@@ -242,14 +473,14 @@ namespace ConsoleTest
             // double 1
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref double_1);
+            write_size = MyConverter.WriteToBinStream(write_stream, double_1);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(double));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out double_1_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out double_1_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", double_1);
@@ -259,14 +490,14 @@ namespace ConsoleTest
             // double 2
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref double_2);
+            write_size = MyConverter.WriteToBinStream(write_stream, double_2);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(double));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out double_2_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out double_2_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", double_2);
@@ -286,14 +517,14 @@ namespace ConsoleTest
 
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref c);
+            write_size = MyConverter.WriteToBinStream(write_stream, c);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(char));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out d);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out d);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", c);
@@ -314,16 +545,17 @@ namespace ConsoleTest
 
             write_stream.Position = 0;
 
-            write_size = MyConverter.WriteToBinStream(ref write_stream, ref str1);
+            write_size = MyConverter.WriteToBinStream(write_stream, str1);
             Console.WriteLine("Write bytes : {0}", write_size);
 
             read_stream.Position = 0;
             read_stream.Write(write_stream.GetBuffer(), 0, write_size);
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(ref read_stream, out str1_out);
+            read_size = MyConverter.ReadFromBinStream(read_stream, out str1_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
+            Console.WriteLine("strlen : {0}", str1.Length);
             Console.WriteLine("input : {0}", str1);
             Console.WriteLine("output : {0}", str1_out);
             Console.WriteLine();
