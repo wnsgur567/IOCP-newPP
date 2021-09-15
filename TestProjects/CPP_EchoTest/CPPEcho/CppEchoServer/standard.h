@@ -118,7 +118,7 @@ namespace Utils
 		int32_t write_size = 0;
 
 		// 크기를 저장합니다
-		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(v.size()));
+		write_size += WriteToBinStream<int32_t, _StreamElem>(os, static_cast<int32_t>(sizeof(_Ty) * v.size()));
 		// string 을 저장
 		for (auto& e : v)
 		{
@@ -259,14 +259,15 @@ namespace Utils
 	//////////////// container 
 
 	// for string
+	// only unicode wchar
 	template<class _Ty, typename _StreamElem>
 	inline int32_t ReadFromBinStreamImpl(std::basic_istream<_StreamElem>& is, typename std::basic_string<_Ty>& v)
 	{
 		int32_t read_size = 0;
-		int32_t string_size = 0;
-		ReadFromBinStream<int32_t, _StreamElem>(is, string_size);
+		int32_t string_byte_size = 0;
+		ReadFromBinStream<int32_t, _StreamElem>(is, string_byte_size);
 		read_size += sizeof(int32_t);
-		v.resize(string_size);
+		v.resize(string_byte_size / sizeof(_Ty));
 		for (auto& e : v)
 		{
 			read_size += ReadFromBinStream(is, e);
@@ -367,9 +368,9 @@ namespace Utils
 	inline int32_t ReadFromBinStreamImpl(
 		std::basic_istream<_StreamElem>& is,
 		ISerializable* class_ptr)
-	{	
+	{
 		return class_ptr->DeSerialize(is);
-	}	
+	}
 
 	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
 	template <class _Ty, typename _StreamElem>

@@ -72,10 +72,14 @@ int main()
 	//Utils::SetTest();
 	//Utils::MapTest();
 
-	ObjTest();
 	//ObjTest();
 	//ObjTest();
 	//ObjTest();
 	//ObjTest();
+	//ObjTest();
+
+
+	std::basic_istringstream<unsigned char> istream;
+
 }
 

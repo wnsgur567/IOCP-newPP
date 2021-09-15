@@ -70,37 +70,38 @@ namespace ConsoleTest
                 string SendMessage = string.Empty;
                 string GetMessage = string.Empty;
 
-                while (true)
-                {
-                    TestNetObject obj = new TestNetObject();
-                    obj.SetInfo();                    
 
-                    MemoryStream stream = new MemoryStream();
+                TestNetObject obj = new TestNetObject();
+                obj.SetInfo();
 
-                    stream.Position = sizeof(int);
-                    int size = MyConverter.WriteToBinStream(stream, obj);
-                    stream.Position = 0;
-                    MyConverter.WriteToBinStream(stream, size);
-                    stream.Position = 0;
+                MemoryStream stream = new MemoryStream();
 
-                    var aa = stream.GetBuffer();
-                    NS.Write(stream.GetBuffer(), 0, sizeof(int) + size);
+                stream.Position = sizeof(int);
+                int size = MyConverter.WriteToBinStream(stream, obj);
+                stream.Position = 0;
+                MyConverter.WriteToBinStream(stream, size);
+                stream.Position = 0;
 
-                    byte[] read_bytes = new byte[4];
-                    NS.Read(read_bytes, 0, sizeof(int));
-                    int read_size = BitConverter.ToInt32(read_bytes);
+                var aa = stream.GetBuffer();
+                NS.Write(stream.GetBuffer(), 0, sizeof(int) + size);
+                Console.WriteLine("write size : {0}", sizeof(int) + size);
 
+                byte[] read_bytes = new byte[4];
+                NS.Read(read_bytes, 0, sizeof(int));
+                int read_size = BitConverter.ToInt32(read_bytes);
 
-                    MemoryStream read_stream = new MemoryStream();
-                    NS.Read(read_stream.GetBuffer(), 0, read_size);
-                    read_stream.Write(read_stream.GetBuffer(), 0, read_size);
-                    read_stream.Position = 0;
+                byte[] read_bytes_data = new byte[read_size];
+                Console.WriteLine("write size : {0}", read_size);
+                NS.Read(read_bytes_data, 0, read_size);
+                MemoryStream read_stream = new MemoryStream();
+                read_stream.Write(read_bytes_data, 0, read_size);
+                read_stream.Position = 0;
 
-                    TestNetObject read_obj = new TestNetObject();
-                    MyConverter.ReadFromBinStream(read_stream,read_obj);
+                TestNetObject read_obj = new TestNetObject();
+                MyConverter.ReadFromBinStream(read_stream, read_obj);
 
-                    read_obj.Print();
-                }
+                read_obj.Print();
+
             }
             catch (Exception e)
             {

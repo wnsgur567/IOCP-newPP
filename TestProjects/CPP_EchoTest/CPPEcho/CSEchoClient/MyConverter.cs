@@ -30,7 +30,7 @@ namespace CSEchoClient
     class MyConverter
     {
         // write for iconvertable
-        // can int... float .. double etc
+        // for integer
         public static int WriteToBinStream<TItem>(MemoryStream writestream, TItem item) where TItem : IConvertible
         {
             if (typeof(string) == typeof(TItem))
@@ -40,19 +40,40 @@ namespace CSEchoClient
                              .GetMethod("GetBytes", new Type[] { item.GetType() })
                              .Invoke(null, new object[] { item });
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             writestream.Write(bytes);
 
             return bytes.Length;
         }
 
-        //// write for Collection item
-        //public static int WriteToBinStream<TItem>(MemoryStream writestream, ) where TItem :
-        //{
+        public static int WriteToBinStream(MemoryStream writestream, float item)
+        {
+            var bytes = BitConverter.GetBytes(item);
 
-        //}
+            //if(BitConverter.IsLittleEndian)
+            //{
+            //    Array.Reverse(bytes);
+            //}
+
+            writestream.Write(bytes);
+
+            return bytes.Length;
+        }
+        public static int WriteToBinStream(MemoryStream writestream, double item)
+        {
+            var bytes = BitConverter.GetBytes(item);
+
+            //if (BitConverter.IsLittleEndian)
+            //{
+            //    Array.Reverse(bytes);
+            //}
+
+            writestream.Write(bytes);
+
+            return bytes.Length;
+        }
 
         #region Read fundamental
         public static int ReadFromBinStream(MemoryStream readstream, out char item)
@@ -60,8 +81,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(char)];
             int read_size = readstream.Read(bytes, 0, sizeof(char));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToChar(bytes);
 
@@ -73,8 +94,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(Int16)];
             int read_size = readstream.Read(bytes, 0, sizeof(Int16));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToInt16(bytes);
 
@@ -85,8 +106,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(UInt16)];
             int read_size = readstream.Read(bytes, 0, sizeof(UInt16));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToUInt16(bytes);
 
@@ -98,8 +119,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(Int32)];
             int read_size = readstream.Read(bytes, 0, sizeof(Int32));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToInt32(bytes);
 
@@ -110,8 +131,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(UInt32)];
             int read_size = readstream.Read(bytes, 0, sizeof(UInt32));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToUInt32(bytes);
 
@@ -120,11 +141,11 @@ namespace CSEchoClient
 
         public static int ReadFromBinStream(MemoryStream readstream, out Int64 item)
         {
-            byte[] bytes = new byte[sizeof(Int64)];
+            byte[] bytes = new byte[sizeof(Int64)]; 
             int read_size = readstream.Read(bytes, 0, sizeof(Int64));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToInt64(bytes);
 
@@ -136,8 +157,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(UInt64)];
             int read_size = readstream.Read(bytes, 0, sizeof(UInt64));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToUInt64(bytes);
 
@@ -149,21 +170,24 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(float)];
             int read_size = readstream.Read(bytes, 0, sizeof(float));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //{
+            //    Array.Reverse(bytes);
+            //}
 
             item = BitConverter.ToSingle(bytes);
 
             return read_size;
         }
+       
 
         public static int ReadFromBinStream(MemoryStream readstream, out double item)
         {
             byte[] bytes = new byte[sizeof(double)];
             int read_size = readstream.Read(bytes, 0, sizeof(double));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToDouble(bytes);
 
@@ -175,8 +199,8 @@ namespace CSEchoClient
             byte[] bytes = new byte[sizeof(char)];
             int read_size = readstream.Read(bytes, 0, sizeof(char));
 
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes);
 
             item = BitConverter.ToBoolean(bytes);
 
@@ -197,20 +221,20 @@ namespace CSEchoClient
             // write string size
             int bytes_length = bytes.Length;
             var bytes_length_bytes = BitConverter.GetBytes(bytes_length);
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes_length_bytes);
+            //if (BitConverter.IsLittleEndian)
+            //    Array.Reverse(bytes_length_bytes);
             writestream.Write(bytes_length_bytes);
             write_size += sizeof(int);
 
             // write string
-            if (BitConverter.IsLittleEndian)
-            {
-                int wchar_size = 2;
-                for (int i = 0; i < bytes.Length; i = i + wchar_size)
-                {
-                    Array.Reverse(bytes, i, wchar_size);
-                }
-            }
+            //if (BitConverter.IsLittleEndian)
+            //{
+            //    int wchar_size = 2;
+            //    for (int i = 0; i < bytes.Length; i = i + wchar_size)
+            //    {
+            //        Array.Reverse(bytes, i, wchar_size);
+            //    }
+            //}
 
             writestream.Write(bytes);
             write_size += bytes.Length;
@@ -232,14 +256,14 @@ namespace CSEchoClient
             readstream.Read(bytes);
             read_size += bytes.Length;
 
-            if (BitConverter.IsLittleEndian)
-            {
-                int wchar_size = 2;
-                for (int i = 0; i < bytes.Length; i = i + wchar_size)
-                {
-                    Array.Reverse(bytes, i, wchar_size);
-                }
-            }
+            //if (BitConverter.IsLittleEndian)
+            //{
+            //    int wchar_size = 2;
+            //    for (int i = 0; i < bytes.Length; i = i + wchar_size)
+            //    {
+            //        Array.Reverse(bytes, i, wchar_size);
+            //    }
+            //}
 
             item = Encoding.Unicode.GetString(bytes);
 

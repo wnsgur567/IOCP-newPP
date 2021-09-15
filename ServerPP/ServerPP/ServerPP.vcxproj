@@ -150,6 +150,7 @@
     <ClCompile Include="IOCPBase\IOCPSessionManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IOCPSession.cpp" />
+    <ClCompile Include="NetBase\ForMemroyStream.cpp" />
     <ClCompile Include="NetBase\MemoryStream.cpp" />
     <ClCompile Include="NetBase\Packet.cpp" />
     <ClCompile Include="NetBase\PacketManager.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="SignInfo.cpp" />
     <ClCompile Include="SignManager.cpp" />
     <ClCompile Include="SignState.cpp" />
+    <ClCompile Include="Utils\ByteUtils.cpp" />
     <ClCompile Include="Utils\CriticalSection.cpp" />
     <ClCompile Include="Utils\FileUtil.cpp" />
     <ClCompile Include="Utils\KISA_CIPHER\CipherManager.cpp" />
@@ -179,6 +181,8 @@
     <ClInclude Include="IOCPBase\NetworkManagerServer.h" />
     <ClInclude Include="IOCPNet_RootHeader.h" />
     <ClInclude Include="IOCPSession.h" />
+    <ClInclude Include="NetBase\ForMemroystream.h" />
+    <ClInclude Include="NetBase\ISerializable.h" />
     <ClInclude Include="NetBase\MemoryStream.h" />
     <ClInclude Include="NetBase\NetBase_RootHeader.h" />
     <ClInclude Include="NetBase\Packet.h" />
@@ -189,6 +193,7 @@
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
     <ClInclude Include="SignState.h" />
+    <ClInclude Include="Utils\ByteUtils.h" />
     <ClInclude Include="Utils\CriticalSection.h" />
     <ClInclude Include="Utils\FileUtil.h" />
     <ClInclude Include="Utils\KISA_CIPHER\CipherManager.h" />

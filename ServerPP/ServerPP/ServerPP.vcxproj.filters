@@ -120,6 +120,12 @@
     <ClCompile Include="CharacterSelectState.cpp">
       <Filter>11_CharacterSelect</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\ByteUtils.cpp">
+      <Filter>00_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="NetBase\ForMemroyStream.cpp">
+      <Filter>01_NetBase\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h">
@@ -211,6 +217,15 @@
     </ClInclude>
     <ClInclude Include="Utils\TryCatchFinally.h">
       <Filter>00_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ByteUtils.h">
+      <Filter>00_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\ISerializable.h">
+      <Filter>01_NetBase\header</Filter>
+    </ClInclude>
+    <ClInclude Include="NetBase\ForMemroystream.h">
+      <Filter>01_NetBase\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

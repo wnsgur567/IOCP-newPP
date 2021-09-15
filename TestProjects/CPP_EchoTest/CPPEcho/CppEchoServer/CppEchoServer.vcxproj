@@ -140,13 +140,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ByteUtils.cpp" />
+    <ClCompile Include="ForMemroyStream.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MemoryStream.cpp" />
     <ClCompile Include="standard.cpp" />
     <ClCompile Include="TestNetObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ByteUtils.h" />
+    <ClInclude Include="ForMemroystream.h" />
     <ClInclude Include="ISerializable.h" />
+    <ClInclude Include="MemoryStream.h" />
     <ClInclude Include="standard.h" />
     <ClInclude Include="TestNetObject.h" />
   </ItemGroup>

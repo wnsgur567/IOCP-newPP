@@ -32,30 +32,43 @@ struct SOCKETINFO
 DWORD WINAPI makeThread(LPVOID hIOCP);
 
 #include "TestNetObject.h"
+int NetTest();
+
+
 
 int main()
 {
-	/* TestNetObject obj;
+	//Utils::NewCharacterTest();
+	//Utils::NewIntegralTest();
+	//Utils::NewFloatingTest();
+	//Utils::NewStringTest();
+	//Utils::NewVectorTest();
+	//Utils::NewMapTest();
 
-	 obj.SetInfo();
-	 obj.Print();
+	/*NetBase::OutputMemoryStreamPtr output_buffer = std::make_shared<NetBase::OutputMemoryStream>(512);
+	NetBase::InputMemoryStreamPtr input_buffer = std::make_shared<NetBase::InputMemoryStream>(512);
 
-	 std::basic_ostringstream<byte> out_stream;
-	 obj.Serialize(out_stream);
+	TestNetObject obj;
 
-	 std::basic_istringstream<byte> in_stream;
-	 in_stream.str(out_stream.str());
-	 TestNetObject obj2;
-	 obj2.DeSerialize(in_stream);
+	obj.SetInfo();
+	obj.Print();
 
-	 obj2.Print();*/
+	obj.Serialize(output_buffer);
 
+	std::basic_istringstream<byte> in_stream;
+	input_buffer->Clear();
+	memcpy(input_buffer->GetBufferPtr(), output_buffer->GetBufferPtr(), 512);
+	TestNetObject obj2;
+	obj2.DeSerialize(input_buffer);
 
+	obj2.Print();*/
 
+	return NetTest();
+}
 
-
-
-	 // Winsock Start - windock.dll 로드
+int NetTest()
+{
+	// Winsock Start - windock.dll 로드
 	WSADATA WSAData;
 	if (WSAStartup(MAKEWORD(2, 2), &WSAData) != 0)
 	{
@@ -184,6 +197,8 @@ DWORD WINAPI makeThread(LPVOID hIOCP)
 			return 1;
 		}
 
+		printf("receivedbytes : %d\n\n", receiveBytes);
+
 		eventSocket->dataBuffer.len = receiveBytes;
 
 		if (receiveBytes == 0)
@@ -198,24 +213,28 @@ DWORD WINAPI makeThread(LPVOID hIOCP)
 
 			byte* byte_ptr = (byte*)eventSocket->messageBuffer;
 
+			printf("isLitter : %d", Utils::BitConverter::IsLittelEndian());
+
+			NetBase::OutputMemoryStreamPtr output_buffer = std::make_shared<NetBase::OutputMemoryStream>(512);
+			NetBase::InputMemoryStreamPtr input_buffer = std::make_shared<NetBase::InputMemoryStream>(512);
+
 			int len;
-			std::basic_istringstream<byte> read_stream;			
-			auto sstr = std::basic_string<byte>();
-			sstr.assign(byte_ptr, byte_ptr + 4);
-			
-			read_stream.str(sstr);
-			const byte* ptr = read_stream.str().c_str();
-			Utils::ReadFromBinStream(read_stream, len);
+			input_buffer->Clear();
+			memcpy(input_buffer->GetBufferPtr(), byte_ptr, sizeof(int));
+			int read_size = Utils::ReadFromBinStream(input_buffer, len);
+
 
 			TestNetObject* obj = new TestNetObject();
-			Utils::ReadFromBinStream(read_stream, obj);
+			input_buffer->Clear();
+			memcpy(input_buffer->GetBufferPtr(), byte_ptr + 4, len);
+			read_size = Utils::ReadFromBinStream(input_buffer, obj);
 
 			obj->Print();
 
-			std::basic_ostringstream<byte> write_stream;
-			write_stream.str((byte*)eventSocket->messageBuffer);
-			Utils::WriteToBinStream(write_stream, len);
-			Utils::WriteToBinStream(write_stream, obj);
+			int send_size = Utils::WriteToBinStream(output_buffer, len);
+			send_size += Utils::WriteToBinStream(output_buffer, obj);
+
+			memcpy(eventSocket->messageBuffer, output_buffer->GetBufferPtr(), send_size);
 
 
 			if (WSASend(eventSocket->socket, &(eventSocket->dataBuffer), 1, &sendBytes, 0, NULL, NULL) == SOCKET_ERROR)
@@ -235,7 +254,7 @@ DWORD WINAPI makeThread(LPVOID hIOCP)
 			eventSocket->dataBuffer.buf = eventSocket->messageBuffer;
 			flags = 0;
 
-			delete obj;
+
 
 			if (WSARecv(eventSocket->socket, &(eventSocket->dataBuffer), 1, &receiveBytes, &flags, &eventSocket->overlapped, NULL) == SOCKET_ERROR)
 			{

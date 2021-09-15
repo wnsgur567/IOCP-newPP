@@ -1,6 +1,6 @@
 #pragma once
 
-#include "standard.h"
+#include "ForMemroystream.h"
 #include <vector>
 #include <map>
 
@@ -10,10 +10,11 @@ public:
 	float_t x;
 	float_t y;
 	float_t z;
+	int32_t a;
 public:
 	// ISerializable을(를) 통해 상속됨
-	virtual int Serialize(std::basic_ostream<byte>& out_stream) override;
-	virtual int DeSerialize(std::basic_istream<byte>& in_stream) override;
+	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+	virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 	void Print() const;
 };
 
@@ -32,7 +33,7 @@ public:
 	void Print() const;
 
 	// ISerializable을(를) 통해 상속됨
-	virtual int Serialize(std::basic_ostream<byte>& out_stream) override;
-	virtual int DeSerialize(std::basic_istream<byte>& out_stream) override;
+	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+	virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 };
 

@@ -18,11 +18,13 @@ namespace CSEchoClient
         float x;
         float y;
         float z;
+        Int32 a;
         public TestMemberClass()
         {
             x = 123.123f;
             y = 0.4874f;
-            z = -7154.454f;
+            z = 7154.454f;
+            a = 1;
         }
 
         public int DeSerialize(MemoryStream stream)
@@ -31,6 +33,7 @@ namespace CSEchoClient
             size += MyConverter.ReadFromBinStream(stream, out x);
             size += MyConverter.ReadFromBinStream(stream, out y);
             size += MyConverter.ReadFromBinStream(stream, out z);
+            size += MyConverter.ReadFromBinStream(stream, out a);
             return size;
         }
 
@@ -40,6 +43,7 @@ namespace CSEchoClient
             size += MyConverter.WriteToBinStream(stream, x);
             size += MyConverter.WriteToBinStream(stream, y);
             size += MyConverter.WriteToBinStream(stream, z);
+            size += MyConverter.WriteToBinStream(stream, a);
             return size;
         }
 
@@ -77,7 +81,7 @@ namespace CSEchoClient
 
         public int Serialize(MemoryStream stream)
         {
-            int size = 0;
+            int size = 0;            
             size += MyConverter.WriteToBinStream(stream, m_int64);
             size += MyConverter.WriteToBinStream(stream, m_float);
             size += MyConverter.WriteToBinStream(stream, m_str);

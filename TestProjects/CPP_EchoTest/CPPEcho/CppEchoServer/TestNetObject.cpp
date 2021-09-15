@@ -1,5 +1,5 @@
 #include "TestNetObject.h"
-#include "standard.h"
+#include "ForMemroystream.h"
 
 void TestNetObject::SetInfo()
 {
@@ -46,7 +46,7 @@ void TestNetObject::Print() const
 	printf("==== print end\n");
 }
 
-int TestNetObject::Serialize(std::basic_ostream<byte>& out_stream)
+int TestNetObject::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
 {
 	int size = 0;	
 	size += Utils::WriteToBinStream(out_stream, m_int64);
@@ -58,33 +58,36 @@ int TestNetObject::Serialize(std::basic_ostream<byte>& out_stream)
 	return size;
 }
 
-int TestNetObject::DeSerialize(std::basic_istream<byte>& in_stream)
+int TestNetObject::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 {
 	int size = 0;	
-	size += Utils::ReadFromBinStream(in_stream, m_int64);
+	size += Utils::ReadFromBinStream(in_stream, m_int64);	
 	size += Utils::ReadFromBinStream(in_stream, m_float);
 	size += Utils::ReadFromBinStream(in_stream, m_wstr);
 	size += Utils::ReadFromBinStream(in_stream, integer_vec);
 	size += Utils::ReadFromBinStream(in_stream, int_to_wstr_map);
 	size += Utils::ReadFromBinStream(in_stream, class_ptr);
+
 	return size;
 }
 
-int TestMemeberClass::Serialize(std::basic_ostream<byte>& out_stream)
+int TestMemeberClass::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
 {
 	int size = 0;
 	size += Utils::WriteToBinStream(out_stream, x);
 	size += Utils::WriteToBinStream(out_stream, y);
 	size += Utils::WriteToBinStream(out_stream, z);
+	size += Utils::WriteToBinStream(out_stream, a);
 	return size;
 }
 
-int TestMemeberClass::DeSerialize(std::basic_istream<byte>& in_stream)
+int TestMemeberClass::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 {
 	int size = 0;
 	size += Utils::ReadFromBinStream(in_stream, x);
 	size += Utils::ReadFromBinStream(in_stream, y);
 	size += Utils::ReadFromBinStream(in_stream, z);
+	size += Utils::ReadFromBinStream(in_stream, a);
 	return size;
 }
 

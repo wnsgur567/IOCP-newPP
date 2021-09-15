@@ -5,6 +5,7 @@ namespace Utils
 	bool BitConverter::m_isLittleEndian = false;
 	BitConverter BitConverterStaticConstructor::bitconverter;
 
+#ifdef __DEBUG
 	void IntegerTest()
 	{
 		int16_t integer16 = 1215;
@@ -110,4 +111,5 @@ namespace Utils
 		auto dd = Utils::BitConverter::BytesToDouble(bytes);
 		printf("ff : %lf\n", dd);
 	}
+#endif
 }
