@@ -123,7 +123,7 @@
     <ClCompile Include="Utils\ByteUtils.cpp">
       <Filter>00_Base</Filter>
     </ClCompile>
-    <ClCompile Include="NetBase\ForMemroyStream.cpp">
+    <ClCompile Include="NetBase\StreamReadWrite.cpp">
       <Filter>01_NetBase\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,7 +224,7 @@
     <ClInclude Include="NetBase\ISerializable.h">
       <Filter>01_NetBase\header</Filter>
     </ClInclude>
-    <ClInclude Include="NetBase\ForMemroystream.h">
+    <ClInclude Include="NetBase\StreamReadWrite.h">
       <Filter>01_NetBase\header</Filter>
     </ClInclude>
   </ItemGroup>

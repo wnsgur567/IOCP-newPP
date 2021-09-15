@@ -150,7 +150,7 @@
     <ClCompile Include="IOCPBase\IOCPSessionManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IOCPSession.cpp" />
-    <ClCompile Include="NetBase\ForMemroyStream.cpp" />
+    <ClCompile Include="NetBase\StreamReadWrite.cpp" />
     <ClCompile Include="NetBase\MemoryStream.cpp" />
     <ClCompile Include="NetBase\Packet.cpp" />
     <ClCompile Include="NetBase\PacketManager.cpp" />
@@ -181,7 +181,7 @@
     <ClInclude Include="IOCPBase\NetworkManagerServer.h" />
     <ClInclude Include="IOCPNet_RootHeader.h" />
     <ClInclude Include="IOCPSession.h" />
-    <ClInclude Include="NetBase\ForMemroystream.h" />
+    <ClInclude Include="NetBase\StreamReadWrite.h" />
     <ClInclude Include="NetBase\ISerializable.h" />
     <ClInclude Include="NetBase\MemoryStream.h" />
     <ClInclude Include="NetBase\NetBase_RootHeader.h" />
