@@ -1,5 +1,5 @@
 
-#define __CIPHER_ON
+//#define __CIPHER_ON
 
 #include "IOCPNet_RootHeader.h"
 

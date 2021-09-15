@@ -67,9 +67,9 @@ namespace Sign
 		bool SaveInfo();	// 정보 변경사항을 저장		
 		SignMap m_info_map;
 	public:
-		SignManager::ResultData SignUpProcess(const SignInfo inInfo);
-		SignManager::ResultData DeleteAccountProcess(const SignInfo inInfo);
-		SignManager::ResultData SignInProcess(const SignInfo inInfo);
-		SignManager::ResultData SignOutProcess(const SignInfo inInfo);
+		SignManager::ResultData SignUpProcess(const SignInfoPtr inInfo);
+		SignManager::ResultData DeleteAccountProcess(const SignInfoPtr inInfo);
+		SignManager::ResultData SignInProcess(const SignInfoPtr inInfo);
+		SignManager::ResultData SignOutProcess(const SignInfoPtr inInfo);
 	};
 }

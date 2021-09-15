@@ -33,9 +33,10 @@
 
 namespace NetBase
 {
+#define WriteToStream(os, inData) size += NetBase::WriteToBinStream(os, inData)
+#define ReadToStream(is, outData) size += NetBase::ReadFromBinStream(is, outData)
 	using byte = unsigned char;
-	using byte_string = std::basic_string<byte>;
-
+	
 #pragma region forward Declaration
 	template <class _Ty>
 	inline int32_t WriteToBinStream(NetBase::OutputMemoryStreamPtr os, const _Ty& v);
@@ -218,7 +219,7 @@ namespace NetBase
 		return static_cast<int32_t>(read_size);
 	}
 
-	//// float	
+	// float	
 	inline int32_t ReadFromBinStreamImpl(NetBase::InputMemoryStreamPtr is, float_t& v)
 	{
 		constexpr size_t read_size = sizeof(float_t);
@@ -374,6 +375,7 @@ namespace NetBase
 		return ReadFromBinStreamImpl(is, v);
 	}
 
+#ifdef __DEBUG
 	void NewIntegralTest();
 	void NewFloatingTest();
 	void NewCharacterTest();
@@ -382,4 +384,5 @@ namespace NetBase
 	void NewListTest();
 	void NewSetTest();
 	void NewMapTest();
+#endif
 }

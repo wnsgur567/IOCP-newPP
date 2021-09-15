@@ -27,3 +27,6 @@ using HandlePtr = std::shared_ptr<HANDLE>;
 #include "Packet.h"
 #include "../Utils/Singleton.h"
 #include "PacketManager.h"
+
+#include "ISerializable.h"
+#include "StreamReadWrite.h"

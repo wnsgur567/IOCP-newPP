@@ -149,7 +149,7 @@ namespace Utils
 
 		static double_t BytesToDouble(byte inBytes[])
 		{
-			int64_t tmp;
+			int64_t tmp = BytesToVal<int64_t>(inBytes);
 			double_t ret;
 			memcpy(&ret, &tmp, sizeof(int64_t));
 			return ret;

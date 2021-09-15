@@ -4,7 +4,7 @@ namespace Sign
 {
 	void SignInfo::Flush()
 	{
-		sign_id = 0;		
+		sign_id = 0;
 		ID.clear();
 		PW.clear();
 	}
@@ -50,5 +50,21 @@ namespace Sign
 	SignInfo::signid_t SignInfo::WStringToSignid(const std::wstring& inStr)
 	{
 		return std::stoull(inStr, 0);
+	}
+
+
+	int SignInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+	{
+		int size = 0;
+		WriteToStream(out_stream, ID);
+		WriteToStream(out_stream, PW);
+		return size;
+	}
+	int SignInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
+	{
+		int size = 0;
+		ReadToStream(in_stream, ID);
+		ReadToStream(in_stream, PW);
+		return size;
 	}
 }

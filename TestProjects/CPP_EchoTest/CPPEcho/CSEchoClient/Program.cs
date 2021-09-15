@@ -15,7 +15,7 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            //SerializeIntegerTest();
+            SerializeIntegerTest();
             //SerializeFloatingTest();
             //SerializeCharacterTest();
             //SerializeStringTest();
@@ -51,68 +51,68 @@ namespace ConsoleTest
 
             //read_obj.Print();
 
-            int PORT = 3500;
-            string IP = "localhost";
+            //int PORT = 3500;
+            //string IP = "localhost";
 
-            NetworkStream NS = null;
-            StreamReader SR = null;
-            StreamWriter SW = null;
-            TcpClient client = null;
-            try
-            {
-                client = new TcpClient(IP, PORT); //client 연결
-                Console.WriteLine("{0}:{1}에 접속하였습니다.", IP, PORT);
-                NS = client.GetStream(); // 소켓에서 메시지를 가져오는 스트림
-                SR = new StreamReader(NS, Encoding.UTF8); // Get message
-                SW = new StreamWriter(NS, Encoding.UTF8); // Send message
-
-
-                string SendMessage = string.Empty;
-                string GetMessage = string.Empty;
+            //NetworkStream NS = null;
+            //StreamReader SR = null;
+            //StreamWriter SW = null;
+            //TcpClient client = null;
+            //try
+            //{
+            //    client = new TcpClient(IP, PORT); //client 연결
+            //    Console.WriteLine("{0}:{1}에 접속하였습니다.", IP, PORT);
+            //    NS = client.GetStream(); // 소켓에서 메시지를 가져오는 스트림
+            //    SR = new StreamReader(NS, Encoding.UTF8); // Get message
+            //    SW = new StreamWriter(NS, Encoding.UTF8); // Send message
 
 
-                TestNetObject obj = new TestNetObject();
-                obj.SetInfo();
+            //    string SendMessage = string.Empty;
+            //    string GetMessage = string.Empty;
 
-                MemoryStream stream = new MemoryStream();
 
-                stream.Position = sizeof(int);
-                int size = MyConverter.WriteToBinStream(stream, obj);
-                stream.Position = 0;
-                MyConverter.WriteToBinStream(stream, size);
-                stream.Position = 0;
+            //    TestNetObject obj = new TestNetObject();
+            //    obj.SetInfo();
 
-                var aa = stream.GetBuffer();
-                NS.Write(stream.GetBuffer(), 0, sizeof(int) + size);
-                Console.WriteLine("write size : {0}", sizeof(int) + size);
+            //    MemoryStream stream = new MemoryStream();
 
-                byte[] read_bytes = new byte[4];
-                NS.Read(read_bytes, 0, sizeof(int));
-                int read_size = BitConverter.ToInt32(read_bytes);
+            //    stream.Position = sizeof(int);
+            //    int size = MyConverter.WriteToBinStream(stream, obj);
+            //    stream.Position = 0;
+            //    MyConverter.WriteToBinStream(stream, size);
+            //    stream.Position = 0;
 
-                byte[] read_bytes_data = new byte[read_size];
-                Console.WriteLine("write size : {0}", read_size);
-                NS.Read(read_bytes_data, 0, read_size);
-                MemoryStream read_stream = new MemoryStream();
-                read_stream.Write(read_bytes_data, 0, read_size);
-                read_stream.Position = 0;
+            //    var aa = stream.GetBuffer();
+            //    NS.Write(stream.GetBuffer(), 0, sizeof(int) + size);
+            //    Console.WriteLine("write size : {0}", sizeof(int) + size);
 
-                TestNetObject read_obj = new TestNetObject();
-                MyConverter.ReadFromBinStream(read_stream, read_obj);
+            //    byte[] read_bytes = new byte[4];
+            //    NS.Read(read_bytes, 0, sizeof(int));
+            //    int read_size = BitConverter.ToInt32(read_bytes);
 
-                read_obj.Print();
+            //    byte[] read_bytes_data = new byte[read_size];
+            //    Console.WriteLine("write size : {0}", read_size);
+            //    NS.Read(read_bytes_data, 0, read_size);
+            //    MemoryStream read_stream = new MemoryStream();
+            //    read_stream.Write(read_bytes_data, 0, read_size);
+            //    read_stream.Position = 0;
 
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e.Message);
-            }
-            finally
-            {
-                if (SW != null) SW.Close();
-                if (SR != null) SR.Close();
-                if (client != null) client.Close();
-            }
+            //    TestNetObject read_obj = new TestNetObject();
+            //    MyConverter.ReadFromBinStream(read_stream, read_obj);
+
+            //    read_obj.Print();
+
+            //}
+            //catch (Exception e)
+            //{
+            //    System.Console.WriteLine(e.Message);
+            //}
+            //finally
+            //{
+            //    if (SW != null) SW.Close();
+            //    if (SR != null) SR.Close();
+            //    if (client != null) client.Close();
+            //}
         }
 
 
@@ -370,7 +370,7 @@ namespace ConsoleTest
             read_stream.Write(write_stream.GetBuffer(), 0, sizeof(Int16));
             read_stream.Position = 0;
 
-            read_size = MyConverter.ReadFromBinStream(read_stream, out integer16_out);
+            read_size = MyConverter.ReadFromBinStream<Int16>(read_stream, out integer16_out);
             Console.WriteLine("Read bytes : {0}", read_size);
 
             Console.WriteLine("input : {0}", integer16);

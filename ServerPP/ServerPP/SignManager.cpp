@@ -86,13 +86,13 @@ namespace Sign
 	}
 
 
-	SignManager::ResultData SignManager::SignUpProcess(const SignInfo inInfo)
+	SignManager::ResultData SignManager::SignUpProcess(const SignInfoPtr inInfo)
 	{	// 회원가입
 		ResultData retData;
 
 		for (const auto& item : m_info_map)
 		{
-			if (item.second->ID == inInfo.ID)
+			if (item.second->ID == inInfo->ID)
 			{
 				retData.result = EResult::ExistID;
 				retData.msg = ResultMSG::IDExistMsg;
@@ -101,14 +101,14 @@ namespace Sign
 			}
 		}
 
-		m_info_map.insert({ inInfo.sign_id ,std::make_shared<SignInfo>(inInfo) });
+		m_info_map.insert({ inInfo->sign_id ,std::make_shared<SignInfo>(inInfo->sign_id, inInfo->ID,inInfo->PW) });
 
 		retData.result = EResult::Success_SignUp;
 		retData.msg = ResultMSG::SignUpSuccessMsg;
 		return retData;
 	}
 
-	SignManager::ResultData SignManager::DeleteAccountProcess(const SignInfo inInfo)
+	SignManager::ResultData SignManager::DeleteAccountProcess(const SignInfoPtr inInfo)
 	{
 		ResultData retData;
 
@@ -117,9 +117,9 @@ namespace Sign
 		{
 			SignInfoPtr pInfo = it->second;
 
-			if (pInfo->ID == inInfo.ID)
+			if (pInfo->ID == inInfo->ID)
 			{
-				if (pInfo->PW == inInfo.PW)
+				if (pInfo->PW == inInfo->PW)
 				{	// delete success
 					retData.result = EResult::Success_DeleteAccount;
 					retData.msg = ResultMSG::DeleteSuccessMsg;
@@ -139,15 +139,15 @@ namespace Sign
 		return retData;
 	}
 
-	SignManager::ResultData SignManager::SignInProcess(const SignInfo inInfo)
+	SignManager::ResultData SignManager::SignInProcess(const SignInfoPtr inInfo)
 	{
 		ResultData retData;
 
 		for (const auto& item : m_info_map)
 		{
-			if (item.second->ID == inInfo.ID)
+			if (item.second->ID == inInfo->ID)
 			{
-				if (item.second->PW == inInfo.PW)
+				if (item.second->PW == inInfo->PW)
 				{	// success
 					retData.result = EResult::Success_SingIn;
 					retData.msg = ResultMSG::SignInSuccessMsg;
@@ -165,7 +165,7 @@ namespace Sign
 		return retData;
 	}
 
-	SignManager::ResultData SignManager::SignOutProcess(const SignInfo inInfo)
+	SignManager::ResultData SignManager::SignOutProcess(const SignInfoPtr inInfo)
 	{
 		ResultData retData;
 

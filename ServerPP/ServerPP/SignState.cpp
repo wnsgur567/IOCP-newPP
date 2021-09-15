@@ -49,39 +49,19 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 	{
 		/// Read from Input Stream
 		// get data from recv stream
-		Sign::SignInfo info;
-		info.Flush();
-
-		// get id from stream
-		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
-		int id_length = 0;	// byte length...
-		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(
-			id_from_stream,
-			id_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		id_from_stream[id_length / 2] = L'\0'; 
-		info.ID = id_from_stream;
-		// get pw from stream
-		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
-		int pw_length = 0;
-		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(
-			pw_from_stream,
-			pw_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		pw_from_stream[pw_length / 2] = L'\0';
-		info.PW = pw_from_stream;
-		/// Read end
+		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
+		pInfo->Flush();
+		ISerializable* ptr = pInfo.get();
+		// get id and pw from stream
+		NetBase::ReadFromBinStream(inpStream, ptr);
 
 		// request sign in process
-		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
+		auto resultData = Sign::SignManager::sInstance->SignInProcess(pInfo);
 		retResult = resultData.result;
 
 #ifdef __DEBUG
-		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
+		printf("%d\n", resultData.result);
 		wprintf(L" msg : %ws\n", resultData.msg);
 #endif // __DEBUG
 
@@ -92,218 +72,216 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 		// write result to send stream (only data part)
 		// sendpacket is composed with (size + id + data)
 
+		int write_size = 0;
 		/// Write to Output Stream
 		// sign data = protocol + result + msg len + msg
-		// write protocol
-		outpStream->Write(&protocol, sizeof(EProtocol));
+		// write protocol	
+		write_size += NetBase::WriteToBinStream(outpStream, (ProtocolSize_t)protocol);
 		// write result
-		outpStream->Write(&resultData.result, sizeof(resultData.result));
+		write_size += NetBase::WriteToBinStream(outpStream, (ResultSize_t)resultData.result);
 		// write result msg
-		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
-		outpStream->Write(&msg_length, sizeof(int));
-		outpStream->Write(resultData.msg, msg_length);
+		write_size += NetBase::WriteToBinStream(outpStream, std::wstring(resultData.msg));
 		/// write end
 
 #ifdef __DEBUG
-		printf("SignState write to stream : %llubytes\n",
-			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+		printf("SignState write to stream : %dbytes\n", write_size);
 #endif // __DEBUG		
 	}
 	break;
-
-	case SignState::EProtocol::SignOut:
-	{
-		/// Read from Input Stream
-		// get data from recv stream
-		Sign::SignInfo info;
-		info.Flush();
-		// get id from stream
-		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
-		int id_length = 0;
-		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(
-			id_from_stream,
-			id_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		id_from_stream[id_length / 2] = L'\0';
-		info.ID = id_from_stream;
-		// get pw from stream
-		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
-		int pw_length = 0;
-		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(
-			pw_from_stream,
-			pw_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		pw_from_stream[pw_length / 2] = L'\0';
-		info.PW = pw_from_stream;
-		/// Read end
-
-		// request sign in process
-		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
-		retResult = resultData.result;
-
-#ifdef __DEBUG
-		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
-		wprintf(L" msg : %ws\n", resultData.msg);
-#endif // __DEBUG
-
-
-		// get new send stream
-		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-
-		// write result to send stream (only data part)
-		// sendpacket is composed with (size + id + data)
-
-		/// Write to Output Stream
-		// sign data = protocol + result + msg len + msg
-		// write protocol
-		outpStream->Write(&protocol, sizeof(EProtocol));
-		// write result
-		outpStream->Write(&resultData.result, sizeof(resultData.result));
-		// write result msg
-		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
-		outpStream->Write(&msg_length, sizeof(int));
-		outpStream->Write(resultData.msg, msg_length);
-		/// write end
-
-#ifdef __DEBUG
-		printf("SignState write to stream : %llubytes\n",
-			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
-#endif // __DEBUG	
-	}
-	break;
-
-	case SignState::EProtocol::SignUp:
-	{
-		/// Read from Input Stream
-		// get data from recv stream
-		Sign::SignInfo info;
-		info.Flush();
-		// get id from stream
-		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
-		int id_length = 0;
-		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(
-			id_from_stream,
-			id_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		id_from_stream[id_length / 2] = L'\0';
-		info.ID = id_from_stream;
-		// get pw from stream
-		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
-		int pw_length = 0;
-		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(
-			pw_from_stream,
-			pw_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		pw_from_stream[pw_length / 2] = L'\0';
-		info.PW = pw_from_stream;
-		/// Read end
-
-		// request sign in process
-		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
-		retResult = resultData.result;
-
-#ifdef __DEBUG
-		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
-		wprintf(L" msg : %ws\n", resultData.msg);
-#endif // __DEBUG
-
-
-		// get new send stream
-		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-
-		// write result to send stream (only data part)
-		// sendpacket is composed with (size + id + data)
-
-		/// Write to Output Stream
-		// sign data = protocol + result + msg len + msg
-		// write protocol
-		outpStream->Write(&protocol, sizeof(EProtocol));
-		// write result
-		outpStream->Write(&resultData.result, sizeof(resultData.result));
-		// write result msg
-		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
-		outpStream->Write(&msg_length, sizeof(int));
-		outpStream->Write(resultData.msg, msg_length);
-		/// write end
-
-#ifdef __DEBUG
-		printf("SignState write to stream : %llubytes\n",
-			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
-#endif // __DEBUG		
-	}
-	break;
-
-	case SignState::EProtocol::DeleteAccount:
-	{
-		/// Read from Input Stream
-		// get data from recv stream
-		Sign::SignInfo info;
-		// get id from stream
-		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
-		int id_length = 0;
-		inpStream->Read(&id_length, sizeof(int));
-		inpStream->Read(
-			id_from_stream,
-			id_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		id_from_stream[id_length / 2] = L'\0';
-		info.ID = id_from_stream;
-		// get pw from stream
-		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
-		int pw_length = 0;
-		inpStream->Read(&pw_length, sizeof(int));
-		inpStream->Read(
-			pw_from_stream,
-			pw_length);
-		// after last word must be \0
-		// unicode is 2bytes per word
-		pw_from_stream[pw_length / 2] = L'\0';
-		info.PW = pw_from_stream;
-		/// Read end
-
-		// request sign in process
-		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
-		retResult = resultData.result;
-
-#ifdef __DEBUG
-		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
-		wprintf(L" msg : %ws\n", resultData.msg);
-#endif // __DEBUG
-
-
-		// get new send stream
-		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-
-		// write result to send stream (only data part)
-		// sendpacket is composed with (size + id + data)
-
-		/// Write to Output Stream
-		// sign data = protocol + result + msg len + msg
-		// write protocol
-		outpStream->Write(&protocol, sizeof(EProtocol));
-		// write result
-		outpStream->Write(&resultData.result, sizeof(resultData.result));
-		// write result msg
-		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
-		outpStream->Write(&msg_length, sizeof(int));
-		outpStream->Write(resultData.msg, msg_length);
-		/// write end
-
-#ifdef __DEBUG
-		printf("SignState write to stream : %llubytes\n",
-			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
-#endif // __DEBUG	
-	}
-	break;
+	//
+	//	case SignState::EProtocol::SignOut:
+	//	{
+	//		/// Read from Input Stream
+	//		// get data from recv stream
+	//		Sign::SignInfo info;
+	//		info.Flush();
+	//		// get id from stream
+	//		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
+	//		int id_length = 0;
+	//		inpStream->Read(&id_length, sizeof(int));
+	//		inpStream->Read(
+	//			id_from_stream,
+	//			id_length);
+	//		// after last word must be \0
+	//		// unicode is 2bytes per word
+	//		id_from_stream[id_length / 2] = L'\0';
+	//		info.ID = id_from_stream;
+	//		// get pw from stream
+	//		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
+	//		int pw_length = 0;
+	//		inpStream->Read(&pw_length, sizeof(int));
+	//		inpStream->Read(
+	//			pw_from_stream,
+	//			pw_length);
+	//		// after last word must be \0
+	//		// unicode is 2bytes per word
+	//		pw_from_stream[pw_length / 2] = L'\0';
+	//		info.PW = pw_from_stream;
+	//		/// Read end
+	//
+	//		// request sign in process
+	//		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
+	//		retResult = resultData.result;
+	//
+	//#ifdef __DEBUG
+	//		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+	//		wprintf(L" msg : %ws\n", resultData.msg);
+	//#endif // __DEBUG
+	//
+	//
+	//		// get new send stream
+	//		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+	//
+	//		// write result to send stream (only data part)
+	//		// sendpacket is composed with (size + id + data)
+	//
+	//		/// Write to Output Stream
+	//		// sign data = protocol + result + msg len + msg
+	//		// write protocol
+	//		outpStream->Write(&protocol, sizeof(EProtocol));
+	//		// write result
+	//		outpStream->Write(&resultData.result, sizeof(resultData.result));
+	//		// write result msg
+	//		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
+	//		outpStream->Write(&msg_length, sizeof(int));
+	//		outpStream->Write(resultData.msg, msg_length);
+	//		/// write end
+	//
+	//#ifdef __DEBUG
+	//		printf("SignState write to stream : %llubytes\n",
+	//			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+	//#endif // __DEBUG	
+	//	}
+	//	break;
+	//
+	//	case SignState::EProtocol::SignUp:
+	//	{
+	//		/// Read from Input Stream
+	//		// get data from recv stream
+	//		Sign::SignInfo info;
+	//		info.Flush();
+	//		// get id from stream
+	//		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
+	//		int id_length = 0;
+	//		inpStream->Read(&id_length, sizeof(int));
+	//		inpStream->Read(
+	//			id_from_stream,
+	//			id_length);
+	//		// after last word must be \0
+	//		// unicode is 2bytes per word
+	//		id_from_stream[id_length / 2] = L'\0';
+	//		info.ID = id_from_stream;
+	//		// get pw from stream
+	//		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
+	//		int pw_length = 0;
+	//		inpStream->Read(&pw_length, sizeof(int));
+	//		inpStream->Read(
+	//			pw_from_stream,
+	//			pw_length);
+	//		// after last word must be \0
+	//		// unicode is 2bytes per word
+	//		pw_from_stream[pw_length / 2] = L'\0';
+	//		info.PW = pw_from_stream;
+	//		/// Read end
+	//
+	//		// request sign in process
+	//		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
+	//		retResult = resultData.result;
+	//
+	//#ifdef __DEBUG
+	//		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+	//		wprintf(L" msg : %ws\n", resultData.msg);
+	//#endif // __DEBUG
+	//
+	//
+	//		// get new send stream
+	//		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+	//
+	//		// write result to send stream (only data part)
+	//		// sendpacket is composed with (size + id + data)
+	//
+	//		/// Write to Output Stream
+	//		// sign data = protocol + result + msg len + msg
+	//		// write protocol
+	//		outpStream->Write(&protocol, sizeof(EProtocol));
+	//		// write result
+	//		outpStream->Write(&resultData.result, sizeof(resultData.result));
+	//		// write result msg
+	//		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
+	//		outpStream->Write(&msg_length, sizeof(int));
+	//		outpStream->Write(resultData.msg, msg_length);
+	//		/// write end
+	//
+	//#ifdef __DEBUG
+	//		printf("SignState write to stream : %llubytes\n",
+	//			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+	//#endif // __DEBUG		
+	//	}
+	//	break;
+	//
+	//	case SignState::EProtocol::DeleteAccount:
+	//	{
+	//		/// Read from Input Stream
+	//		// get data from recv stream
+	//		Sign::SignInfo info;
+	//		// get id from stream
+	//		wchar_t id_from_stream[Sign::SignInfo::MAX_IDSIZE];
+	//		int id_length = 0;
+	//		inpStream->Read(&id_length, sizeof(int));
+	//		inpStream->Read(
+	//			id_from_stream,
+	//			id_length);
+	//		// after last word must be \0
+	//		// unicode is 2bytes per word
+	//		id_from_stream[id_length / 2] = L'\0';
+	//		info.ID = id_from_stream;
+	//		// get pw from stream
+	//		wchar_t pw_from_stream[Sign::SignInfo::MAX_PWSIZE];
+	//		int pw_length = 0;
+	//		inpStream->Read(&pw_length, sizeof(int));
+	//		inpStream->Read(
+	//			pw_from_stream,
+	//			pw_length);
+	//		// after last word must be \0
+	//		// unicode is 2bytes per word
+	//		pw_from_stream[pw_length / 2] = L'\0';
+	//		info.PW = pw_from_stream;
+	//		/// Read end
+	//
+	//		// request sign in process
+	//		auto resultData = Sign::SignManager::sInstance->SignInProcess(info);
+	//		retResult = resultData.result;
+	//
+	//#ifdef __DEBUG
+	//		wprintf(L" [id : %ws] , [pw : %ws]\n ", info.ID.c_str(), info.PW.c_str());
+	//		wprintf(L" msg : %ws\n", resultData.msg);
+	//#endif // __DEBUG
+	//
+	//
+	//		// get new send stream
+	//		outpStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+	//
+	//		// write result to send stream (only data part)
+	//		// sendpacket is composed with (size + id + data)
+	//
+	//		/// Write to Output Stream
+	//		// sign data = protocol + result + msg len + msg
+	//		// write protocol
+	//		outpStream->Write(&protocol, sizeof(EProtocol));
+	//		// write result
+	//		outpStream->Write(&resultData.result, sizeof(resultData.result));
+	//		// write result msg
+	//		int msg_length = static_cast<int>(wcslen(resultData.msg) * sizeof(wchar_t));	// 2bytes per one wchar
+	//		outpStream->Write(&msg_length, sizeof(int));
+	//		outpStream->Write(resultData.msg, msg_length);
+	//		/// write end
+	//
+	//#ifdef __DEBUG
+	//		printf("SignState write to stream : %llubytes\n",
+	//			sizeof(EProtocol) + sizeof(resultData.result) + msg_length);
+	//#endif // __DEBUG	
+	//	}
+	//	break;
 
 	default:
 		break;

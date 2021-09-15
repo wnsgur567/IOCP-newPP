@@ -8,7 +8,7 @@ namespace Sign
 
 	// ID 중복 허용 x
 	// ID 사전 순으로 정렬
-	class SignInfo
+	class SignInfo : public ISerializable
 	{
 	public:
 		static constexpr size_t MAX_IDSIZE = 30;
@@ -30,5 +30,9 @@ namespace Sign
 		
 		static signid_t StringToSignid(const std::string& inStr);
 		static signid_t WStringToSignid(const std::wstring& inStr);
+
+		// ISerializable을(를) 통해 상속됨
+		virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+		virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 	};
 }
