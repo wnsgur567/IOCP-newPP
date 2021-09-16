@@ -11,7 +11,8 @@ IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 
 void IOCPSession::ChangeState(ClientStatePtr pNextState)
 {
-	m_current_state;
+	m_current_state = pNextState;
+	m_current_state->OnChangedToThis();
 }
 
 void IOCPSession::Initialze()
@@ -124,6 +125,7 @@ bool IOCPSession::OnCompleteSend()
 	/*--------- change state process     ----------*/
 
 	// state È£Ãâ
+	m_current_state->OnSendCompleted();
 
 	/*--------- change state process end ----------*/
 

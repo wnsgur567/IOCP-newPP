@@ -16,9 +16,7 @@ public:
 
 	class ClientState
 	{
-	public:
-		using ProtocolSize_t = __int64;
-		using ResultSize_t = __int32;
+		
 	protected:
 		std::weak_ptr<IOCPSession> m_ownerPtr;
 	public:
@@ -28,6 +26,11 @@ public:
 		// input read 시 protocol 부분 부터 읽음
 		virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) = 0;
 		virtual void OnSendCompleted() = 0;
+
+		// 첫 세션 생성 시 state 를 생성하면서 필요한 초기화 작업
+		virtual void OnInitilzed() = 0;
+		// 다른 state에서 자신의 state 로 변경되었을 때 할 작업
+		virtual void OnChangedToThis() = 0;
 	};
 	using ClientStatePtr = std::shared_ptr<ClientState>;
 

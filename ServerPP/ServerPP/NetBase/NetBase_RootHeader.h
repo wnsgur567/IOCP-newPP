@@ -19,6 +19,8 @@ using VoidPtr = std::shared_ptr<void>;
 using HandlePtr = std::shared_ptr<HANDLE>;
 #define SOCKET_END	0
 
+#include "../Utils/Exceptions.h"
+
 #include "SocketAddress.h"
 #include "TCPSocket.h"
 #include "SocketUtil.h"

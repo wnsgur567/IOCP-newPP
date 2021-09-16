@@ -13,14 +13,16 @@ namespace Sign
 	public:
 		static constexpr size_t MAX_IDSIZE = 30;
 		static constexpr size_t MAX_PWSIZE = 40;
-		using signid_t = unsigned __int64;
+		using signid_t = uint64_t;
 	public:
 		signid_t sign_id;
 		std::wstring ID;
 		std::wstring PW;
+		std::wstring JoinDate;
+		bool IsActivated;
 		void Flush();
 	public:
-		SignInfo() : sign_id(0), ID(), PW() {}
+		SignInfo() : sign_id(0), ID(), PW(), JoinDate(), IsActivated(false){}
 		SignInfo(signid_t inSignID, const wchar_t* inID, const wchar_t* inPW);
 		SignInfo(signid_t inSignID, std::wstring inID, std::wstring inPW);
 		bool operator == (const SignInfo& other);
@@ -28,8 +30,6 @@ namespace Sign
 		bool operator > (const SignInfo& other);
 		bool operator < (const SignInfo& other);
 		
-		static signid_t StringToSignid(const std::string& inStr);
-		static signid_t WStringToSignid(const std::wstring& inStr);
 
 		// ISerializable을(를) 통해 상속됨
 		virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;

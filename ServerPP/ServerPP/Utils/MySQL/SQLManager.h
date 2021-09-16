@@ -14,6 +14,14 @@
 
 namespace SQL
 {
+	class SQLQueryException : public std::exception
+	{
+		public:
+		const char* what() const noexcept override
+		{
+			return "No Available Query";
+		}
+	};
 
 	class SQLManager : public MyBase::Singleton<SQLManager>
 	{
@@ -44,10 +52,14 @@ namespace SQL
 		void Finalize() noexcept override;
 
 		// for select results
-		bool Query(
+		void Query(
 			const char* inQuery,
 			queryResult_t& outVec);
+		void Query(
+			const std::string& inQuery,
+			queryResult_t& outVec);
 
-		bool Query(const char* inQuery);
+		void Query(const char* inQuery);
+		void Query(const std::string& inQuery);
 	};
 }

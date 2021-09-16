@@ -61,7 +61,7 @@ namespace SQL
 #endif //  __DEBUG
 	}
 
-	bool SQLManager::Query(const char* inQuery, queryResult_t& outVec)
+	void SQLManager::Query(const char* inQuery, queryResult_t& outVec)
 	{
 #ifdef __DEBUG
 		printf("\t- SQLManager::Query() for select -\n");
@@ -73,7 +73,7 @@ namespace SQL
 		if (retval != 0)
 		{	// query fail
 			printf("MySql query error : %s\n", mysql_error(&m_conn));
-			return false;
+			throw SQLQueryException();
 		}
 
 		// print query results		
@@ -112,12 +112,15 @@ namespace SQL
 
 #ifdef __DEBUG		
 		printf("\t- SQLManager::Query() end -\n");
-#endif
-
-		return true;
+#endif		
 	}
 
-	bool SQLManager::Query(const char* inQuery)
+	void SQLManager::Query(const std::string& inQuery, queryResult_t& outVec)
+	{
+		Query(inQuery.c_str(), outVec);
+	}
+
+	void SQLManager::Query(const char* inQuery)
 	{
 #ifdef __DEBUG	
 		printf("\t- SQLManager::Query() end -\n");
@@ -126,14 +129,15 @@ namespace SQL
 		if (retval != 0)
 		{	// query fail
 			printf("MySql query error : %s", mysql_error(&m_conn));
-			return false;
+			throw SQLQueryException();
 		}
-
 
 #ifdef __DEBUG
 		printf("\t- SQLManager::Query() end -\n");
-#endif
-
-		return true;
+#endif		
+	}
+	void SQLManager::Query(const std::string& inQuery)
+	{
+		Query(inQuery.c_str());
 	}
 }

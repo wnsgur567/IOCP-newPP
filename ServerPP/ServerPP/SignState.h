@@ -4,20 +4,23 @@
 class SignState : public IOCPSession::ClientState
 {
 private:
-	enum class EProtocol : ProtocolSize_t
-	{
-		None = 0,
-
-		SignIn = 1 << 0,
-		SignOut = 1 << 1,
-		SignUp = 1 << 2,
-		DeleteAccount = 1 << 3,
-	};
+	using EProtocol = Sign::SignManager::EProtocol;
+	using EResult = Sign::SignManager::EResult;
 protected:
-	SignState(IOCPSessionPtr inpOwnerSession) : ClientState(inpOwnerSession) {}
+	EResult m_current_result;
+	SignState(IOCPSessionPtr inpOwnerSession) :
+		ClientState(inpOwnerSession), m_current_result(EResult::None) {}
 public:
 	virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
 	virtual void OnSendCompleted() override;
+	virtual void OnInitilzed() override;
+	virtual void OnChangedToThis() override;
 
-	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);
+	void GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol);
+	void HandleSignInPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);
+	void HandleSignOutPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);
+	void HandleSignUpPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);
+	void HandleDeleteAccountPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);	
+
+	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);	
 };

@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CharacterInfo.cpp" />
+    <ClCompile Include="CharacterSelectManager.cpp" />
     <ClCompile Include="CharacterSelectState.cpp" />
     <ClCompile Include="ClientState.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -170,6 +172,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h" />
+    <ClInclude Include="CharacterInfo.h" />
+    <ClInclude Include="CharacterSelectManager.h" />
     <ClInclude Include="CharacterSelectState.h" />
     <ClInclude Include="ClientState.h" />
     <ClInclude Include="Engine.h" />
@@ -195,6 +199,7 @@
     <ClInclude Include="SignState.h" />
     <ClInclude Include="Utils\ByteUtils.h" />
     <ClInclude Include="Utils\CriticalSection.h" />
+    <ClInclude Include="Utils\Exceptions.h" />
     <ClInclude Include="Utils\FileUtil.h" />
     <ClInclude Include="Utils\KISA_CIPHER\CipherManager.h" />
     <ClInclude Include="Utils\KISA_CIPHER\KISA_SEED_ECB.h" />

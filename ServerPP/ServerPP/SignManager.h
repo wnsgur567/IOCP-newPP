@@ -24,7 +24,7 @@ namespace Sign
 			static const wchar_t* WrongPWMsg;
 		};
 
-		enum class EProtocol : __int64
+		enum class EProtocol : ProtocolSize_t
 		{
 			None = 0,
 
@@ -35,7 +35,7 @@ namespace Sign
 			DeleteAccount = 1 << 3,
 		};
 
-		enum class EResult : __int32
+		enum class EResult : ResultSize_t
 		{
 			None = 0,
 
@@ -52,6 +52,7 @@ namespace Sign
 
 		struct ResultData
 		{
+			EProtocol protocol;
 			EResult result;
 			const wchar_t* msg;
 		};
@@ -63,13 +64,15 @@ namespace Sign
 		void Finalize() noexcept override;
 		~SignManager();
 	private:
-		bool LoadInfo();	// 정보를 읽어 list 에 셋팅
-		bool SaveInfo();	// 정보 변경사항을 저장		
-		SignMap m_info_map;
+		bool IsExist(const std::wstring& inID);
+		void LoadInfo(const std::wstring& inID, SignInfoPtr& outInfo);
+		void SaveInfo(const SignInfoPtr inInfo);		
+		void DeleteInfo(const SignInfoPtr inInfo);
+		//SignMap m_info_map;
 	public:
-		SignManager::ResultData SignUpProcess(const SignInfoPtr inInfo);
-		SignManager::ResultData DeleteAccountProcess(const SignInfoPtr inInfo);
-		SignManager::ResultData SignInProcess(const SignInfoPtr inInfo);
-		SignManager::ResultData SignOutProcess(const SignInfoPtr inInfo);
+		ResultData SignUpProcess(const SignInfoPtr inInfo);
+		ResultData DeleteAccountProcess(const SignInfoPtr inInfo);
+		ResultData SignInProcess(const SignInfoPtr inInfo);
+		ResultData SignOutProcess(const SignInfoPtr inInfo);
 	};
 }
