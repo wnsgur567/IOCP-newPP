@@ -159,6 +159,9 @@
     <ClCompile Include="NetBase\SocketAddress.cpp" />
     <ClCompile Include="NetBase\SocketUtil.cpp" />
     <ClCompile Include="NetBase\TCPSocket.cpp" />
+    <ClCompile Include="NetGameObject.cpp" />
+    <ClCompile Include="PlayerInfo.cpp" />
+    <ClCompile Include="Sector.cpp" />
     <ClCompile Include="SignInfo.cpp" />
     <ClCompile Include="SignManager.cpp" />
     <ClCompile Include="SignState.cpp" />
@@ -169,6 +172,9 @@
     <ClCompile Include="Utils\KISA_CIPHER\KISA_SEED_ECB.cpp" />
     <ClCompile Include="Utils\MySQL\SQLManager.cpp" />
     <ClCompile Include="Utils\StringUtil.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="VillageManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h" />
@@ -194,6 +200,9 @@
     <ClInclude Include="NetBase\SocketAddress.h" />
     <ClInclude Include="NetBase\SocketUtil.h" />
     <ClInclude Include="NetBase\TCPSocket.h" />
+    <ClInclude Include="NetGameObject.h" />
+    <ClInclude Include="PlayerInfo.h" />
+    <ClInclude Include="Sector.h" />
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
     <ClInclude Include="SignState.h" />
@@ -207,6 +216,12 @@
     <ClInclude Include="Utils\Singleton.h" />
     <ClInclude Include="Utils\StringUtil.h" />
     <ClInclude Include="Utils\TryCatchFinally.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="VillageInfoBase.h" />
+    <ClInclude Include="VillageManager.h" />
+    <ClInclude Include="VillageState.h" />
+    <ClInclude Include="VillageState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utils\TryCatchFinally.snippet" />

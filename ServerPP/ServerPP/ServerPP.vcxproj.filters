@@ -49,6 +49,12 @@
     <Filter Include="11_CharacterSelect">
       <UniqueIdentifier>{6c8408e1-a16e-43b8-9cff-e6e4076fa3c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="12_Village">
+      <UniqueIdentifier>{16e4d7cc-8703-4526-a50c-dcd1a0a69f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="100_Player">
+      <UniqueIdentifier>{e0bb7506-0273-400f-83af-5b97425ac8a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -131,6 +137,24 @@
     </ClCompile>
     <ClCompile Include="CharacterSelectManager.cpp">
       <Filter>11_CharacterSelect</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInfo.cpp">
+      <Filter>100_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Sector.cpp">
+      <Filter>100_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>100_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="NetGameObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="VillageManager.cpp">
+      <Filter>12_Village</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>100_Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +265,33 @@
     </ClInclude>
     <ClInclude Include="Utils\Exceptions.h">
       <Filter>00_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="VillageState.h">
+      <Filter>12_Village</Filter>
+    </ClInclude>
+    <ClInclude Include="VillageState.cpp">
+      <Filter>12_Village</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInfo.h">
+      <Filter>100_Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>100_Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>100_Player</Filter>
+    </ClInclude>
+    <ClInclude Include="NetGameObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="VillageInfoBase.h">
+      <Filter>12_Village</Filter>
+    </ClInclude>
+    <ClInclude Include="VillageManager.h">
+      <Filter>12_Village</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>100_Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

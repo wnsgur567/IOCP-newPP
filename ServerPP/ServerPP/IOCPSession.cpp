@@ -12,7 +12,14 @@ IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 void IOCPSession::ChangeState(ClientStatePtr pNextState)
 {
 	m_current_state = pNextState;
-	m_current_state->OnChangedToThis();
+
+	NetBase::OutputMemoryStreamPtr pOutputStream;	
+	m_current_state->OnChangedToThis(pOutputStream);
+	if (Send(pOutputStream))
+	{
+		// ...
+	}
+
 }
 
 void IOCPSession::Initialze()
@@ -29,7 +36,9 @@ void IOCPSession::Initialze()
 
 IOCPSession::IOCPSession()
 	: IOCPSessionBase(),
-	m_isSigned(false)
+	m_isSigned(false),
+	m_session_id(0),
+	m_user_id(0)
 {
 
 }

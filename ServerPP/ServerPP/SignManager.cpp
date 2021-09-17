@@ -226,6 +226,7 @@ namespace Sign
 		{	// sign in success
 			retData.result = EResult::Success_SingIn;
 			retData.msg = ResultMSG::SignInSuccessMsg;
+			retData.user_id = getInfo->sign_id;
 			return retData;
 		}
 

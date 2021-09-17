@@ -34,7 +34,7 @@
 namespace NetBase
 {
 #define WriteToStream(os, inData) size += NetBase::WriteToBinStream(os, inData)
-#define ReadToStream(is, outData) size += NetBase::ReadFromBinStream(is, outData)
+#define ReadFromStream(is, outData) size += NetBase::ReadFromBinStream(is, outData)
 	using byte = unsigned char;
 	
 #pragma region forward Declaration
@@ -56,9 +56,6 @@ namespace NetBase
 	inline int32_t ReadFromBinStreamImpl(NetBase::InputMemoryStreamPtr is, typename std::pair<_Ty1, _Ty2>& v);
 
 #pragma endregion	
-
-	// character type 은 실제 유니코드가 어떻게 serialize 되는지 확인하고  할 예정임
-	// unicode 는 big endian 기준이라 아마 안하는게 맞을 거 같은데...
 #pragma region Write (Serialization)
 	// integral type
 	template<class _Ty>
@@ -352,11 +349,24 @@ namespace NetBase
 	{
 		return class_ptr->Serialize(os);
 	}
+	inline int32_t WriteToBinStreamImpl(
+		NetBase::OutputMemoryStreamPtr os,
+		ISerializablePtr class_ptr
+	)
+	{
+		return class_ptr->Serialize(os);
+	}
 
 	// read for ISerializable Class Ptr
 	inline int32_t ReadFromBinStreamImpl(
 		NetBase::InputMemoryStreamPtr is,
 		ISerializable* class_ptr)
+	{
+		return class_ptr->DeSerialize(is);
+	}
+	inline int32_t ReadFromBinStreamImpl(
+		NetBase::InputMemoryStreamPtr is,
+		ISerializablePtr class_ptr)
 	{
 		return class_ptr->DeSerialize(is);
 	}

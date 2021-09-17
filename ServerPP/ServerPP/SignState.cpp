@@ -55,7 +55,7 @@ void SignState::OnSendCompleted()
 	{
 	case EResult::Success_SingIn:
 	{
-		auto owner = m_ownerPtr.lock();
+		auto owner = m_ownerPtr.lock();		
 		owner->ChangeState(owner->m_characterSelect_state);
 #ifdef __DEBUG
 		printf("change client state : sign -> character select\n");
@@ -114,6 +114,9 @@ void SignState::HandleSignInPacket(NetBase::InputMemoryStreamPtr inpStream, NetB
 	// request sign in process
 	auto resultData = Sign::SignManager::sInstance->SignInProcess(pInfo);
 	m_current_result = resultData.result;
+	auto owner = m_ownerPtr.lock();
+	owner->m_user_id = resultData.user_id;
+
 
 #ifdef __DEBUG
 	wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
@@ -286,6 +289,7 @@ void SignState::OnInitilzed()
 {
 }
 
-void SignState::OnChangedToThis()
+void SignState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpStream)
 {
+	outpStream = nullptr;
 }

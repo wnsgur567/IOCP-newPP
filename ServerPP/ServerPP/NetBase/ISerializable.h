@@ -17,3 +17,4 @@ public:
 	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) = 0;
 	virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) = 0;
 };
+using ISerializablePtr = std::shared_ptr<ISerializable>;

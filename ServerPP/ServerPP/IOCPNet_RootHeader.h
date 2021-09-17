@@ -24,6 +24,18 @@ using ResultSize_t = __int32;
 #include "CharacterSelectManager.h"
 #include "CharacterSelectState.h"
 
+#include "NetGameObject.h"
+
+#include "Vector2.h"
+#include "Vector3.h"
+#include "PlayerInfo.h"
+
+#include "Sector.h"
+
+#include "VillageInfoBase.h"
+#include "VillageManager.h"
+#include "VillageState.h"
+
 
 
 #include "Engine.h"

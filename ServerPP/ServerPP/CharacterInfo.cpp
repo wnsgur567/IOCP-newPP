@@ -21,9 +21,9 @@ int CharacterInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
 int CharacterInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 {
 	int size = 0;
-	ReadToStream(in_stream, character_id);
-	ReadToStream(in_stream, user_id);
-	ReadToStream(in_stream, character_type);
-	ReadToStream(in_stream, character_name);
+	ReadFromStream(in_stream, character_id);
+	ReadFromStream(in_stream, user_id);
+	ReadFromStream(in_stream, character_type);
+	ReadFromStream(in_stream, character_name);
 	return 0;
 }

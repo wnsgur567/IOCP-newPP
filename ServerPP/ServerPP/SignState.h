@@ -14,7 +14,7 @@ public:
 	virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
 	virtual void OnSendCompleted() override;
 	virtual void OnInitilzed() override;
-	virtual void OnChangedToThis() override;
+	virtual void OnChangedToThis(NetBase::OutputMemoryStreamPtr&) override;
 
 	void GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol);
 	void HandleSignInPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);

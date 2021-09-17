@@ -54,6 +54,7 @@ namespace Sign
 		{
 			EProtocol protocol;
 			EResult result;
+			uint64_t user_id;
 			const wchar_t* msg;
 		};
 

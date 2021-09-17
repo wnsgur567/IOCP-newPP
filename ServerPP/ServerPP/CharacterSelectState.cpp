@@ -2,7 +2,7 @@
 
 void CharacterSelectState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
-	
+
 
 }
 
@@ -14,7 +14,7 @@ void CharacterSelectState::OnInitilzed()
 {
 }
 
-void CharacterSelectState::OnChangedToThis()
+void CharacterSelectState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpStream)
 {
 #ifdef  __DEBUG
 	printf("start Character Select State!!\n");
@@ -24,6 +24,12 @@ void CharacterSelectState::OnChangedToThis()
 	// 2. 해당 유저에 대한 모든 캐릭터 정보 불러오기 (SQL)
 	// 3. 불러온 정보를 Session 수준에서 저장
 	// 4. 모든 캐릭터 정보를 전송
+
+	auto owner = m_ownerPtr.lock();	// session ptr	
+	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->StateInitializeProcess(owner->m_user_id);
+	m_current_result = resultData.result;
+
+	outpStream = resultData.outpStream;
 }
 
 
@@ -38,7 +44,7 @@ void CharacterSelectState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outPr
 	{
 		outProtocol = EProtocol::SignOut;
 		return;
-	}	
+	}
 
 	throw Utils::NotImplementException();
 }

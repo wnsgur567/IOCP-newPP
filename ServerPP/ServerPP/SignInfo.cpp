@@ -54,8 +54,8 @@ namespace Sign
 	int SignInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 	{
 		int size = 0;
-		ReadToStream(in_stream, ID);
-		ReadToStream(in_stream, PW);
+		ReadFromStream(in_stream, ID);
+		ReadFromStream(in_stream, PW);
 		return size;
 	}
 }
