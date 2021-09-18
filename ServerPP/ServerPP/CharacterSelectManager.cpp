@@ -161,7 +161,7 @@ namespace CharacterSelect
 			throw;
 		}
 	}
-	CharacterSelectManager::ResultData CharacterSelectManager::StateInitializeProcess(uint64_t inUserID)
+	CharacterSelectManager::ResultData CharacterSelectManager::StateChangedProcess(uint64_t inUserID)
 	{
 		ResultData retData;
 

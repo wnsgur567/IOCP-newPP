@@ -33,6 +33,7 @@ using ResultSize_t = __int32;
 #include "Sector.h"
 
 #include "VillageInfoBase.h"
+#include "FirtstVillage.h"
 #include "VillageManager.h"
 #include "VillageState.h"
 

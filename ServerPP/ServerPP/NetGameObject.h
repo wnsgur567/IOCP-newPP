@@ -8,5 +8,6 @@ private:
 	bool m_isPlayable;		// user 가 직접 조작하는 object 인지
 public:
 	virtual bool IsEqual(const NetGameObject& other);	
+	uint64_t GetNetID() const;
 };
 

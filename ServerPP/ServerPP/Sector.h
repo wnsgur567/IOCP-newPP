@@ -13,14 +13,21 @@ private:
 	
 	std::vector<SectorPtr> m_nearSector_vec;	// 좌상단부터 8방위
 
-	std::vector<PlayerInfoPtr> m_player_vec;
+	// NetGameObject id to info
+	std::unordered_map<uint64_t, PlayerInfoPtr> m_player_map;
 	// NPC...
-public:
-	void Initialize();	// 위치값 설정 , 주변 섹터 검색
-	void Finalize();	// release
-	// 현재 섹터에 존재하는 모든 player 에게 정보를 보내기
-	void SendAll();
+private:
 	
+
+public:
+	void Initialize(Vector2Int pos, Vector2Int grid, Vector2Int size, bool activate = true);		// 위치값 설정 
+	void SetNearSector(const std::vector<std::vector<SectorPtr>>& sectors);	// after initilaized
+	void Finalize();	// release
+
+	void EnterSection(PlayerInfoPtr);
+	void LeaveSection(PlayerInfoPtr);
+	// 현재 섹터에 존재하는 모든 player 에게 정보를 보내기
+	void SendEnterPacket();
+	void SendLeavePacket();
+	void SendPacket();
 };
-
-

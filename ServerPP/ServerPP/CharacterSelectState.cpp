@@ -26,7 +26,7 @@ void CharacterSelectState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpS
 	// 4. 모든 캐릭터 정보를 전송
 
 	auto owner = m_ownerPtr.lock();	// session ptr	
-	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->StateInitializeProcess(owner->m_user_id);
+	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->StateChangedProcess(owner->m_user_id);
 	m_current_result = resultData.result;
 
 	outpStream = resultData.outpStream;

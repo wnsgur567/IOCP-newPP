@@ -156,6 +156,9 @@
     <ClCompile Include="Vector2.cpp">
       <Filter>100_Player</Filter>
     </ClCompile>
+    <ClCompile Include="FirstVillage.cpp">
+      <Filter>12_Village</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h">
@@ -292,6 +295,12 @@
     </ClInclude>
     <ClInclude Include="Vector2.h">
       <Filter>100_Player</Filter>
+    </ClInclude>
+    <ClInclude Include="FirtstVillage.h">
+      <Filter>12_Village</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorOwner.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

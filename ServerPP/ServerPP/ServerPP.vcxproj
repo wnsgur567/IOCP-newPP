@@ -147,6 +147,7 @@
     <ClCompile Include="CharacterSelectState.cpp" />
     <ClCompile Include="ClientState.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="FirstVillage.cpp" />
     <ClCompile Include="IOCPBase\IOCPNetworkManager.cpp" />
     <ClCompile Include="IOCPBase\IOCPSessionBase.cpp" />
     <ClCompile Include="IOCPBase\IOCPSessionManager.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="CharacterSelectState.h" />
     <ClInclude Include="ClientState.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="FirtstVillage.h" />
     <ClInclude Include="IOCPBase\EngineBase.h" />
     <ClInclude Include="IOCPBase\IOCPBase_RootHeader.h" />
     <ClInclude Include="IOCPBase\IOCPNetworkManager.h" />
@@ -203,6 +205,7 @@
     <ClInclude Include="NetGameObject.h" />
     <ClInclude Include="PlayerInfo.h" />
     <ClInclude Include="Sector.h" />
+    <ClInclude Include="SectorOwner.h" />
     <ClInclude Include="SignInfo.h" />
     <ClInclude Include="SignManager.h" />
     <ClInclude Include="SignState.h" />

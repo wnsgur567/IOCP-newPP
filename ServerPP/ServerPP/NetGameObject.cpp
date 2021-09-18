@@ -6,3 +6,8 @@ bool NetGameObject::IsEqual(const NetGameObject& other)
         return true;
     return false;
 }
+
+uint64_t NetGameObject::GetNetID() const
+{
+    return m_net_id;
+}

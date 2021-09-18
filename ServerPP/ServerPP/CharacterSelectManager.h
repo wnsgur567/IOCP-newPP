@@ -54,14 +54,9 @@ namespace CharacterSelect
 	public:
 
 	public:
-		ResultData StateInitializeProcess(uint64_t);
+		ResultData StateChangedProcess(uint64_t);	// user id
 		ResultData CharacterSelectProcess(const CharacterInfoPtr inInfo);
 		ResultData MakeNewCharacterProcess(const CharacterInfoPtr inInfo);
 		ResultData SignOutProcess(const CharacterInfoPtr inInfo);
-
-
-
-
-
 	};
 }
