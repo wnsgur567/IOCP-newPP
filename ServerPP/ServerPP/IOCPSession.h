@@ -12,17 +12,19 @@ private:
 	DERIVED_ENGINE_FRIEND_CODE;
 	friend class SignState;
 	friend class CharacterSelectState;
-	
-public:	
+	friend class VillageState;
+	friend class DungeonState;
+public:
 
 	class ClientState
 	{
-		
+
 	protected:
 		std::weak_ptr<IOCPSession> m_ownerPtr;
 	public:
 		ClientState(IOCPSessionPtr inpOwnerSession)
-			: m_ownerPtr(inpOwnerSession) {	}
+			: m_ownerPtr(inpOwnerSession)
+		{	}
 
 		// input read 시 protocol 부분 부터 읽음
 		virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) = 0;
@@ -45,20 +47,20 @@ protected:
 	ClientStatePtr m_village_state;
 	ClientStatePtr m_dungeoun_state;
 	ClientStatePtr m_chat_state;
-	
+
 	void ChangeState(ClientStatePtr pNextState);
 protected:
+	bool m_isSigned;
 	uint64_t m_session_id;	// session이 생성될 때 부여되는 고유 id
 	uint64_t m_user_id;		// id pw 에 대응되는 user 고유 id	
+	PlayerInfoPtr m_player;	// character 선택 후 선택된 캐릭터의 정보들
 protected:
 	static IOCP_Base::IOCPSessionBasePtr CreateSession();
 protected:
-	bool m_isSigned;
+
 	IOCPSession();
 public:
 	void Initialze() override;
-
-	bool IsSigned() const;
 
 	bool Recv() override;
 	bool Send(NetBase::OutputMemoryStreamPtr pStream) override;

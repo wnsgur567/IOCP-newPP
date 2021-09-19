@@ -227,6 +227,7 @@ namespace Sign
 			retData.result = EResult::Success_SingIn;
 			retData.msg = ResultMSG::SignInSuccessMsg;
 			retData.user_id = getInfo->sign_id;
+			printf("sign id : %llu\n", retData.user_id);
 			return retData;
 		}
 

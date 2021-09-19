@@ -92,6 +92,8 @@ namespace NetBase
 		return (m_capacity - m_length);
 	}
 
+	// endian 반영되지 않는 메모리 읽기
+	// endian 반영되는것은 netbase 의 ReadFromBinStream 을 이용할 것
 	void InputMemoryStream::Read(void* outData, size_t inByteCount)
 	{
 		memcpy(outData, m_buffer + m_head, inByteCount);

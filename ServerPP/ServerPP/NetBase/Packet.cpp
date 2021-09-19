@@ -102,7 +102,8 @@ namespace NetBase
 		m_sizeflag = true;
 		m_recvbytes = 0;
 		m_target_recvbytes = 0;
-
+		
+		m_pStream->Clear();
 		m_overlappedEx.flush();
 	}
 
@@ -111,7 +112,8 @@ namespace NetBase
 		BYTE* ptr = m_pStream->GetBufferPtr();
 
 		// id
-		m_pStream->Read(&outID, sizeof(packetId_t));
+		NetBase::ReadFromBinStream(m_pStream, outID);
+		//m_pStream->Read(&outID, sizeof(packetId_t));
 
 #ifdef __CIPHER_ON
 		// decryption

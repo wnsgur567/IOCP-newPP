@@ -130,7 +130,7 @@ namespace IOCP_Base
 			return  NetBase::PacketBase::EPacketState::InComplete;
 		}
 
-		inpRecvPacket->m_pStream->SetLenth(inpRecvPacket->m_recvbytes);
+		inpRecvPacket->m_pStream->SetLenth(inpRecvPacket->m_recvbytes);			
 
 		return  NetBase::PacketBase::EPacketState::Completed;
 	}

@@ -2,12 +2,45 @@
 
 void CharacterSelectState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
+#ifdef __DEBUG
+	printf("---CharacterSelectState OnRecvCompleted Process...\n");
+#endif // __DEBUG
 
+	ProtocolSize_t raw_protocol;
+	NetBase::ReadFromBinStream(inpStream, raw_protocol);
+	//inpStream->Read(&raw_protocol, sizeof(ProtocolSize_t));
+
+	EProtocol protocol;
+	GetProtocol(raw_protocol, protocol);
+
+	switch (protocol)
+	{
+	case EProtocol::CharacterSelect:
+		HandleCharacterSelectPacket(inpStream, outpStream);
+		break;
+	case EProtocol::SignOut:
+		HandleSignOutPacket(inpStream, outpStream);
+		break;
+	default:
+		throw Utils::NotImplementException();
+		break;
+	}
 
 }
 
 void CharacterSelectState::OnSendCompleted()
 {
+	switch (m_current_result)
+	{
+	case EResult::Success_CharacterSelect:
+	{
+		auto owner = m_ownerPtr.lock();
+		owner->ChangeState(owner->m_village_state);
+	}
+	break;
+	default:
+		break;
+	}
 }
 
 void CharacterSelectState::OnInitilzed()
@@ -25,7 +58,7 @@ void CharacterSelectState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpS
 	// 3. 불러온 정보를 Session 수준에서 저장
 	// 4. 모든 캐릭터 정보를 전송
 
-	auto owner = m_ownerPtr.lock();	// session ptr	
+	auto owner = m_ownerPtr.lock();
 	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->StateChangedProcess(owner->m_user_id);
 	m_current_result = resultData.result;
 
@@ -49,11 +82,33 @@ void CharacterSelectState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outPr
 	throw Utils::NotImplementException();
 }
 
-void CharacterSelectState::HandleCharacterSelectPacket(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&)
+void CharacterSelectState::HandleCharacterSelectPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
+	// get selected character info from stream
+	CharacterInfoPtr pInfo = std::make_shared<CharacterInfo>();
+	//ISerializable* ptr = pInfo.get();
+	NetBase::ReadFromBinStream(inpStream, pInfo);
+	auto owner = m_ownerPtr.lock();
+	owner->m_player->SetCharacterInfo(pInfo);
+
+	// confirm info
+	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->CharacterSelectProcess(pInfo);
+	m_current_result = resultData.result;
+	outpStream = resultData.outpStream;
+	switch (resultData.result)
+	{
+	case EResult::Success_CharacterSelect:
+		break;
+	case EResult::UndefinedCharacter:
+		break;
+
+	default:
+		break;
+	}
+
 }
 
-void CharacterSelectState::HandleSignOutPacket(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&)
+void CharacterSelectState::HandleSignOutPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
 }
 

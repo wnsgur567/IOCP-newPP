@@ -1,5 +1,5 @@
 #include "IOCPNet_RootHeader.h"
-#include <handleapi.h>
+
 
 IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 {
@@ -13,8 +13,12 @@ void IOCPSession::ChangeState(ClientStatePtr pNextState)
 {
 	m_current_state = pNextState;
 
-	NetBase::OutputMemoryStreamPtr pOutputStream;	
+	NetBase::OutputMemoryStreamPtr pOutputStream;
 	m_current_state->OnChangedToThis(pOutputStream);
+
+	if (pOutputStream == nullptr)
+		return;
+
 	if (Send(pOutputStream))
 	{
 		// ...
@@ -27,18 +31,15 @@ void IOCPSession::Initialze()
 	// TODO : 모든 state 할당
 	m_sign_state = SignState::Create(shared_from_this());
 	m_characterSelect_state = CharacterSelectState::Create(shared_from_this());
-
-	
+	m_village_state = VillageState::Create(shared_from_this());
+	m_dungeoun_state = DungeonState::Create(shared_from_this());
 
 	// 첫 시작을 로그인 상태로 변경함
 	m_current_state = m_sign_state;
 }
 
 IOCPSession::IOCPSession()
-	: IOCPSessionBase(),
-	m_isSigned(false),
-	m_session_id(0),
-	m_user_id(0)
+	: IOCPSessionBase(), m_isSigned(false), m_session_id(0), m_user_id(0), m_player(nullptr)
 {
 
 }
@@ -114,7 +115,7 @@ bool IOCPSession::OnCompleteRecv()
 	}
 
 	/*--------- data process end ----------*/
-
+	m_pRecvPacket->Clear();
 	// recv 날려놓기
 	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
 	{
@@ -156,9 +157,4 @@ bool IOCPSession::OnCompleteSend()
 void IOCPSession::OnBeforeDisconnected()
 {
 	// Session 정리
-}
-
-bool IOCPSession::IsSigned() const
-{
-	return m_isSigned;
 }

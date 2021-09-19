@@ -10,11 +10,12 @@ namespace Village
 		{
 			None = 0,
 
-			VillageInit,
-			EnterVillage,
-			ExitVillage,
-			PlayerAction,
-			PlayerMove,
+			VillageInit = 1 << 0,
+			EnterVillage = 1 << 1,
+			ExitVillage = 1 << 2,
+			PlayerAction = 1 << 3,						// 이동하지 않는 모든 움직임
+			PlayerMove = 1 << 4,						// 이동하는 움직임
+			PlayerMoveAndAction = (1 << 3) | (1 << 4),	// action 과 move 가 같이 일어날 수 있음
 		};
 		enum class EResult : ResultSize_t
 		{
@@ -26,6 +27,8 @@ namespace Village
 			EProtocol protocol;
 			EResult result;
 			NetBase::OutputMemoryStreamPtr outpStream;
+
+			ResultData() : protocol(), result(), outpStream(nullptr) {}
 		};
 	protected:
 		VillageManager() {}
@@ -34,11 +37,10 @@ namespace Village
 		~VillageManager() {	}
 		bool Initialize(LPVOID) noexcept override;
 		void Finalize() noexcept override;
-
 	public:
 		ResultData StateChangedProcess(uint64_t);	// village id
 		ResultData VillageChangedProcess(uint64_t);	// village id
-		ResultData VillageActionProcess(const VillageInfoBase);
+		ResultData VillageActionProcess(VillageInfoBasePtr, SectorPtr, PlayerInfoPtr);
 		ResultData GoBackToCharacterSelectProcess(uint64_t);	//user id
 	};
 }

@@ -55,6 +55,9 @@
     <Filter Include="100_Player">
       <UniqueIdentifier>{e0bb7506-0273-400f-83af-5b97425ac8a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="13_Dungeon">
+      <UniqueIdentifier>{163ab9aa-c223-4907-a3f3-d26e345602cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,9 +68,6 @@
     </ClCompile>
     <ClCompile Include="SignManager.cpp">
       <Filter>10_Sign</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientState.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Utils\CriticalSection.cpp">
       <Filter>00_Base</Filter>
@@ -158,6 +158,18 @@
     </ClCompile>
     <ClCompile Include="FirstVillage.cpp">
       <Filter>12_Village</Filter>
+    </ClCompile>
+    <ClCompile Include="VillageInfoBase.cpp">
+      <Filter>12_Village</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonState.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="VillageState.cpp">
+      <Filter>12_Village</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorManager.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,12 +281,6 @@
     <ClInclude Include="Utils\Exceptions.h">
       <Filter>00_Base</Filter>
     </ClInclude>
-    <ClInclude Include="VillageState.h">
-      <Filter>12_Village</Filter>
-    </ClInclude>
-    <ClInclude Include="VillageState.cpp">
-      <Filter>12_Village</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerInfo.h">
       <Filter>100_Player</Filter>
     </ClInclude>
@@ -300,6 +306,15 @@
       <Filter>12_Village</Filter>
     </ClInclude>
     <ClInclude Include="SectorOwner.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonState.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="VillageState.h">
+      <Filter>12_Village</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,7 +10,8 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase
 #endif //  __DEBUG
 
 	ProtocolSize_t raw_protocol;
-	inpStream->Read(&raw_protocol, sizeof(ProtocolSize_t));
+	NetBase::ReadFromBinStream(inpStream, raw_protocol);
+	//inpStream->Read(&raw_protocol, sizeof(ProtocolSize_t));
 
 	EProtocol protocol;
 	GetProtocol(raw_protocol, protocol);
@@ -56,6 +57,7 @@ void SignState::OnSendCompleted()
 	case EResult::Success_SingIn:
 	{
 		auto owner = m_ownerPtr.lock();		
+		owner->m_isSigned = true;
 		owner->ChangeState(owner->m_characterSelect_state);
 #ifdef __DEBUG
 		printf("change client state : sign -> character select\n");
@@ -104,7 +106,7 @@ void SignState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 void SignState::HandleSignInPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
 	/// Read from Input Stream
-		// get data from recv stream
+	// get data from recv stream
 	Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
 	pInfo->Flush();
 	ISerializable* ptr = pInfo.get();
@@ -156,7 +158,7 @@ void SignState::HandleSignOutPacket(NetBase::InputMemoryStreamPtr inpStream, Net
 	// get id and pw from stream
 	NetBase::ReadFromBinStream(inpStream, ptr);
 
-	// request sign in process
+	// request sign out process
 	auto resultData = Sign::SignManager::sInstance->SignOutProcess(pInfo);
 	m_current_result = resultData.result;
 
@@ -198,7 +200,7 @@ void SignState::HandleSignUpPacket(NetBase::InputMemoryStreamPtr inpStream, NetB
 	// get id and pw from stream
 	NetBase::ReadFromBinStream(inpStream, ptr);
 
-	// request sign in process
+	// request sign up process
 	auto resultData = Sign::SignManager::sInstance->SignUpProcess(pInfo);
 	m_current_result = resultData.result;
 
@@ -234,15 +236,15 @@ void SignState::HandleSignUpPacket(NetBase::InputMemoryStreamPtr inpStream, NetB
 void SignState::HandleDeleteAccountPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
 	/// Read from Input Stream
-		// get data from recv stream
+	// get data from recv stream
 	Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
 	pInfo->Flush();
 	ISerializable* ptr = pInfo.get();
 	// get id and pw from stream
 	NetBase::ReadFromBinStream(inpStream, ptr);
 
-	// request sign in process
-	auto resultData = Sign::SignManager::sInstance->SignInProcess(pInfo);
+	// request delete account process
+	auto resultData = Sign::SignManager::sInstance->DeleteAccountProcess(pInfo);
 	m_current_result = resultData.result;
 
 #ifdef __DEBUG

@@ -5,7 +5,7 @@ namespace Village
 	class VillageInfoBase;
 	using VillageInfoBasePtr = std::shared_ptr<VillageInfoBase>;
 	// village super
-	class VillageInfoBase
+	class VillageInfoBase : public ISerializable
 	{
 	protected:
 		uint32_t m_village_id;
@@ -17,11 +17,17 @@ namespace Village
 
 		std::vector<std::vector<SectorPtr>> m_sectors;
 
+	public:
 		VillageInfoBase() :
 			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_size(), m_pixel_size() {}
-	public:
 		virtual void Initialize() = 0;
 		virtual void Finalize() = 0;
+
+		uint32_t GetVillageID() const { return m_village_id; }
+
+		virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+		virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
+
 		template <typename _Ty>
 		static VillageInfoBasePtr Create();
 	};
