@@ -19,6 +19,8 @@ public:
 	virtual void OnChangedToThis(NetBase::OutputMemoryStreamPtr&) override;
 	void GetProtocol(ProtocolSize_t, EProtocol&);
 
+	
+
 	// 제자리 행동
 	void HandleAction(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&);
 	// 이동

@@ -49,7 +49,10 @@ void VillageState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpStream)
 	printf("start Village State!!\n");
 #endif //  __DEBUG
 
-	auto resultData = Village::VillageManager::sInstance->VillageChangedProcess(m_pVillageInfo->GetVillageID());
+	// 추후 저장된 user 정보에서 가져 올 것
+	// 
+	uint32_t village_id = 1U;
+	auto resultData = Village::VillageManager::sInstance->VillageChangedProcess(village_id);
 	m_current_result = resultData.result;
 	outpStream = resultData.outpStream;
 }

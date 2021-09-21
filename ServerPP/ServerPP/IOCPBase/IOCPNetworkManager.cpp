@@ -130,7 +130,7 @@ namespace IOCP_Base
 			return  NetBase::PacketBase::EPacketState::InComplete;
 		}
 
-		inpRecvPacket->m_pStream->SetLenth(inpRecvPacket->m_recvbytes);			
+		inpRecvPacket->m_pStream->SetLenth(inpRecvPacket->m_recvbytes);
 
 		return  NetBase::PacketBase::EPacketState::Completed;
 	}
@@ -146,6 +146,8 @@ namespace IOCP_Base
 			}
 			return  NetBase::PacketBase::EPacketState::InComplete;
 		}
+		printf("%d bytes is sended\n", inpSendPacket->m_sendbytes);
+
 		return  NetBase::PacketBase::EPacketState::Completed;
 	}
 
@@ -171,6 +173,11 @@ namespace IOCP_Base
 				// 비동기 입출력 결과 확인
 				if (retval == 0 || cbTransferred == 0)
 				{
+					// 비정상 종료 시
+					// retval : false / transferred = 0
+					// 정상 종료 시
+					// retval : true / trnasferred = 0
+
 					if (retval == 0)
 					{	// error
 						DWORD temp1, temp2;
@@ -179,8 +186,8 @@ namespace IOCP_Base
 							&temp1, FALSE, &temp2);
 						NetBase::SocketUtil::ReportError("WSAGetOverlappedResult()");
 					}
-
-					throw std::exception();
+					// ....
+					throw std::exception("session end");
 				}
 
 				switch (overlapped->type)
@@ -188,7 +195,7 @@ namespace IOCP_Base
 				case  NetBase::OverlappedEx::EOverlappedType::Accept:
 				{
 					NetBase::AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<NetBase::AcceptPacket>(pPacket.lock());
-					
+
 					// OnAccept
 					IOCPNetworkManager::sInstance->OnAccepted(pAcceptPacket);
 				}
@@ -217,10 +224,13 @@ namespace IOCP_Base
 				break;
 				}
 			}
-			catch (const std::exception&)
+			catch (const std::exception& e)
 			{
+				printf("throw : %s\n", e.what());
+
 				// OnDiscnnected
 				IOCPNetworkManager::sInstance->OnDisconnected(pointer);
+				overlapped->pointer = nullptr;
 			}
 		}
 
@@ -282,10 +292,10 @@ namespace IOCP_Base
 		{
 		case  NetBase::PacketBase::EPacketState::Error:
 			//return false;
-			throw std::exception();
+			throw std::exception("SendPacket - Error");
 		case  NetBase::PacketBase::EPacketState::End:
 			//return false;
-			throw std::exception();
+			throw std::exception("SendPacket - End");
 		case  NetBase::PacketBase::EPacketState::InComplete:
 			return false;
 		case  NetBase::PacketBase::EPacketState::Completed:
@@ -353,6 +363,7 @@ namespace IOCP_Base
 #ifdef __DEBUG
 		::size_t ptr = (::size_t)pSession.get();
 		printf("(%llu) : Session 삭제 완료\n", ptr);
+		printf("Session use_count %d\n", pSession.use_count());
 #endif
 	}
 }

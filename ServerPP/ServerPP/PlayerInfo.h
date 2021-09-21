@@ -9,6 +9,7 @@ private:
 	CharacterInfoPtr m_character_info;
 	Vector3 m_posisition;
 public:
+	PlayerInfo();
 	void SetCharacterInfo(CharacterInfoPtr inInfo) { m_character_info = inInfo; }
 	Vector3 GetPosition() { return m_posisition; }
 

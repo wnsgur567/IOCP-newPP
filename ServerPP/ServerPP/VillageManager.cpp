@@ -27,7 +27,7 @@ namespace Village
 		//write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)retData.result);
 		write_size += NetBase::WriteToBinStream(stream, inVillageID);
 #ifdef __DEBUG	
-		printf("CharacterState write to stream : %dbytes\n", write_size);
+		printf("VillageState ChnagedProcess write to stream : %dbytes\n", write_size);
 #endif
 		retData.outpStream = stream;
 		return retData;
@@ -45,7 +45,7 @@ namespace Village
 		//write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)retData.result);
 		write_size += NetBase::WriteToBinStream(stream, inVillageID);
 #ifdef __DEBUG	
-		printf("CharacterState write to stream : %dbytes\n", write_size);
+		printf("VillageState village changed process  write to stream : %dbytes\n", write_size);
 #endif
 		retData.outpStream = stream;
 		return retData;

@@ -37,7 +37,7 @@ namespace NetBase
 			(LPTSTR)&lpMsgBuf,
 			0, NULL);
 
-		printf("Error %s: %d- %s\n", inOperationDesc, errorNum, (char*)lpMsgBuf);
+		printf("Error %s: %d- %ws\n", inOperationDesc, errorNum, (wchar_t*)lpMsgBuf);
 		LocalFree(lpMsgBuf);
 	}
 

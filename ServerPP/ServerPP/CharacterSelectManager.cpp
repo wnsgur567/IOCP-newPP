@@ -248,7 +248,7 @@ namespace CharacterSelect
 		}
 		else
 		{	// 캐릭터 선택 성공
-			retData.result = EResult::UndefinedCharacter;
+			retData.result = EResult::Success_CharacterSelect;
 			auto msg = ResultMSG::CharacterSelectSuccessMsg;
 
 			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();

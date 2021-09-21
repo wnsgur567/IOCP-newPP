@@ -20,6 +20,7 @@ using HandlePtr = std::shared_ptr<HANDLE>;
 #define SOCKET_END	0
 
 #include "../Utils/Exceptions.h"
+#include "../Utils/CriticalSection.h"
 
 #include "SocketAddress.h"
 #include "TCPSocket.h"

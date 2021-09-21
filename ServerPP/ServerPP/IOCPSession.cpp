@@ -41,7 +41,7 @@ void IOCPSession::Initialze()
 IOCPSession::IOCPSession()
 	: IOCPSessionBase(), m_isSigned(false), m_session_id(0), m_user_id(0), m_player(nullptr)
 {
-
+	m_player = std::make_shared<PlayerInfo>();
 }
 
 bool IOCPSession::Recv()
@@ -58,6 +58,9 @@ bool IOCPSession::Recv()
 
 bool IOCPSession::Send(NetBase::OutputMemoryStreamPtr pStream)
 {
+	// critical_section
+	MyBase::AutoLocker locker(&m_cs);
+
 	auto pSendPacket = NetBase::PacketManager::sInstance->GetSendPacketFromPool();
 
 	//
@@ -127,17 +130,13 @@ bool IOCPSession::OnCompleteRecv()
 
 bool IOCPSession::OnCompleteSend()
 {
+	// critical_section
+	MyBase::AutoLocker locker(&m_cs);
+
 	// send packet 을 회수
 	NetBase::SendPacketPtr pSendPacket = m_sendPacketQueue.front();
 	m_sendPacketQueue.pop();
 	NetBase::PacketManager::sInstance->RetrieveSendPacket(pSendPacket);
-
-	/*--------- change state process     ----------*/
-
-	// state 호출
-	m_current_state->OnSendCompleted();
-
-	/*--------- change state process end ----------*/
 
 	// queue 확인
 	// 남아있는 패킷이 있을경우 전송
@@ -150,6 +149,12 @@ bool IOCPSession::OnCompleteSend()
 			shared_from_this()))
 			return false;
 	}
+
+	/*--------- change state process     ----------*/
+	// state 호출	
+	m_current_state->OnSendCompleted();
+
+	/*--------- change state process end ----------*/
 
 	return true;
 }
