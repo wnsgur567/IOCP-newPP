@@ -12,22 +12,13 @@ IOCP_Base::IOCPSessionBasePtr IOCPSession::CreateSession()
 void IOCPSession::ChangeState(ClientStatePtr pNextState)
 {
 	m_current_state = pNextState;
-
-	NetBase::OutputMemoryStreamPtr pOutputStream;
-	m_current_state->OnChangedToThis(pOutputStream);
-
-	if (pOutputStream == nullptr)
-		return;
-
-	if (Send(pOutputStream))
-	{
-		// ...
-	}
-
+	m_current_state->OnChangedToThis();
 }
 
 void IOCPSession::Initialze()
 {
+	m_player = std::make_shared<PlayerInfo>(shared_from_this());
+
 	// TODO : 모든 state 할당
 	m_sign_state = SignState::Create(shared_from_this());
 	m_characterSelect_state = CharacterSelectState::Create(shared_from_this());
@@ -41,7 +32,7 @@ void IOCPSession::Initialze()
 IOCPSession::IOCPSession()
 	: IOCPSessionBase(), m_isSigned(false), m_session_id(0), m_user_id(0), m_player(nullptr)
 {
-	m_player = std::make_shared<PlayerInfo>();
+	
 }
 
 bool IOCPSession::Recv()
@@ -102,22 +93,10 @@ bool IOCPSession::OnCompleteRecv()
 
 	++m_newRecvID;
 
-	/*--------- data process     ----------*/
-
-	// for send stream
-	NetBase::OutputMemoryStreamPtr pOutputStream;
-	m_current_state->OnRecvCompleted(pStream, pOutputStream);
-
-#ifdef __DEBUG
-	printf("\nsend_id : (%lu)\n", m_newSendID);
-#endif // __DEBUG
-
-	if (Send(pOutputStream))
-	{
-		// ...
-	}
-
+	/*--------- data process     ----------*/	
+	m_current_state->OnRecvCompleted(pStream);
 	/*--------- data process end ----------*/
+
 	m_pRecvPacket->Clear();
 	// recv 날려놓기
 	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))

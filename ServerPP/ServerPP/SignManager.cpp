@@ -53,7 +53,7 @@ namespace Sign
 		try
 		{
 			std::stringstream query;
-			query << "select * from signinfo where = ";	
+			query << "select * from signinfo where = ";
 			query << "\'" << Utils::StringUtil::WstrToStr(inID) << "\'";
 
 #ifdef __DEBUG
@@ -80,13 +80,13 @@ namespace Sign
 		try
 		{
 			std::stringstream query;
-			query << "select * from signinfo where ID = ";			
+			query << "select * from signinfo where ID = ";
 			query << "\'" << Utils::StringUtil::WstrToStr(inID) << "\'";
 
 #ifdef __DEBUG
 			printf("query : %s\n", query.str().c_str());
 #endif
-			SQL::SQLManager::sInstance->Query(query.str(), results);			
+			SQL::SQLManager::sInstance->Query(query.str(), results);
 		}
 		catch (const SQL::SQLQueryException& e)
 		{
@@ -107,10 +107,10 @@ namespace Sign
 		outInfo = std::make_shared<SignInfo>();
 		outInfo->sign_id = std::stoull(row[0]);
 		outInfo->ID = Utils::StringUtil::StrToWstr(row[1]);
-		outInfo->PW = Utils::StringUtil::StrToWstr(row[2]); 
+		outInfo->PW = Utils::StringUtil::StrToWstr(row[2]);
 		outInfo->JoinDate = Utils::StringUtil::StrToWstr(row[3]);
 		outInfo->IsActivated = static_cast<bool>(std::stoi(row[4]));
-		
+
 #ifdef __DEBUG
 		printf("Load / %llu : (%ws , %ws)\n",
 			outInfo->sign_id,
@@ -152,115 +152,318 @@ namespace Sign
 		// TODO : implement delete process 
 	}
 
-	SignManager::ResultData SignManager::SignUpProcess(const SignInfoPtr inInfo)
-	{	// 회원가입
-		ResultData retData;
+	SignManager::EResult SignManager::SignUpProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{	// 회원가입 process
 
+		/// Read from Input Stream
+		// get data from recv stream
+		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
+		pInfo->Flush();
+		ISerializable* ptr = pInfo.get();
+		// get id and pw from stream
+		NetBase::ReadFromBinStream(inpStream, ptr);
+
+
+		EProtocol protocol;
+		EResult result;
+		std::wstring msg;
+
+		// ID 정보가 있는지 확인하기
 		SignInfoPtr getInfo;
-		LoadInfo(inInfo->ID, getInfo);
+		LoadInfo(pInfo->ID, getInfo);
 
-		retData.protocol = EProtocol::SignUp;
+
 		if (nullptr == getInfo)
-		{	// not exist
+		{	// id not exist
 			// sign up sueccess
-			SaveInfo(inInfo);
+			SaveInfo(pInfo);
 
-			retData.result = EResult::Success_SignUp;
-			retData.msg = ResultMSG::SignUpSuccessMsg;
-			return retData;
+			protocol = EProtocol::SignUp;
+			result = EResult::Success_SignUp;
+			msg = ResultMSG::SignUpSuccessMsg;
+		}
+		else
+		{	// id exist
+			protocol = EProtocol::SignUp;
+			result = EResult::ExistID;
+			msg = ResultMSG::IDExistMsg;
 		}
 
-		// exist
-		retData.result = EResult::ExistID;
-		retData.msg = ResultMSG::SignUpSuccessMsg;
-		return retData;
+
+#ifdef __DEBUG
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
+		printf("%d\n", result);
+		wprintf(L" msg : %ws\n", msg.c_str());
+#endif // __DEBUG
+
+		// get new send stream
+		auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream(only data part)
+			// sendpacket is composed with (size + id + data)
+
+		int write_size = 0;
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol	
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+		// write result
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+		// write result msg
+		write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+		/// write end		
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n", write_size);
+#endif // __DEBUG	
+
+
+		// send result to CLIENT
+		inpSession->Send(pOutputStream);
+
+		return result;
 	}
 
-	SignManager::ResultData SignManager::DeleteAccountProcess(const SignInfoPtr inInfo)
-	{
-		ResultData retData;
+	SignManager::EResult SignManager::DeleteAccountProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{	// 회원 탈퇴 process
 
+		/// Read from Input Stream
+	// get data from recv stream
+		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
+		pInfo->Flush();
+		ISerializable* ptr = pInfo.get();
+		// get id and pw from stream
+		NetBase::ReadFromBinStream(inpStream, ptr);
+
+		EProtocol protocol;
+		EResult result;
+		std::wstring msg;
+
+		// db 정보 읽기
 		SignInfoPtr getInfo;
-		LoadInfo(inInfo->ID, getInfo);
+		LoadInfo(pInfo->ID, getInfo);
 
-		retData.protocol = EProtocol::DeleteAccount;
+
 		if (nullptr == getInfo)
-		{
-			if (getInfo->PW == inInfo->PW)
-			{
-				DeleteInfo(inInfo);
+		{	// 해당 ID 가 없는 경우
+			protocol = EProtocol::DeleteAccount;
+			result = EResult::NotExistID;
+			msg = ResultMSG::NotExistIDMsg;
 
-				retData.result = EResult::Success_DeleteAccount;
-				retData.msg = ResultMSG::DeleteSuccessMsg;
-				return retData;
+#ifdef __DEBUG
+			wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
+			printf("%d\n", result);
+			wprintf(L" msg : %ws\n", msg.c_str());
+#endif // __DEBUG
+		}
+		else
+		{	// ID 일치
+			if (getInfo->PW == pInfo->PW)
+			{	// PW 일치
+
+				// db 에서 삭제
+				DeleteInfo(pInfo);
+
+				protocol = EProtocol::DeleteAccount;
+				result = EResult::Success_DeleteAccount;
+				msg = ResultMSG::DeleteSuccessMsg;
+
+				// 로그아웃 시키기
+				inpSession->SetSign(false);
 			}
+			else
+			{	// PW 불일치
+				protocol = EProtocol::DeleteAccount;
+				result = EResult::WrongPW;
+				msg = ResultMSG::WrongPWMsg;
+			}
+		}
 
-			retData.result = EResult::WrongPW;
-			retData.msg = ResultMSG::WrongPWMsg;
-			return retData;
+#ifdef __DEBUG
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
+		printf("%d\n", result);
+		wprintf(L" msg : %ws\n", msg.c_str());
+#endif // __DEBUG
+
+		// get new send stream
+		auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream(only data part)
+			// sendpacket is composed with (size + id + data)
+
+		int write_size = 0;
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol	
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+		// write result
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+		// write result msg
+		write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+		/// write end		
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n", write_size);
+#endif // __DEBUG	
+
+
+		// send result to CLIENT
+		inpSession->Send(pOutputStream);
+
+		return result;
+	}
+
+	SignManager::EResult SignManager::SignInProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{	// 로그인 process
+
+		/// Read from Input Stream
+		// get data from recv stream
+		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
+		pInfo->Flush();
+		ISerializable* ptr = pInfo.get();
+		// get id and pw from stream
+		NetBase::ReadFromBinStream(inpStream, ptr);
+
+		EProtocol protocol;
+		EResult result;
+		std::wstring msg;
+
+		// db 정보 읽기
+		SignInfoPtr getInfo;
+		LoadInfo(pInfo->ID, getInfo);
+
+
+		if (nullptr == getInfo)
+		{	// id not exist
+			protocol = EProtocol::SignIn;
+			result = EResult::NotExistID;
+			msg = ResultMSG::NotExistIDMsg;
+		}
+		else if (getInfo->PW == pInfo->PW)
+		{	// sign in success
+			protocol = EProtocol::SignIn;
+			result = EResult::Success_SingIn;
+			msg = ResultMSG::SignInSuccessMsg;
+			inpSession->SetUserID(getInfo->sign_id);
+			printf("sign id : %llu\n", getInfo->sign_id);
+
+			// 로그인 시키기
+			inpSession->SetSign(true);
 		}
 		else
 		{
-			retData.result = EResult::NotExistID;
-			retData.msg = ResultMSG::NotExistIDMsg;
-			return retData;
+			protocol = EProtocol::SignIn;
+			result = EResult::WrongPW;
+			msg = ResultMSG::WrongPWMsg;
 		}
+
+#ifdef __DEBUG
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
+		printf("%d\n", result);
+		wprintf(L" msg : %ws\n", msg.c_str());
+#endif // __DEBUG
+
+		// get new send stream
+		auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream(only data part)
+		// sendpacket is composed with (size + id + data)
+
+		int write_size = 0;
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol	
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+		// write result
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+		// write result msg
+		write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+		/// write end		
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n", write_size);
+#endif // __DEBUG	
+
+
+		// send result to CLIENT
+		inpSession->Send(pOutputStream);
+
+		return result;
 	}
 
-	SignManager::ResultData SignManager::SignInProcess(const SignInfoPtr inInfo)
-	{
-		ResultData retData;
+	SignManager::EResult SignManager::SignOutProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{	// 로그아웃 process
 
+		/// Read from Input Stream
+		// get data from recv stream
+		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
+		pInfo->Flush();
+		ISerializable* ptr = pInfo.get();
+		// get id and pw from stream
+		NetBase::ReadFromBinStream(inpStream, ptr);
+
+		EProtocol protocol;
+		EResult result;
+		std::wstring msg;
+
+		// db 정보 읽기
 		SignInfoPtr getInfo;
-		LoadInfo(inInfo->ID, getInfo);
+		LoadInfo(pInfo->ID, getInfo);
 
-		retData.protocol = EProtocol::SignIn;
+
 		if (nullptr == getInfo)
 		{	// id not exist
-			retData.result = EResult::NotExistID;
-			retData.msg = ResultMSG::NotExistIDMsg;
-			return retData;
+			protocol = EProtocol::SignOut;
+			result = EResult::NotExistID;
+			msg = ResultMSG::NotExistIDMsg;
+		}
+		else if (getInfo->PW == pInfo->PW)
+		{	// sign out success
+			protocol = EProtocol::SignOut;
+			result = EResult::Success_SignOut;
+			msg = ResultMSG::SignOutSuccessMsg;
+
+			// 로그아웃 시키기
+			inpSession->SetSign(false);
+		}
+		else
+		{	// wrong pw
+			protocol = EProtocol::SignOut;
+			result = EResult::WrongPW;
+			msg = ResultMSG::WrongPWMsg;
 		}
 
-		if (getInfo->PW == inInfo->PW)
-		{	// sign in success
-			retData.result = EResult::Success_SingIn;
-			retData.msg = ResultMSG::SignInSuccessMsg;
-			retData.user_id = getInfo->sign_id;
-			printf("sign id : %llu\n", retData.user_id);
-			return retData;
-		}
+#ifdef __DEBUG
+		wprintf(L" [id : %ws] , [pw : %ws]\n ", pInfo->ID.c_str(), pInfo->PW.c_str());
+		printf("%d\n", result);
+		wprintf(L" msg : %ws\n", msg.c_str());
+#endif // __DEBUG
 
-		retData.result = EResult::WrongPW;
-		retData.msg = ResultMSG::WrongPWMsg;
-		return retData;
+		// get new send stream
+		auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+
+		// write result to send stream(only data part)
+			// sendpacket is composed with (size + id + data)
+
+		int write_size = 0;
+		/// Write to Output Stream
+		// sign data = protocol + result + msg len + msg
+		// write protocol	
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+		// write result
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+		// write result msg
+		write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+		/// write end		
+
+#ifdef __DEBUG
+		printf("SignState write to stream : %dbytes\n", write_size);
+#endif // __DEBUG	
+
+
+		// send result to CLIENT
+		inpSession->Send(pOutputStream);
+
+		return result;
 	}
-
-	SignManager::ResultData SignManager::SignOutProcess(const SignInfoPtr inInfo)
-	{
-		ResultData retData;
-
-		SignInfoPtr getInfo;
-		LoadInfo(inInfo->ID, getInfo);
-
-		retData.protocol = EProtocol::SignOut;
-		if (nullptr == getInfo)
-		{	// id not exist
-			retData.result = EResult::NotExistID;
-			retData.msg = ResultMSG::NotExistIDMsg;
-			return retData;
-		}
-
-		if (getInfo->PW == inInfo->PW)
-		{	// sign in success
-			retData.result = EResult::Success_SignOut;
-			retData.msg = ResultMSG::SignOutSuccessMsg;
-			return retData;
-		}
-
-		retData.result = EResult::WrongPW;
-		retData.msg = ResultMSG::WrongPWMsg;
-		return retData;
-	}
-
 }

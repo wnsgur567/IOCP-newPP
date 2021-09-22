@@ -1,6 +1,6 @@
 #include "IOCPNet_RootHeader.h"
 
-void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
+void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 {
 #ifdef __DEBUG
 	printf("---VillageState OnRecvCompleted Process...\n");
@@ -22,13 +22,6 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetB
 		// 마을 확장 시
 		break;
 
-	case EProtocol::PlayerAction:
-		break;
-	case EProtocol::PlayerMove:
-		break;
-	case EProtocol::PlayerMoveAndAction:
-		break;
-
 	default:
 		throw Utils::NotImplementException();
 		break;
@@ -41,39 +34,23 @@ void VillageState::OnSendCompleted()
 
 void VillageState::OnInitilzed()
 {
+	
 }
 
-void VillageState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpStream)
+void VillageState::OnChangedToThis()
 {
 #ifdef  __DEBUG
 	printf("start Village State!!\n");
 #endif //  __DEBUG
 
-	// 추후 저장된 user 정보에서 가져 올 것
-	// 
-	uint32_t village_id = 1U;
-	auto resultData = Village::VillageManager::sInstance->VillageChangedProcess(village_id);
-	m_current_result = resultData.result;
-	outpStream = resultData.outpStream;
+	// 추후 저장된 user 정보에서 village id 가져 올 것		
+	auto owner = m_ownerPtr.lock();	
+	m_current_result = Village::VillageManager::sInstance->StateChangedProcess(owner);
 }
 
 void VillageState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 {
-	if ((ProtocolSize_t)EProtocol::PlayerAction & inOrigin)
-	{
-		if ((ProtocolSize_t)EProtocol::PlayerMove & inOrigin)
-		{
-			outProtocol = EProtocol::PlayerMoveAndAction;
-			return;
-		}
-		outProtocol = EProtocol::PlayerAction;
-		return;
-	}
-	if ((ProtocolSize_t)EProtocol::PlayerMove & inOrigin)
-	{
-		outProtocol = EProtocol::PlayerMove;
-		return;
-	}
+	
 	if ((ProtocolSize_t)EProtocol::EnterVillage & inOrigin)
 	{
 		outProtocol = EProtocol::EnterVillage;

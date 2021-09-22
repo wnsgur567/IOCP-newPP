@@ -1,7 +1,7 @@
 #include "IOCPNet_RootHeader.h"
 
-PlayerInfo::PlayerInfo()
-	: m_character_info(nullptr), m_posisition()
+PlayerInfo::PlayerInfo(IOCP_Base::IOCPSessionBasePtr pSession)
+	: m_character_info(nullptr), m_posisition(), m_pOwnerSession(pSession)
 {
 	m_character_info = std::make_shared<CharacterInfo>();
 }

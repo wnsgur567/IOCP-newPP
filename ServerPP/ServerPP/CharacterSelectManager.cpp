@@ -12,11 +12,25 @@ namespace CharacterSelect
 
 	bool CharacterSelectManager::Initialize(LPVOID) noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- CharacterSelectManager::Initialize() -----\n");
+#endif //  __DEBUG
+
+#ifdef  __DEBUG
+		printf("----- CharacterSelectManager::Initialize() Complete -----\n");
+#endif //  __DEBUG
 		return true;
 	}
 
 	void CharacterSelectManager::Finalize() noexcept
 	{
+#ifdef  __DEBUG
+		printf("\n----- CharacterSelectManager::Finalize() -----\n");
+#endif //  __DEBUG
+
+#ifdef  __DEBUG
+		printf("----- CharacterSelectManager::Finalize() Complete -----\n");
+#endif //  __DEBUG
 	}
 
 	bool CharacterSelectManager::IsExist(uint64_t character_id) const
@@ -161,112 +175,146 @@ namespace CharacterSelect
 			throw;
 		}
 	}
-	CharacterSelectManager::ResultData CharacterSelectManager::StateChangedProcess(uint64_t inUserID)
+
+
+	// sign state 에서 character select state 로 변경되었을 때 처리할 것들
+	// 해당 유저에 대한 캐릭터 정보들을 불러와서 send 함
+	CharacterSelectManager::EResult CharacterSelectManager::StateChangedProcess(IOCPSessionPtr inpSession)
 	{
-		ResultData retData;
+		// 1. user id를 확인
+		// 2. 해당 유저에 대한 모든 캐릭터 정보 불러오기 (SQL)
+		// 3. 불러온 정보를 Session 수준에서 저장
+		// 4. 모든 캐릭터 정보를 전송
 
+		EProtocol protocol;
+		EResult result;
+		std::wstring msg;
+
+		auto user_id = inpSession->GetUserID();
+
+		// load character data from db
 		std::vector<CharacterInfoPtr> user_character_infos;
-		LoadInfos(inUserID, user_character_infos);
+		LoadInfos(user_id, user_character_infos);
 
-		retData.protocol = EProtocol::AllCharacterInfo;
+
 		if (user_character_infos.size() == 0)
-		{	// no data
-			retData.result = EResult::NoData;
-			auto msg = ResultMSG::NoCharacterMsg;
+		{	// no character
+			protocol = EProtocol::AllCharacterInfo;
+			result = EResult::NoData;
+			msg = ResultMSG::NoCharacterMsg;
 
 			// out stream 조림
-			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+			auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 			// wirte to stream 
 			// protocol + result + msg (no data)
 			int write_size = 0;
-			write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)retData.protocol);
-			write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)retData.result);
-			write_size += NetBase::WriteToBinStream(stream, std::wstring(msg));
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+			write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+			// write end
 #ifdef __DEBUG	
 			printf("CharacterState write to stream : %dbytes\n", write_size);
-			printf("%ws\n", msg);
+			printf("%ws\n", msg.c_str());
 #endif
-			// write end
-			retData.outpStream = stream;
-			return retData;
+			// send result to CLIENT
+			inpSession->Send(pOutputStream);
+
+			return result;
 		}
 		else
 		{
-			retData.result = EResult::CharaterInfos;
-			auto msg = ResultMSG::CharacterInfosMsg;
+			protocol = EProtocol::AllCharacterInfo;
+			result = EResult::CharaterInfos;
+			msg = ResultMSG::CharacterInfosMsg;
+
 			// out stream 조림
-			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+			auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 			// wirte to stream 
-			// protocol + result + msg (no data)
+			// protocol + result + characterInfo vector + msg (no data)
 			int write_size = 0;
-			write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)retData.protocol);
-			write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)retData.result);
-			write_size += NetBase::WriteToBinStream(stream, user_character_infos);
-			write_size += NetBase::WriteToBinStream(stream, std::wstring(msg));
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+			write_size += NetBase::WriteToBinStream(pOutputStream, user_character_infos);
+			write_size += NetBase::WriteToBinStream(pOutputStream, std::wstring(msg));
+			// write end
 #ifdef __DEBUG	
 			printf("CharacterState write to stream : %dbytes\n", write_size);
-			printf("%ws\n", msg);
+			printf("%ws\n", msg.c_str());
 #endif
-			// write end
+			// send result to CLIENT
+			inpSession->Send(pOutputStream);
 
-			retData.outpStream = stream;
-			return retData;
+			return result;
 		}
 	}
 
-	CharacterSelectManager::ResultData CharacterSelectManager::CharacterSelectProcess(const CharacterInfoPtr inInfo)
+	CharacterSelectManager::EResult CharacterSelectManager::CharacterSelectProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
 	{
-		ResultData retData;
+		// get selected character info from stream
+		CharacterInfoPtr pInfo = std::make_shared<CharacterInfo>();
+		//ISerializable* ptr = pInfo.get();
+		NetBase::ReadFromBinStream(inpStream, pInfo);	
+		inpSession->SetCharacterInfo(pInfo);		
 
+		EProtocol protocol;
+		EResult result;
+		std::wstring msg;
+
+
+		// db 에서 정보 가져오기
 		CharacterInfoPtr check_info;
-		LoadInfo(inInfo->character_id, check_info);
-
-		retData.protocol = EProtocol::CharacterSelect;
+		LoadInfo(pInfo->character_id, check_info);
+		
 		if (nullptr == check_info)
-		{	// 검증 실패
-			retData.result = EResult::UndefinedCharacter;
-			auto msg = ResultMSG::CharacterInfosMsg;
+		{	// character 정보 없음
+			protocol = EProtocol::CharacterSelect;
+			result = EResult::UndefinedCharacter;
+			msg = ResultMSG::CharacterInfosMsg;
 
 			// out stream 조림
-			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+			auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 			// wirte to stream 
 			// protocol + result + msg
 			int write_size = 0;
-			write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)retData.protocol);
-			write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)retData.result);
-			write_size += NetBase::WriteToBinStream(stream, std::wstring(msg));
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+			write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+			// write end
 #ifdef __DEBUG	
 			printf("CharacterState write to stream : %dbytes\n", write_size);
-			printf("%ws\n", msg);
-#endif
-			// write end
-			retData.outpStream = stream;
-			return retData;
+			printf("%ws\n", msg.c_str());
+#endif			
+			// send result to CLIENT
+			inpSession->Send(pOutputStream);
+
+			return result;
 		}
 		else
 		{	// 캐릭터 선택 성공
-			retData.result = EResult::Success_CharacterSelect;
-			auto msg = ResultMSG::CharacterSelectSuccessMsg;
+			protocol = EProtocol::CharacterSelect;
+			result = EResult::Success_CharacterSelect;
+			msg = ResultMSG::CharacterSelectSuccessMsg;
 
-			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+			auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
 			// wirte to stream 
 			// protocol + result + msg
 			int write_size = 0;
-			write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)retData.protocol);
-			write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)retData.result);
-			write_size += NetBase::WriteToBinStream(stream, std::wstring(msg));
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
+			write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
+			write_size += NetBase::WriteToBinStream(pOutputStream, msg);
+			// write end
 #ifdef __DEBUG	
 			printf("CharacterState write to stream : %dbytes\n", write_size);
-			printf("%ws\n", msg);
+			printf("%ws\n", msg.c_str());
 #endif
-			// write end
-			retData.outpStream = stream;
-			return retData;
+			// send result to CLIENT
+			inpSession->Send(pOutputStream);
+
+			return result;
 		}
 	}
-
 }

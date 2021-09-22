@@ -364,6 +364,10 @@ namespace IOCP_Base
 		::size_t ptr = (::size_t)pSession.get();
 		printf("(%llu) : Session 삭제 완료\n", ptr);
 		printf("Session use_count %d\n", pSession.use_count());
+		// 현재 함수 param에 하나
+		// cating 된것 하나
+		// 호출한 스레드에 하나
+		// overlapped 구조체에 하나
 #endif
 	}
 }

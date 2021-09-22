@@ -27,12 +27,35 @@ namespace Village
 				m_sectors[i].push_back(pSector);
 			}
 		}
+
+		m_enter_pos = std::make_shared<VillageEnterPositon>();
+		m_enter_pos->m_grid_position.x = 0;
+		m_enter_pos->m_grid_position.y = 1;
+		m_enter_pos->m_local_position.x = 20.f;
+		m_enter_pos->m_local_position.y = 90.f;
 	}
 
 
 	void FirstVillageInfo::Finalize()
 	{
 
+	}
+	void FirstVillageInfo::OnPlayerRegisted(PlayerInfoPtr pInfo)
+	{
+		auto pCurrent_sector = m_sectors[m_enter_pos->m_grid_position.x][m_enter_pos->m_grid_position.y];
+		// player 위치 조정
+		Vector2Int sector_pos = pCurrent_sector->GetPixelPos();
+		float x_pos = static_cast<float>(sector_pos.x) + m_enter_pos->m_local_position.x;
+		float y_pos = static_cast<float>(sector_pos.y) + m_enter_pos->m_local_position.y;
+		pInfo->SetPosition(x_pos, y_pos, 0.f);
+
+		// 섹터에 player 등록
+		pCurrent_sector->EnterSection(pInfo);
+		// player에 sector 등록
+		pInfo->SetSector(pCurrent_sector);
+	}
+	void FirstVillageInfo::BeforePlayerDelete(PlayerInfoPtr pInfo)
+	{
 	}
 }
 

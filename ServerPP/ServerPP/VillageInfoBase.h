@@ -2,6 +2,17 @@
 
 namespace Village
 {
+	// village 최초 입장시 player pos 셋팅을 위한 정보
+	struct VillageEnterPositon
+	{
+	public:
+		Vector2Int m_grid_position;
+		Vector2 m_local_position;
+	};
+	using VillageEnterPositonPtr = std::shared_ptr<VillageEnterPositon>;
+
+
+
 	class VillageInfoBase;
 	using VillageInfoBasePtr = std::shared_ptr<VillageInfoBase>;
 	// village super
@@ -16,15 +27,26 @@ namespace Village
 		Vector2Int m_pixel_size;		// 현재 맵의 픽셀 기준 크기
 
 		std::vector<std::vector<SectorPtr>> m_sectors;
-
+		VillageEnterPositonPtr m_enter_pos;
+	protected:
+		std::unordered_map<uint64_t, PlayerInfoPtr> m_IdToPlayer_map;
 	public:
 		VillageInfoBase() :
-			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_size(), m_pixel_size() {}
+			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_size(), m_pixel_size(),
+			m_IdToPlayer_map() {}
+		~VillageInfoBase() { }
 		virtual void Initialize() = 0;
 		virtual void Finalize() = 0;
 
 		uint32_t GetVillageID() const { return m_village_id; }
 
+	public:
+		void RegistEnterPlayerObj(PlayerInfoPtr);	// obj id
+		void DeleteExitPlayerObj(uint32_t);	// obj id
+
+		virtual void OnPlayerRegisted(PlayerInfoPtr) = 0;		// player 가 현재 village 에 등록된 이후 처리할 것
+		virtual void BeforePlayerDelete(PlayerInfoPtr) = 0;		// player 가 현재 village 에서 제외되기 전 처리할 것
+	public:
 		virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
 		virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 

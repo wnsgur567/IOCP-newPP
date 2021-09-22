@@ -39,7 +39,6 @@ namespace Sign
 		{
 			None = 0,
 
-			// start 1000
 			ExistID = 1001,
 			NotExistID,
 			WrongPW,
@@ -50,14 +49,7 @@ namespace Sign
 			Success_DeleteAccount,
 		};
 
-		struct ResultData
-		{
-			EProtocol protocol;
-			EResult result;
-			uint64_t user_id;
-			const wchar_t* msg;
-		};
-
+	
 	protected:
 		SignManager() {}
 	public:
@@ -68,12 +60,11 @@ namespace Sign
 		bool IsExist(const std::wstring& inID);
 		void LoadInfo(const std::wstring& inID, SignInfoPtr& outInfo);
 		void SaveInfo(const SignInfoPtr inInfo);		
-		void DeleteInfo(const SignInfoPtr inInfo);
-		//SignMap m_info_map;
+		void DeleteInfo(const SignInfoPtr inInfo);		
 	public:
-		ResultData SignUpProcess(const SignInfoPtr inInfo);
-		ResultData DeleteAccountProcess(const SignInfoPtr inInfo);
-		ResultData SignInProcess(const SignInfoPtr inInfo);
-		ResultData SignOutProcess(const SignInfoPtr inInfo);
+		EResult SignUpProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult DeleteAccountProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult SignInProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult SignOutProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
 	};
 }

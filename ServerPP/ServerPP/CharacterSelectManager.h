@@ -33,12 +33,7 @@ namespace CharacterSelect
 			static const wchar_t* CharacterSelectSuccessMsg;
 			static const wchar_t* UndefinedCharacterMsg;
 		};
-		struct ResultData
-		{
-			EProtocol protocol;
-			EResult result;
-			NetBase::OutputMemoryStreamPtr outpStream;		
-		};
+		
 	protected:
 		CharacterSelectManager() {}
 	public:
@@ -51,12 +46,11 @@ namespace CharacterSelect
 		void LoadInfos(uint64_t user_id, std::vector<CharacterInfoPtr>& outVec);
 		void SaveInfo(const CharacterInfoPtr);
 		void DeleteInfo(const CharacterInfoPtr inInfo);
-	public:
 
 	public:
-		ResultData StateChangedProcess(uint64_t);	// user id
-		ResultData CharacterSelectProcess(const CharacterInfoPtr inInfo);
-		ResultData MakeNewCharacterProcess(const CharacterInfoPtr inInfo);
-		ResultData SignOutProcess(const CharacterInfoPtr inInfo);
+		EResult StateChangedProcess(IOCPSessionPtr inpSession);	
+		EResult CharacterSelectProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult MakeNewCharacterProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult SignOutProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
 	};
 }

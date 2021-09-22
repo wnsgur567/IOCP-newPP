@@ -1,6 +1,6 @@
 #include "IOCPNet_RootHeader.h"
 
-void CharacterSelectState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
+void CharacterSelectState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 {
 #ifdef __DEBUG
 	printf("---CharacterSelectState OnRecvCompleted Process...\n");
@@ -16,11 +16,19 @@ void CharacterSelectState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStre
 	switch (protocol)
 	{
 	case EProtocol::CharacterSelect:
-		HandleCharacterSelectPacket(inpStream, outpStream);
-		break;
+	{
+		// confirm info
+		auto owner = m_ownerPtr.lock();
+		m_current_result = CharacterSelect::CharacterSelectManager::sInstance->CharacterSelectProcess(inpStream, owner);
+	}
+	break;
 	case EProtocol::SignOut:
-		HandleSignOutPacket(inpStream, outpStream);
-		break;
+	{
+		// TODO : ...
+		//auto owner = m_ownerPtr.lock();
+		//m_current_result = CharacterSelect::CharacterSelectManager::sInstance->CharacterSelectProcess(inpStream, owner);
+	}
+	break;
 	default:
 		throw Utils::NotImplementException();
 		break;
@@ -47,22 +55,14 @@ void CharacterSelectState::OnInitilzed()
 {
 }
 
-void CharacterSelectState::OnChangedToThis(NetBase::OutputMemoryStreamPtr& outpStream)
+void CharacterSelectState::OnChangedToThis()
 {
 #ifdef  __DEBUG
 	printf("start Character Select State!!\n");
-#endif //  __DEBUG
-
-	// 1. user id를 확인
-	// 2. 해당 유저에 대한 모든 캐릭터 정보 불러오기 (SQL)
-	// 3. 불러온 정보를 Session 수준에서 저장
-	// 4. 모든 캐릭터 정보를 전송
+#endif //  __DEBUG	
 
 	auto owner = m_ownerPtr.lock();
-	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->StateChangedProcess(owner->m_user_id);
-	m_current_result = resultData.result;
-
-	outpStream = resultData.outpStream;
+	m_current_result = CharacterSelect::CharacterSelectManager::sInstance->StateChangedProcess(owner);	
 }
 
 
@@ -82,35 +82,6 @@ void CharacterSelectState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outPr
 	throw Utils::NotImplementException();
 }
 
-void CharacterSelectState::HandleCharacterSelectPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
-{
-	// get selected character info from stream
-	CharacterInfoPtr pInfo = std::make_shared<CharacterInfo>();
-	//ISerializable* ptr = pInfo.get();
-	NetBase::ReadFromBinStream(inpStream, pInfo);
-	auto owner = m_ownerPtr.lock();
-	owner->m_player->SetCharacterInfo(pInfo);
-
-	// confirm info
-	auto resultData = CharacterSelect::CharacterSelectManager::sInstance->CharacterSelectProcess(pInfo);
-	m_current_result = resultData.result;
-	outpStream = resultData.outpStream;
-	switch (resultData.result)
-	{
-	case EResult::Success_CharacterSelect:
-		break;
-	case EResult::UndefinedCharacter:
-		break;
-
-	default:
-		break;
-	}
-
-}
-
-void CharacterSelectState::HandleSignOutPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
-{
-}
 
 IOCPSession::ClientStatePtr CharacterSelectState::Create(IOCPSessionPtr pSession)
 {
@@ -119,5 +90,3 @@ IOCPSession::ClientStatePtr CharacterSelectState::Create(IOCPSessionPtr pSession
 
 	return retState;
 }
-
-

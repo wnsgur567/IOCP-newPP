@@ -13,10 +13,10 @@ protected:
 	VillageState(IOCPSessionPtr inOwnerSession)
 		: ClientState(inOwnerSession), m_current_result(EResult::None), m_pVillageInfo(nullptr) {}
 public:
-	void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
+	void OnRecvCompleted(NetBase::InputMemoryStreamPtr) override;
 	void OnSendCompleted() override;
 	virtual void OnInitilzed() override;
-	virtual void OnChangedToThis(NetBase::OutputMemoryStreamPtr&) override;
+	virtual void OnChangedToThis() override;
 	void GetProtocol(ProtocolSize_t, EProtocol&);
 
 	

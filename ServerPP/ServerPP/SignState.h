@@ -11,16 +11,12 @@ protected:
 	SignState(IOCPSessionPtr inpOwnerSession) :
 		ClientState(inpOwnerSession), m_current_result(EResult::None) {}
 public:
-	virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
+	virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr) override;
 	virtual void OnSendCompleted() override;
 	virtual void OnInitilzed() override;
-	virtual void OnChangedToThis(NetBase::OutputMemoryStreamPtr&) override;
+	virtual void OnChangedToThis() override;
 
-	void GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol);
-	void HandleSignInPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);
-	void HandleSignOutPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);
-	void HandleSignUpPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);
-	void HandleDeleteAccountPacket(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream);	
+	void GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol);	
 
-	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);	
+	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);
 };

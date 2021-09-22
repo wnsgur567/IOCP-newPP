@@ -2,6 +2,22 @@
 
 namespace Village
 {
+	
+	void VillageInfoBase::RegistEnterPlayerObj(PlayerInfoPtr inpPlayerInfo)
+	{
+
+		m_IdToPlayer_map.insert({ inpPlayerInfo->GetNetID(),  inpPlayerInfo });
+
+		// callback
+		OnPlayerRegisted(inpPlayerInfo);
+	}
+	void VillageInfoBase::DeleteExitPlayerObj(uint32_t in_netobj_id)
+	{
+		// callback
+		BeforePlayerDelete(m_IdToPlayer_map[in_netobj_id]);
+
+		m_IdToPlayer_map.erase(in_netobj_id);
+	}
 	int VillageInfoBase::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
 	{
 		int size = 0;

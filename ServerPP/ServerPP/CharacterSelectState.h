@@ -10,14 +10,12 @@ protected:
 	CharacterSelectState(IOCPSessionPtr inOwnerSession) 
 		: ClientState(inOwnerSession), m_current_result() {}
 public:
-	void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) override;
+	void OnRecvCompleted(NetBase::InputMemoryStreamPtr) override;
 	void OnSendCompleted() override;
 	virtual void OnInitilzed() override;
-	virtual void OnChangedToThis(NetBase::OutputMemoryStreamPtr&) override;
+	virtual void OnChangedToThis() override;
 
 	void GetProtocol(ProtocolSize_t, EProtocol&);
-	void HandleCharacterSelectPacket(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&);
-	void HandleSignOutPacket(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&);
 
 	static IOCPSession::ClientStatePtr Create(IOCPSessionPtr);	
 };

@@ -3,12 +3,13 @@
 // 1 2 3
 // 4 5 6
 // 7 8 9
-Sector::EDirection Sector::GetRelativePosInSector(const Vector3& pos)
+// param pos 는 좌상단 기준 절대 pixel position
+Sector::EDirection Sector::GetRelativeDirInSector(const Vector3& pos)
 {	// unity 기준 y가 점프
 	// x check
 
 	int x_flag = 0;
-	int x_left = m_left_top_pixcel_position.x;
+	int x_left = m_left_top_pixel_position.x;
 	if (pos.x < x_left)
 		x_flag = -1;
 	else if (x_left + m_size.x < pos.x)
@@ -16,7 +17,7 @@ Sector::EDirection Sector::GetRelativePosInSector(const Vector3& pos)
 
 	// z check
 	int z_flag = 0;
-	int z_top = m_left_top_pixcel_position.y;
+	int z_top = m_left_top_pixel_position.y;
 	if (pos.z < z_top)
 		z_flag = -1;
 	else if (z_top + m_size.y < pos.z)
@@ -45,7 +46,7 @@ Sector::EDirection Sector::GetRelativePosInSector(const Vector3& pos)
 
 void Sector::Initialize(Vector2Int pos, Vector2Int grid, Vector2Int size, bool activate)
 {
-	m_left_top_pixcel_position = pos;
+	m_left_top_pixel_position = pos;
 	m_grid_position = grid;
 	m_size = size;
 	IsAccesible = activate;
@@ -78,15 +79,46 @@ void Sector::Finalize()
 {
 }
 
+// 좌상단이 0,0 기준
+bool Sector::IsInSector(const Vector2& vec)
+{
+	Vector2Int left_top = m_left_top_pixel_position;
+	Vector2Int right_bottom = { m_left_top_pixel_position.x + m_size.x,
+								m_left_top_pixel_position.y + m_size.y };
+
+	int x = static_cast<int>(vec.x);
+	int y = static_cast<int>(vec.y);
+	if (x < left_top.x || right_bottom.x < x)
+		return false;
+	if (y < left_top.y || right_bottom.y < y)
+		return false;
+	return true;
+}
+
+bool Sector::IsInSector(const Vector2Int& vec)
+{
+	Vector2Int left_top = m_left_top_pixel_position;
+	Vector2Int right_bottom = { m_left_top_pixel_position.x + m_size.x,
+								m_left_top_pixel_position.y + m_size.y };
+
+	int x = vec.x;
+	int y = vec.y;
+	if (x < left_top.x || right_bottom.x < x)
+		return false;
+	if (y < left_top.y || right_bottom.y < y)
+		return false;
+	return true;
+}
+
 void Sector::PlayerMove(PlayerInfoPtr inpPlayer)
 {
 	auto pos = inpPlayer->GetPosition();
-	auto dir = GetRelativePosInSector(pos);
+	auto dir = GetRelativeDirInSector(pos);
 
 	switch (dir)
 	{
 	case Sector::EDirection::Middle:
-		PlayerAction(inpPlayer);
+
 		break;
 
 	case Sector::EDirection::LeftUpper:
@@ -119,10 +151,26 @@ void Sector::PlayerMove(PlayerInfoPtr inpPlayer)
 	}
 }
 
-void Sector::PlayerAction(PlayerInfoPtr inpPlayer)
+// 시야 내 모든 플레이어 긁어오기
+void Sector::GetNearPlayerInfos(std::vector<PlayerInfoPtr>& outVec)
 {
+	outVec.clear();
 
+	for (auto& item : m_player_map)
+	{
+		outVec.push_back(item.second);
+	}
+
+	for (auto& nearSector : m_nearSector_vec)
+	{
+		for (auto& item : nearSector->m_player_map)
+		{
+			outVec.push_back(item.second);
+		}
+	}
 }
+
+
 
 void Sector::EnterSection(PlayerInfoPtr inpPlayer)
 {

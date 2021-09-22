@@ -35,6 +35,14 @@ bool Engine::Initialize(LPVOID args) noexcept
 	Sign::SignManager::sInstance->Initialize(nullptr);
 	// Sign Manager end
 
+	if (false == CharacterSelect::CharacterSelectManager::StaticInit())
+		return false;
+	CharacterSelect::CharacterSelectManager::sInstance->Initialize(nullptr);
+
+	if (false == Village::VillageManager::StaticInit())
+		return false;
+	Village::VillageManager::sInstance->Initialize(nullptr);
+
 #ifdef  __DEBUG
 	printf("----- Engine::Initialize() Complete -----\n");
 #endif //  __DEBUG

@@ -1,6 +1,6 @@
 #include "IOCPNet_RootHeader.h"
 
-void DungeonState::OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&)
+void DungeonState::OnRecvCompleted(NetBase::InputMemoryStreamPtr)
 {
 }
 
@@ -12,7 +12,7 @@ void DungeonState::OnInitilzed()
 {
 }
 
-void DungeonState::OnChangedToThis(NetBase::OutputMemoryStreamPtr&)
+void DungeonState::OnChangedToThis()
 {
 }
 

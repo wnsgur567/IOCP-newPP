@@ -27,13 +27,13 @@ public:
 		{	}
 
 		// input read 시 protocol 부분 부터 읽음
-		virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&) = 0;
+		virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr) = 0;
 		virtual void OnSendCompleted() = 0;
 
 		// 첫 세션 생성 시 state 를 생성하면서 필요한 초기화 작업
 		virtual void OnInitilzed() = 0;
 		// 다른 state에서 자신의 state 로 변경되었을 때 할 작업
-		virtual void OnChangedToThis(NetBase::OutputMemoryStreamPtr&) = 0;
+		virtual void OnChangedToThis() = 0;
 	};
 	using ClientStatePtr = std::shared_ptr<ClientState>;
 
@@ -54,6 +54,18 @@ protected:
 	uint64_t m_session_id;	// session이 생성될 때 부여되는 고유 id
 	uint64_t m_user_id;		// id pw 에 대응되는 user 고유 id	
 	PlayerInfoPtr m_player;	// character 선택 후 선택된 캐릭터의 정보들
+	Village::VillageInfoBasePtr m_village;	// 
+public:
+	void SetSign(bool b) { m_isSigned = b; }
+	bool GetIsSigned() const { return m_isSigned; }
+	void SetSessionID(uint64_t inID) { m_session_id = inID; }
+	uint64_t GetSessionID() const { return m_session_id; }
+	void SetUserID(uint64_t inID) { m_user_id = inID; }
+	uint64_t GetUserID() const { return m_user_id; }
+	void SetCharacterInfo(CharacterInfoPtr inInfo) { m_player->SetCharacterInfo(inInfo); }
+	PlayerInfoPtr GetPlayerInfo() { return m_player; }
+	void SetVillageInfo(Village::VillageInfoBasePtr inVillage) { m_village = inVillage; }
+	Village::VillageInfoBasePtr GetVillageInfo() { return m_village; }
 protected:
 	static IOCP_Base::IOCPSessionBasePtr CreateSession();
 protected:
