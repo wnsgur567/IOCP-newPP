@@ -1,19 +1,40 @@
 #include "IOCPNet_RootHeader.h"
 
-PlayerInfo::PlayerInfo(IOCP_Base::IOCPSessionBasePtr pSession)
-	: m_character_info(nullptr), m_posisition(), m_pOwnerSession(pSession)
+PlayerInfo::PlayerInfo()
+	: NetGameObject(NetGameObject::ENetGameObjectType::Player),
+	m_character_info(nullptr), m_posisition(), m_pOwnerSession()
 {
-	m_character_info = std::make_shared<CharacterInfo>();
+	
 }
 
 int PlayerInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
 {
 	int size = 0;
+	size += NetGameObject::Serialize(out_stream);
+	WriteToStream(out_stream, m_character_info);
+	ISerializable* pos = &m_posisition;
+	WriteToStream(out_stream, pos);
 	return size;
 }
 
 int PlayerInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 {
 	int size = 0;
+	size += NetGameObject::DeSerialize(in_stream);
+	ReadFromStream(in_stream, m_character_info);
+	ISerializable* pos = &m_posisition;
+	ReadFromStream(in_stream, pos);
 	return size;
 }
+
+void PlayerInfo::OnCreated()
+{
+	printf("created new PlayerInfo\n");
+	m_character_info = std::make_shared<CharacterInfo>();
+}
+
+void PlayerInfo::BeforeDestroy()
+{
+	printf("Destroyed PlayerInfo\n");
+}
+

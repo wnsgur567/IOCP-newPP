@@ -4,6 +4,7 @@ class Sector;
 using SectorPtr = std::shared_ptr<Sector>;
 class Sector
 {
+	friend class SectorManager;
 public:
 	enum class EDirection
 	{
@@ -41,19 +42,18 @@ public:
 	void SetNearSector(const std::vector<std::vector<SectorPtr>>& sectors);	// after initilaized
 	void Finalize();	// release
 
-public:
+protected:
 	EDirection GetRelativeDirInSector(const Vector3&);
 	Vector2Int GetPixelPos() const { return m_left_top_pixel_position; }
-public:
+
 	bool IsInSector(const Vector2& vec);
 	bool IsInSector(const Vector2Int& vec);
 	void PlayerMove(PlayerInfoPtr);	
 	void GetNearPlayerInfos(std::vector<PlayerInfoPtr>& outVec);
 
 	virtual void EnterSection(PlayerInfoPtr);
-	virtual void LeaveSection(PlayerInfoPtr);
-	// 현재 섹터에 존재하는 모든 player 에게 정보를 보내기
-	//void SendEnterPacket();
-	//void SendLeavePacket();
-	//void SendPacket();
+	virtual void LeaveSection(PlayerInfoPtr);	
+
+public:
+	void SendAll(NetBase::OutputMemoryStreamPtr);
 };

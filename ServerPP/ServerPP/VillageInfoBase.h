@@ -24,15 +24,16 @@ namespace Village
 
 		uint32_t m_player_view_range;	// 현재 맵에서 player 의 시야 범위 , radius
 		Vector2Int m_grid_size;
+		Vector2Int m_sector_size;		// sector 의 크기
 		Vector2Int m_pixel_size;		// 현재 맵의 픽셀 기준 크기
 
-		std::vector<std::vector<SectorPtr>> m_sectors;
-		VillageEnterPositonPtr m_enter_pos;
+		std::vector<std::vector<SectorPtr>> m_sectors;		// 분할된 2차원 섹터
+		VillageEnterPositonPtr m_enter_pos;					// 마을 입장 시 시작 위치 지정
 	protected:
 		std::unordered_map<uint64_t, PlayerInfoPtr> m_IdToPlayer_map;
 	public:
 		VillageInfoBase() :
-			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_size(), m_pixel_size(),
+			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_size(), m_sector_size(), m_pixel_size(),
 			m_IdToPlayer_map() {}
 		~VillageInfoBase() { }
 		virtual void Initialize() = 0;

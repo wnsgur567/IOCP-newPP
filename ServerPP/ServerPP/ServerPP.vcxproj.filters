@@ -171,6 +171,9 @@
     <ClCompile Include="SectorManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="NetGameObjectManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h">
@@ -315,6 +318,9 @@
       <Filter>12_Village</Filter>
     </ClInclude>
     <ClInclude Include="SectorManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NetGameObjectManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

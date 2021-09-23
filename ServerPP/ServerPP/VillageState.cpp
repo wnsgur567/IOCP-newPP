@@ -65,6 +65,28 @@ void VillageState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 	throw Utils::NotImplementException();
 }
 
+void VillageState::GetProtocol(ProtocolSize_t inOrigin, ESectorProtocol& outProtocol)
+{
+	if ((ProtocolSize_t)ESectorProtocol::PlayerMove & inOrigin)
+	{
+		if ((ProtocolSize_t)ESectorProtocol::PlayerAction & inOrigin)
+		{
+			outProtocol = ESectorProtocol::PlayerMoveAndAction;
+			return;
+		}
+		outProtocol = ESectorProtocol::PlayerMove;
+		return;
+	}
+	if ((ProtocolSize_t)ESectorProtocol::PlayerAction & inOrigin)
+	{
+		outProtocol = ESectorProtocol::PlayerAction;
+		return;
+	}
+	
+
+	throw Utils::NotImplementException();
+}
+
 void VillageState::HandleAction(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
 

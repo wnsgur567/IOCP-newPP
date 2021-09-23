@@ -8,6 +8,7 @@ using ProtocolSize_t = __int64;
 using ResultSize_t = __int32;
 
 #include "NetGameObject.h"
+#include "NetGameObjectManager.h"
 
 #include "Vector2.h"
 #include "Vector3.h"

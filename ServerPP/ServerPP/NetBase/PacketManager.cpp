@@ -117,11 +117,7 @@ namespace NetBase
 	void PacketManager::RetrieveSendPacket(SendPacketPtr inpPacket)
 	{
 		inpPacket->Clear();
-		m_sendpacket_pool.push(inpPacket);
-
-		auto pStream = inpPacket->m_pStream;
-		pStream->Clear();
-		m_sendStream_queue.push(pStream);
+		m_sendpacket_pool.push(inpPacket);		
 	}
 
 	OutputMemoryStreamPtr PacketManager::GetSendStreamFromPool()
@@ -129,5 +125,10 @@ namespace NetBase
 		OutputMemoryStreamPtr pStream = m_sendStream_queue.front();
 		m_sendStream_queue.pop();
 		return pStream;
+	}
+	void PacketManager::RetrieveSendStream(OutputMemoryStreamPtr pStream)
+	{		
+		pStream->Clear();
+		m_sendStream_queue.push(pStream);
 	}
 }

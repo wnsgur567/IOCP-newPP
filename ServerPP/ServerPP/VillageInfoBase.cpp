@@ -2,7 +2,7 @@
 
 namespace Village
 {
-	
+	// 해당 player를 현재 village 의 섹터에 배치시킴
 	void VillageInfoBase::RegistEnterPlayerObj(PlayerInfoPtr inpPlayerInfo)
 	{
 

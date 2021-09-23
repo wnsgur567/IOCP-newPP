@@ -370,6 +370,7 @@ namespace NetBase
 	{
 		return class_ptr->DeSerialize(is);
 	}
+	
 
 	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
 	template <class _Ty>

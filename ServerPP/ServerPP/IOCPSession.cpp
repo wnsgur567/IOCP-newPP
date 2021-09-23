@@ -17,7 +17,8 @@ void IOCPSession::ChangeState(ClientStatePtr pNextState)
 
 void IOCPSession::Initialze()
 {
-	m_player = std::make_shared<PlayerInfo>(shared_from_this());
+	m_player = NetGameObjectManager::sInstance->Create<PlayerInfo>();
+	m_player->SetSession(shared_from_this());
 
 	// TODO : 모든 state 할당
 	m_sign_state = SignState::Create(shared_from_this());
@@ -52,11 +53,14 @@ bool IOCPSession::Send(NetBase::OutputMemoryStreamPtr pStream)
 	// critical_section
 	MyBase::AutoLocker locker(&m_cs);
 
+	// stream 회수
 	auto pSendPacket = NetBase::PacketManager::sInstance->GetSendPacketFromPool();
 
 	//
 	pSendPacket->Packing(m_newSendID, pStream);
 	++m_newSendID;
+
+	NetBase::PacketManager::sInstance->RetrieveSendStream(pStream);
 
 	// send queue 에 추가
 	m_sendPacketQueue.push(pSendPacket);

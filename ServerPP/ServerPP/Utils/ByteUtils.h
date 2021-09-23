@@ -70,7 +70,8 @@ namespace Utils
 
 	public:
 		template<typename T>
-		static typename std::enable_if<std::is_integral<T>::value>::type GetBytes(T inValue, byte outBytes[])
+		static typename std::enable_if
+			<std::is_integral<T>::value>::type GetBytes(T inValue, byte outBytes[])
 		{
 			byte* ptr = outBytes;
 			int type_size = static_cast<int>(sizeof(T));

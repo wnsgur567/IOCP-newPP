@@ -9,10 +9,15 @@ public:
 	{
 		None,
 
-		FirstInit = 1 << 20,
-		PlayerAction = 1 << 21,							// 이동하지 않는 모든 움직임
-		PlayerMove = 1 << 22,							// 이동하는 움직임
-		PlayerMoveAndAction = (1 << 21) | (1 << 22),	// action 과 move 가 같이 일어날 수 있음
+		FirstInit = 1 << 20,				// 최초 입장시 현재 클라에게
+		FirstInit_Others = 1 << 21,			// 최초 입장시 입장 위치에서 근처섹터의 오브젝트들
+
+		PlayerAction = 1 << 22,							// 이동하지 않는 모든 움직임
+		PlayerMove = 1 << 23,							// 이동하는 움직임
+		PlayerMoveAndAction = (PlayerAction) | (PlayerMove),	// action 과 move 가 같이 일어날 수 있음
+
+		EnterInView = 1 << 24,			// 시야 범위 내로 들어온 새로운 오브젝트
+		LeaveInView = 1 << 25,			// 시야 범위 밖으로 나간 기존 오브젝트
 	};
 	enum class  EResult :ResultSize_t
 	{
@@ -30,6 +35,7 @@ public:
 public:
 	void GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol);
 
+	EResult FirstEnterProcess(SectorPtr inCurrentSector, Vector2 inlocal_position, PlayerInfoPtr inpPlayer, IOCP_Base::IOCPSessionBasePtr inpSession);
 	EResult ActionProcess(NetBase::InputMemoryStreamPtr inpStream, SectorPtr inCurrentSector, PlayerInfoPtr inpPlayer);
 	EResult MoveProcess(NetBase::InputMemoryStreamPtr inpStream, std::vector<std::vector<SectorPtr>>& inSectors, SectorPtr inCurrent_sector, PlayerInfoPtr inpPlayer);
 	EResult MoveAndActionProcess(std::vector<std::vector<SectorPtr>>& inSectors, SectorPtr inCurrent_sector, PlayerInfoPtr inpPlayer);

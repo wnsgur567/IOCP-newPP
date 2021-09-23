@@ -169,6 +169,7 @@ namespace NetBase
 	}
 
 	// total size + packetid + data
+	// memory copy from instream to sendpacket's stream
 	void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
 	{
 		
@@ -181,9 +182,6 @@ namespace NetBase
 #else
 		size_t retBits = inStream->GetLength();
 #endif
-			
-
-
 
 		// total size = id size + data size
 		packetSize_t total_size = sizeof(packetId_t) + static_cast<packetSize_t>(retBits);
@@ -197,6 +195,5 @@ namespace NetBase
 
 		// bytes setting
 		m_target_sendbytes = total_size + sizeof(packetSize_t);
-
 	}
 }

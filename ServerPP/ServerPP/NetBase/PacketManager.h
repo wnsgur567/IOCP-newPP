@@ -53,7 +53,8 @@ namespace NetBase
 		void RetrieveRecvPacket(RecvPacketPtr inpPacket);
 		SendPacketPtr GetSendPacketFromPool();
 		void RetrieveSendPacket(SendPacketPtr inpPacket);
-		OutputMemoryStreamPtr GetSendStreamFromPool();	// send packet 회수 시 같이 처리
+		OutputMemoryStreamPtr GetSendStreamFromPool();	
+		void RetrieveSendStream(OutputMemoryStreamPtr);
 	};
 
 }

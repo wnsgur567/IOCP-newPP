@@ -12,7 +12,7 @@ int main()
 		return 1;
 
 	Engine::InitArgs args;
-	args.stream_buf_size = 512;
+	args.stream_buf_size = 1024;
 	args.acptpacket_pool_size = 1024;
 	args.recvpacket_pool_size = 1024;
 	args.sendpacket_pool_size = 1024;

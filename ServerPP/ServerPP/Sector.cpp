@@ -50,6 +50,23 @@ void Sector::Initialize(Vector2Int pos, Vector2Int grid, Vector2Int size, bool a
 	m_grid_position = grid;
 	m_size = size;
 	IsAccesible = activate;
+
+#ifdef __DEBUG
+	// TODO : Test끝나면 삭제하기
+	// sector 마다 dummy player 생성하기 (Test용도임)
+	auto obj = NetGameObjectManager::sInstance->Create<PlayerInfo>();
+
+	// dummy info
+	// sector 의 중앙마다 하나씩 dummy를 배치
+	int obj_x = m_left_top_pixel_position.x + m_size.x / 2;
+	int obj_y = -m_left_top_pixel_position.y - m_size.y / 2;
+	CharacterInfoPtr char_info = std::make_shared<CharacterInfo>();
+	std::wstring dummy_name = L"더미더미";
+	char_info->SetInfo(1U, 10000U, 1U, dummy_name);
+	obj->SetCharacterInfo(char_info);
+	obj->SetPosition(static_cast<float>(obj_x), static_cast<float>(obj_y), 0.f);
+	m_player_map.insert({ obj->GetNetID(), obj });
+#endif 
 }
 
 // after initilaized
@@ -65,10 +82,19 @@ void Sector::SetNearSector(const std::vector<std::vector<SectorPtr>>& sectors)
 	{
 		for (size_t j = 0; j < 3; j++)
 		{
+			// except me
+			if (i == 1 && j == 1)
+				continue;
 			int row = m_grid_position.x + offset[i][j].x;
 			int col = m_grid_position.y + offset[i][j].y;
+
+			// out of range
 			if (row < 0 || col < 0)
 				continue;
+			if (row >= sectors.size() || col >= sectors[0].size())	// 사각으로 꽉 차있는 경우만 가능
+				continue;
+
+			// near sector
 			if (sectors[row][col]->IsAccesible)
 				m_nearSector_vec.push_back(sectors[row][col]);
 		}
@@ -181,4 +207,51 @@ void Sector::LeaveSection(PlayerInfoPtr inpPlayer)
 {
 	m_player_map.erase(inpPlayer->GetNetID());
 }
+
+// 주변에 이 섹터가 시야 범위 내인 모든 근처 섹터의 player 들에게 전송
+void Sector::SendAll(NetBase::OutputMemoryStreamPtr inpStream)
+{
+	std::vector<PlayerInfoPtr> players;
+	GetNearPlayerInfos(players);
+
+	for (auto& item : m_player_map)
+	{
+		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+		(*sendstream) = (*inpStream);	// copy
+		auto current_session = item.second->GetSession();
+
+#ifdef __DEBUG
+		// DEBUG 모드에서의 Dummy player 일 경우 session 할당 안되있음
+		if (current_session != nullptr)
+			current_session->Send(sendstream);
+		else
+		{
+			NetBase::PacketManager::sInstance->RetrieveSendStream(sendstream);
+		}
+#else
+		current_session->Send(sendstream);
+#endif
+		}
+
+	for (auto& item : players)
+	{
+		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+		(*sendstream) = (*inpStream);	// copy
+		auto current_session = item->GetSession();
+
+#ifdef __DEBUG
+		// DEBUG 모드에서의 Dummy player 일 경우 session 할당 안되있음
+		if (current_session != nullptr)
+			current_session->Send(sendstream);
+		else
+		{
+			NetBase::PacketManager::sInstance->RetrieveSendStream(sendstream);
+		}
+#else
+		current_session->Send(sendstream);
+#endif	
+		}
+
+	NetBase::PacketManager::sInstance->RetrieveSendStream(inpStream);
+	}
 
