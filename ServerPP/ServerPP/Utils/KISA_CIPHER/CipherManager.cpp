@@ -44,21 +44,21 @@ namespace NetCipher
 
 		while (complete_size < inSize)
 		{
-#ifdef __DEBUG
+#ifdef __CIPHER_DEBUG
 			printf("before : ");
 			for (int i = 0; i < m_block_size; i++)
 				printf("%02X ", ptr[i]);
 			printf("\n");
-#endif
+#endif // __CIPHER_DEBUG
 
 			SEED_Encrypt(ptr, m_pdwRoundKey);
 
-#ifdef __DEBUG		
+#ifdef __CIPHER_DEBUG		
 			printf("after : ");
 			for (int i = 0; i < m_block_size; i++)
 				printf("%02X ", ptr[i]);
 			printf("\n");
-#endif // __DEBUG			
+#endif // __CIPHER_DEBUG			
 
 			ptr += m_block_size;
 			complete_size += m_block_size;
@@ -76,16 +76,16 @@ namespace NetCipher
 
 		while (complete_size < inSize)
 		{
-#ifdef __DEBUG
+#ifdef __CIPHER_DEBUG
 			printf("before : ");
 			for (int i = 0; i < m_block_size; i++)
 				printf("%02X ", ptr[i]);
 			printf("\n");
-#endif // __DEBUG
+#endif // __CIPHER_DEBUG
 
 			SEED_Decrypt(ptr, m_pdwRoundKey);
 
-#ifdef __DEBUG
+#ifdef __CIPHER_DEBUG
 			printf("after : ");
 			for (int i = 0; i < m_block_size; i++)
 				printf("%02X ", ptr[i]);

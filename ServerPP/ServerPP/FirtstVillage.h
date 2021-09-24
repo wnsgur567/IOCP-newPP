@@ -4,7 +4,8 @@ namespace Village
 {
 	class FirstVillageInfo : public Village::VillageInfoBase
 	{
-		friend VillageInfoBase;
+		friend class VillageManager;
+		friend VillageInfoBase;	
 	protected:
 		FirstVillageInfo() {}
 	public:

@@ -146,7 +146,7 @@ namespace IOCP_Base
 			}
 			return  NetBase::PacketBase::EPacketState::InComplete;
 		}
-		printf("%d bytes is sended\n", inpSendPacket->m_sendbytes);
+		printf("%d bytes is sended\ n", inpSendPacket->m_sendbytes);
 
 		return  NetBase::PacketBase::EPacketState::Completed;
 	}

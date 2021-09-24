@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DungeonState" Collapsed="true">
+    <Position X="26.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAABEAAAAAAAAAAAAAAAAAAgCAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>DungeonState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetGameObject" Collapsed="true">
+    <Position X="13.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAAAAAAAAAQAAQAAAAAAACBAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NetGameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetGameObjectManager" Collapsed="true">
+    <Position X="14.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAQAAAAwAAAAAAgBAgEAAAAAAACAAAAA=</HashCode>
+      <FileName>NetGameObjectManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SectorManager" Collapsed="true">
+    <Position X="21.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQQAAACCAAAQAAAAAAAAAAAAAAgAAACAIAQAAAAAA=</HashCode>
+      <FileName>SectorManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SectorOwner" Collapsed="true">
+    <Position X="36.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SectorOwner.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ISerializable" Collapsed="true">
+    <Position X="18.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAACBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NetBase\ISerializable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Engine" Collapsed="true">
+    <Position X="28" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAQAAAAAAAAAAAAAAgAAABAAAAAAAAAA=</HashCode>
+      <FileName>Engine.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOCPSession" Collapsed="true">
+    <Position X="8.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAMAJAAgFBAIAkEEAAAAEYSACgwAAIgAAAAAAAQ=</HashCode>
+      <FileName>IOCPSession.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SignState">
+    <Position X="33.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAABEAAAAAAAAAAAAABAAAAgAAAAEAAAAAAQAAAAAg=</HashCode>
+      <FileName>SignState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CharacterInfo" Collapsed="true">
+    <Position X="18.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAACAAAAAQACACBABAAQAgAAAAAAAAA=</HashCode>
+      <FileName>CharacterInfo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CharacterSelectState" Collapsed="true">
+    <Position X="31.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAABEAAAAAAAAAAAAAAAIAAgAAAAEAAAAAAQAAAAAg=</HashCode>
+      <FileName>CharacterSelectState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VillageState">
+    <Position X="31" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAABEAAAAAAAAAQACAgAAAAgAgAAEAAAAgAQAAAAAg=</HashCode>
+      <FileName>VillageState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerInfo" Collapsed="true">
+    <Position X="13.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAECAAABAAAgBAKAACACBAAwAAAAAAAAABICA=</HashCode>
+      <FileName>PlayerInfo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sector" Collapsed="true">
+    <Position X="28" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUEAYACCAAAEQAICAAAAAAEAAAAgAgAACAABBsAAAI=</HashCode>
+      <FileName>Sector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector2" Collapsed="true">
+    <Position X="25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAACBAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>Vector2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector2Int" Collapsed="true">
+    <Position X="11.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAACBAAAAAAABgAAAAAAA=</HashCode>
+      <FileName>Vector2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector3" Collapsed="true">
+    <Position X="16" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAACBAAAAAAABgAQAAAAA=</HashCode>
+      <FileName>Vector3.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::InputMemoryStream">
+    <Position X="0.5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIAABAQAAAggAAAABAQAAAAgEAgAACCAAAAgAABAAAA=</HashCode>
+      <FileName>NetBase\MemoryStream.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::OutputMemoryStream">
+    <Position X="3" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAQAAAAgAAAABAQAAAAAEAAAAAAAAAQgAAFQAAA=</HashCode>
+      <FileName>NetBase\MemoryStream.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::PacketBase">
+    <Position X="10" Y="1" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="NetBase::PacketBase::EPacketState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>NetBase\Packet.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAARAAAAIAAAAAAEAAAAAAQCAAAAAABAAAA=</HashCode>
+      <FileName>NetBase\Packet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::AcceptPacket">
+    <Position X="7.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAABBAAAIAAAAAAAAAgAAEAAAAIQAABAAAA=</HashCode>
+      <FileName>NetBase\Packet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::RecvPacket">
+    <Position X="12" Y="5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAggABAAAACIAAAABAgIAAAEAAEAAAAgBAAAA=</HashCode>
+      <FileName>NetBase\Packet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::SendPacket">
+    <Position X="9.5" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAEAAAABAAAAQAAAAAAAgIAAAEAAAAAACABAAAA=</HashCode>
+      <FileName>NetBase\Packet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::PacketManager" Collapsed="true">
+    <Position X="10" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GAAAAAAAAAABAUAAgAgAAAQgAAAAggkwAAgAACAAkAQ=</HashCode>
+      <FileName>NetBase\PacketManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::SocketAddress">
+    <Position X="31.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAQAAAAgAAAAIAAAAAAgEAAA=</HashCode>
+      <FileName>NetBase\SocketAddress.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::SocketUtil">
+    <Position X="33.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAIAAAAAAAAAAEAQAAAAAAAICYEACAAA=</HashCode>
+      <FileName>NetBase\SocketUtil.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::TCPSocket">
+    <Position X="29.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KIAAgCAAAAAAAEAAAOAAAYAAAIAAAAAgAAIAACAAAAA=</HashCode>
+      <FileName>NetBase\TCPSocket.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetBase::MyClass" Collapsed="true">
+    <Position X="36.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAQAAAAAAAAA=</HashCode>
+      <FileName>NetBase\StreamReadWrite.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOCP_Base::EngineBase&lt;DerivedEngine, DerivedSession&gt;" Collapsed="true">
+    <Position X="28" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAQAAAAAAAAAAAAAAgAACAAAAAAAAAAA=</HashCode>
+      <FileName>IOCPBase\EngineBase.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOCP_Base::IOCPNetworkManager" Collapsed="true">
+    <Position X="16.75" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAFIBAKBAAAAAQAACCAIAAAABCRAgAQAAAAACAAAgAA=</HashCode>
+      <FileName>IOCPBase\IOCPNetworkManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOCP_Base::IOCPSessionBase" Collapsed="true">
+    <Position X="8.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEQEAAAAEQCAAAAAIQIYAQgBAgwAIAAAAA=</HashCode>
+      <FileName>IOCPBase\IOCPSessionBase.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOCP_Base::IOCPSessionManager" Collapsed="true">
+    <Position X="12.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAARAAAAAAAQAEABEAgAAAAAAAAACAAAA=</HashCode>
+      <FileName>IOCPBase\IOCPSessionManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOCP_Base::NetworkManagerServer&lt;T&gt;" Collapsed="true">
+    <Position X="16.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAQAAAAQCAAAAAgAAgAAAAAAgCAAAAAA=</HashCode>
+      <FileName>IOCPBase\NetworkManagerServer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utils::BitConverter">
+    <Position X="22.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAABAAAACABACARAAAAAAAAAACAAAAAAAEAFAAA=</HashCode>
+      <FileName>Utils\ByteUtils.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utils::BitConverterStaticConstructor">
+    <Position X="24.25" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\ByteUtils.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utils::NotImplementException" Collapsed="true">
+    <Position X="25.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\Exceptions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utils::FileUtil">
+    <Position X="20.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAJAAAAAAAAQAAIAAAAAAAAAA=</HashCode>
+      <FileName>Utils\FileUtil.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyBase::CriticalSection" Collapsed="true">
+    <Position X="33.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAgYAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\CriticalSection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyBase::AutoLocker" Collapsed="true">
+    <Position X="26.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAACAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\CriticalSection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyBase::Singleton&lt;T&gt;" Collapsed="true">
+    <Position X="21.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAQAAAACAAABAAAAAgAEAAAAgAAAAAAA=</HashCode>
+      <FileName>Utils\Singleton.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NetCipher::CipherManager" Collapsed="true">
+    <Position X="19" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABACAAAAAAAAQAAAAAAAAAAAACAgABAAAAAAAgAAgA=</HashCode>
+      <FileName>Utils\KISA_CIPHER\CipherManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SQL::SQLQueryException">
+    <Position X="26.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\MySQL\SQLManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SQL::SQLManager" Collapsed="true">
+    <Position X="25.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAEIAAAAQAAAAAAAEAAIAAAgAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\MySQL\SQLManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sign::SignInfo" Collapsed="true">
+    <Position X="22.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAgACAAAAAAQAAAyBAAAAAAAAkACAIAAA=</HashCode>
+      <FileName>SignInfo.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sign::SignManager" Collapsed="true">
+    <Position X="30.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAACAAQAQAAAAyAAAAAAAgAAAADAEAIBIAAA=</HashCode>
+      <FileName>SignManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CharacterSelect::CharacterSelectManager" Collapsed="true">
+    <Position X="32.75" Y="14.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="CharacterSelect::CharacterSelectManager::EProtocol" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CharacterSelectManager.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="CharacterSelect::CharacterSelectManager::EResult" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CharacterSelectManager.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Struct Name="CharacterSelect::CharacterSelectManager::ResultMSG" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CharacterSelectManager.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAMAAAAAAQAQAAAEiAAAAQAAgAAAAAAAAIAAIAA=</HashCode>
+      <FileName>CharacterSelectManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Village::FirstVillageInfo" Collapsed="true">
+    <Position X="20.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAMAAAAAAAAAAgAAAAAAAAUAAAAA=</HashCode>
+      <FileName>FirtstVillage.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Village::VillageInfoBase" Collapsed="true">
+    <Position X="20.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQQhACAEAAAQAAAEQAAIAAACBAgUAAKAAgAwQAAAA=</HashCode>
+      <FileName>VillageInfoBase.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Village::VillageManager" Collapsed="true">
+    <Position X="23.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAgAAAAAAAAQAAAAAAEAAIAYAAgCAAAAAAAAAAAAA=</HashCode>
+      <FileName>VillageManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="NetBase::OverlappedEx">
+    <Position X="7.75" Y="1" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="NetBase::OverlappedEx::EOverlappedType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>NetBase\Packet.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAgAABAAAAAAgAAQQAAAA=</HashCode>
+      <FileName>NetBase\Packet.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Village::VillageEnterPositon" Collapsed="true">
+    <Position X="28" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>VillageInfoBase.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="NetCipher::_DWORD" Collapsed="true">
+    <Position X="26" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Utils\KISA_CIPHER\CipherManager.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

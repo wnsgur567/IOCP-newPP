@@ -33,7 +33,7 @@ void IOCPSession::Initialze()
 IOCPSession::IOCPSession()
 	: IOCPSessionBase(), m_isSigned(false), m_session_id(0), m_user_id(0), m_player(nullptr)
 {
-	
+
 }
 
 bool IOCPSession::Recv()
@@ -97,7 +97,7 @@ bool IOCPSession::OnCompleteRecv()
 
 	++m_newRecvID;
 
-	/*--------- data process     ----------*/	
+	/*--------- data process     ----------*/
 	m_current_state->OnRecvCompleted(pStream);
 	/*--------- data process end ----------*/
 
@@ -145,4 +145,14 @@ bool IOCPSession::OnCompleteSend()
 void IOCPSession::OnBeforeDisconnected()
 {
 	// Session Á¤¸®
+
+	if (m_player != nullptr)
+	{
+		auto pSector = m_player->GetSector();
+		if (pSector != nullptr)
+		{
+			pSector->DisapearSection(m_player);			
+			NetGameObjectManager::sInstance->Destroy(m_player->GetNetID());
+		}
+	}
 }

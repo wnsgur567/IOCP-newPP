@@ -12,19 +12,45 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 
 	EProtocol protocol;
 	GetProtocol(raw_protocol, protocol);
+	ESectorProtocol sector_protocol;
+	GetProtocol(raw_protocol, sector_protocol);
 
 	switch (protocol)
 	{
 	case EProtocol::EnterVillage:
-		// 마을 확장 시
-		break;
+	{
+		auto owner = m_ownerPtr.lock();
+		Village::VillageManager::sInstance->VillageEnterProcess(inpStream, owner);
+	}
+	break;
 	case EProtocol::ExitVillage:
-		// 마을 확장 시
-		break;
+	{
+		auto owner = m_ownerPtr.lock();
+		Village::VillageManager::sInstance->VillageExitProcess(inpStream, owner);
+	}
+	break;
+	}
 
-	default:
-		throw Utils::NotImplementException();
-		break;
+	switch (sector_protocol)
+	{
+	case ESectorProtocol::PlayerMoveAndAction:
+	{
+		auto owner = m_ownerPtr.lock();
+		Village::VillageManager::sInstance->VillageExitProcess(inpStream, owner);
+	}
+	break;
+	case ESectorProtocol::PlayerAction:
+	{
+		auto owner = m_ownerPtr.lock();
+		Village::VillageManager::sInstance->VillageActionProcess(inpStream, owner);
+	}
+	break;
+	case ESectorProtocol::PlayerMove:
+	{
+		auto owner = m_ownerPtr.lock();
+		Village::VillageManager::sInstance->VillageMoveProcess(inpStream, owner);
+	}
+	break;
 	}
 }
 
@@ -34,7 +60,7 @@ void VillageState::OnSendCompleted()
 
 void VillageState::OnInitilzed()
 {
-	
+
 }
 
 void VillageState::OnChangedToThis()
@@ -44,13 +70,13 @@ void VillageState::OnChangedToThis()
 #endif //  __DEBUG
 
 	// 추후 저장된 user 정보에서 village id 가져 올 것		
-	auto owner = m_ownerPtr.lock();	
+	auto owner = m_ownerPtr.lock();
 	m_current_result = Village::VillageManager::sInstance->StateChangedProcess(owner);
 }
 
 void VillageState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 {
-	
+
 	if ((ProtocolSize_t)EProtocol::EnterVillage & inOrigin)
 	{
 		outProtocol = EProtocol::EnterVillage;
@@ -62,7 +88,7 @@ void VillageState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 		return;
 	}
 
-	throw Utils::NotImplementException();
+	
 }
 
 void VillageState::GetProtocol(ProtocolSize_t inOrigin, ESectorProtocol& outProtocol)
@@ -82,9 +108,9 @@ void VillageState::GetProtocol(ProtocolSize_t inOrigin, ESectorProtocol& outProt
 		outProtocol = ESectorProtocol::PlayerAction;
 		return;
 	}
-	
 
-	throw Utils::NotImplementException();
+
+	
 }
 
 void VillageState::HandleAction(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)

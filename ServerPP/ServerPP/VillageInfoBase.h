@@ -18,6 +18,7 @@ namespace Village
 	// village super
 	class VillageInfoBase : public ISerializable
 	{
+		friend class VillageManager;
 	protected:
 		uint32_t m_village_id;
 		std::wstring m_village_name;
@@ -42,8 +43,8 @@ namespace Village
 		uint32_t GetVillageID() const { return m_village_id; }
 
 	public:
-		void RegistEnterPlayerObj(PlayerInfoPtr);	// obj id
-		void DeleteExitPlayerObj(uint32_t);	// obj id
+		void RegistEnterPlayerObj(PlayerInfoPtr);	
+		void DeleteExitPlayerObj(uint32_t);	
 
 		virtual void OnPlayerRegisted(PlayerInfoPtr) = 0;		// player 가 현재 village 에 등록된 이후 처리할 것
 		virtual void BeforePlayerDelete(PlayerInfoPtr) = 0;		// player 가 현재 village 에서 제외되기 전 처리할 것

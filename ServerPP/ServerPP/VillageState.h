@@ -3,7 +3,7 @@
 class VillageState : public IOCPSession::ClientState
 {
 private:
-	using ESectorProtocol = SectorManager::EProtocol;
+	using ESectorProtocol = SectorManager::EProtocol;		
 	using EProtocol = Village::VillageManager::EProtocol;
 	using EResult = Village::VillageManager::EResult;
 	EResult m_current_result;

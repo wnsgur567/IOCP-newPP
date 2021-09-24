@@ -39,12 +39,12 @@ namespace Village
 	VillageManager::EResult VillageManager::StateChangedProcess(IOCPSessionPtr inpSession)
 	{
 		EResult result = EResult::None;
-		
+
 		{	// player 가 들어갈 village info 셋팅 및 village info 전송
 			uint32_t start_village_id = 1U;
 			inpSession->SetVillageInfo(m_villageInfo_map[start_village_id]);
 
-			EProtocol protocol = EProtocol::EnterVillage;			
+			EProtocol protocol = EProtocol::EnterVillage;
 
 			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
@@ -71,7 +71,7 @@ namespace Village
 		return result;
 	}
 
-	VillageManager::EResult VillageManager::VillageChangedProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	VillageManager::EResult VillageManager::VillageEnterProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
 	{
 		uint32_t start_village_id = 1U;
 
@@ -97,27 +97,42 @@ namespace Village
 #endif
 			// send data to CLIENT
 			inpSession->Send(stream);
-
-			return result;
 		}
 
-		{	// enter info
-
-			//// 현재 village 에 player 를 등록
-			//inpVillageInfo->RegistEnterPlayerObj(inpPlayer);
-
-			//// sector manager 에게 sectors 를 넘기고 stream 받아오기
-
-			//EProtocol protocol = EProtocol::EnterVillage;
-			//auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-			//int write_size = 0;
-
+		{	// player 를 Village 에 입장시키기
+			auto village_info = inpSession->GetVillageInfo();
+			auto player_info = inpSession->GetPlayerInfo();
+			// player 를 마을에 등록시키고
+			// 내부에서 Sector manager 를 통해 관련 작업까지 완료
+			village_info->RegistEnterPlayerObj(player_info);
 		}
 
 		return EResult();
 	}
+	VillageManager::EResult VillageManager::VillageExitProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{
+		return EResult();
+	}
+	VillageManager::EResult VillageManager::VillageActionAndMoveProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{
+		return EResult();
+	}
 	VillageManager::EResult VillageManager::VillageActionProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
 	{
+		return EResult();
+	}
+	VillageManager::EResult VillageManager::VillageMoveProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)
+	{	// client 로 부터 move packet이 날라왓을 경우
+		auto pPlayer_info = inpSession->GetPlayerInfo();
+		auto pVillage_info = inpSession->GetVillageInfo();
+
+		// 섹터 매니저에 일임
+		SectorManager::sInstance->MoveProcess(
+			inpStream, 
+			pVillage_info->m_sectors, 
+			pPlayer_info->GetSector(),
+			pPlayer_info);
+
 		return EResult();
 	}
 	VillageManager::EResult VillageManager::GoBackToCharacterSelectProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession)

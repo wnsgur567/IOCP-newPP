@@ -328,5 +328,6 @@
     <None Include="Utils\TryCatchFinally.snippet">
       <Filter>00_Base</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

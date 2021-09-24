@@ -2,7 +2,7 @@
 
 class Sector;
 using SectorPtr = std::shared_ptr<Sector>;
-class Sector
+class Sector : public std::enable_shared_from_this<Sector>
 {
 	friend class SectorManager;
 public:
@@ -28,7 +28,8 @@ private:
 	Vector2Int m_size;						// width height
 	Vector2Int m_grid_position;				// 현재 맵을 기준으로 2차원 관리 벡터에서의 grid pos
 
-	std::vector<SectorPtr> m_nearSector_vec;	// 좌상단부터 8방위
+	//std::vector<SectorPtr> m_nearSector_vec;	
+	std::vector<std::vector<SectorPtr>> m_nearSector_vec;	// 좌상단부터 3*3
 
 	// NetGameObject id to info
 	std::unordered_map<uint64_t, PlayerInfoPtr> m_player_map;
@@ -48,12 +49,14 @@ protected:
 
 	bool IsInSector(const Vector2& vec);
 	bool IsInSector(const Vector2Int& vec);
-	void PlayerMove(PlayerInfoPtr);	
-	void GetNearPlayerInfos(std::vector<PlayerInfoPtr>& outVec);
-
-	virtual void EnterSection(PlayerInfoPtr);
-	virtual void LeaveSection(PlayerInfoPtr);	
-
+	void GetNearPlayerInfos(std::vector<PlayerInfoPtr>& outVec);	
 public:
+	virtual void MoveInSection(PlayerInfoPtr);
+	virtual void EnterSection(PlayerInfoPtr,EDirection);
+	virtual void LeaveSection(PlayerInfoPtr, EDirection);
+	virtual void FirstEnterSection(PlayerInfoPtr);
+	virtual void DisapearSection(PlayerInfoPtr);
 	void SendAll(NetBase::OutputMemoryStreamPtr);
+	void SendAllInSector(NetBase::OutputMemoryStreamPtr);
+	void SendAllExceptOne(NetBase::OutputMemoryStreamPtr inpStream, uint64_t);
 };

@@ -39,8 +39,11 @@ namespace Village
 		VillageInfoBasePtr GetVillageInfo(uint32_t inVillageID);
 	public:
 		EResult StateChangedProcess(IOCPSessionPtr inpSession);			// current village info
-		EResult VillageChangedProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);		// current village info
+		EResult VillageEnterProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);		// current village info
+		EResult VillageExitProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult VillageActionAndMoveProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
 		EResult VillageActionProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
+		EResult VillageMoveProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);
 		EResult GoBackToCharacterSelectProcess(NetBase::InputMemoryStreamPtr inpStream, IOCPSessionPtr inpSession);		//user id
 	};
 }
