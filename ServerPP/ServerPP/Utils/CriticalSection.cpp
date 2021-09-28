@@ -24,12 +24,20 @@ namespace MyBase
 
 
 	AutoLocker::AutoLocker(CriticalSection* pCs)
-		: m_pCs(pCs)
+		: isUnlocked(false), m_pCs(pCs)
 	{
 		m_pCs->Lock();
 	}
 	AutoLocker::~AutoLocker()
 	{
-		m_pCs->UnLock();
+		ManualUnlock();
+	}
+	void AutoLocker::ManualUnlock()
+	{
+		if (false == isUnlocked)
+		{
+			isUnlocked = true;
+			m_pCs->UnLock();
+		}
 	}
 }

@@ -8,7 +8,7 @@ void CharacterInfo::SetInfo(uint64_t id, uint64_t user_id, uint32_t char_type, s
 	this->character_name = char_name;
 }
 
-int CharacterInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+int CharacterInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 {
 	int size = 0;
 	WriteToStream(out_stream, character_id);

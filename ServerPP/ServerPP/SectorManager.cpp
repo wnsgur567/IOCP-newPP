@@ -104,16 +104,17 @@ SectorManager::EResult SectorManager::MoveProcess(NetBase::InputMemoryStreamPtr 
 {	// 섹터 외부로 이동 가능성 있음
 
 	// stream 으로부터 현재 player 의 position 값 가져오기
-	Vector3 player_pos;
-	ISerializable* ptr = &player_pos;
-	NetBase::ReadFromBinStream(inpStream, ptr);
+	Vector3Ptr pPlayer_Pos = std::make_shared<Vector3>();	
+	NetBase::ReadFromBinStream(inpStream, pPlayer_Pos);
+
+	
 
 	// 이동된 위치 동기화
-	inpPlayer->SetPosition(player_pos.x, player_pos.y, player_pos.z);
-	printf("SectorManager MoveProcess() pos : (%0.2f,%0.2f,%0.2f)\n", player_pos.x, player_pos.y, player_pos.z);
+	inpPlayer->SetPosition(pPlayer_Pos->x, pPlayer_Pos->y, pPlayer_Pos->z);
+	printf("SectorManager MoveProcess() pos : (%0.2f,%0.2f,%0.2f)\n", pPlayer_Pos->x, pPlayer_Pos->y, pPlayer_Pos->z);
 
 	// 기존에 있던 섹터를 기준으로 판별
-	auto dir = inCurrent_sector->GetRelativeDirInSector(player_pos);
+	auto dir = inCurrent_sector->GetRelativeDirInSector(*pPlayer_Pos);
 
 	// 동기화 된 위치정보 뿌리기	
 	switch (dir)

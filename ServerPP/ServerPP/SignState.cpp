@@ -11,17 +11,17 @@ void SignState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 
 	ProtocolSize_t raw_protocol;
 	NetBase::ReadFromBinStream(inpStream, raw_protocol);
-	//inpStream->Read(&raw_protocol, sizeof(ProtocolSize_t));
-
 	EProtocol protocol;
+	// protocol check
 	GetProtocol(raw_protocol, protocol);
 	switch (protocol)
 	{
 	case SignState::EProtocol::SignIn:
 	{
-		// request sign in process
+		// request sign in process 
 		auto owner = m_ownerPtr.lock();
-		m_current_result = Sign::SignManager::sInstance->SignInProcess(inpStream, owner);		
+		m_current_result = Sign::SignManager::sInstance->
+			SignInProcess(inpStream, owner);		
 	}
 	break;
 

@@ -45,7 +45,6 @@ namespace NetBase
 		std::queue<RecvPacketPtr> m_recvpacket_pool;
 		std::queue<SendPacketPtr> m_sendpacket_pool;
 		std::queue<OutputMemoryStreamPtr> m_sendStream_queue;
-
 	public:
 		AcceptPacketPtr GetAcceptPacketFromPool();
 		void RetrieveAcceptPacket(AcceptPacketPtr inpPacket);

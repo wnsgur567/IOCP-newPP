@@ -18,7 +18,7 @@ namespace Village
 
 		m_IdToPlayer_map.erase(in_netobj_id);
 	}
-	int VillageInfoBase::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+	int VillageInfoBase::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 	{
 		int size = 0;
 		WriteToStream(out_stream, m_village_id);

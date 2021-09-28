@@ -218,9 +218,8 @@ void Sector::MoveInSection(PlayerInfoPtr inpPlayer)
 	int write_bytes = 0;
 	write_bytes += NetBase::WriteToBinStream(stream, (ProtocolSize_t)protocol);
 	write_bytes += NetBase::WriteToBinStream(stream, inpPlayer->GetNetID());
-	Vector3 player_pos = inpPlayer->GetPosition();
-	ISerializable* ptr = &player_pos;
-	write_bytes += NetBase::WriteToBinStream(stream, ptr);
+	Vector3 player_pos = inpPlayer->GetPosition();	
+	write_bytes += NetBase::WriteToBinStream(stream, player_pos);
 
 #ifdef __DEBUG
 	printf("SectorManager MoveProcess() write size : %d\n", write_bytes);
@@ -325,12 +324,11 @@ void Sector::EnterSection(PlayerInfoPtr inpPlayer, EDirection inPlayerMoveDir)
 		int write_size = 0;
 		write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)protocol);
 		write_size += NetBase::WriteToBinStream(stream, inpPlayer);
-
 #ifdef __DEBUG	
 		printf("Sector EnterSection write to stream : %dbytes\n", write_size);
 #endif
 		for (auto& s : outViewSectors)
-		{
+		{	// 뽑아온 섹터 내부에 있는 플레이어들에게 모두 전송
 			s->SendAllInSector(stream);
 		}
 	}
@@ -346,7 +344,6 @@ void Sector::EnterSection(PlayerInfoPtr inpPlayer, EDirection inPlayerMoveDir)
 				newPlayers.push_back(item.second);
 			}
 		}
-
 		// 10명 단위로 끊어서 send
 		int start_index = 0;
 		size_t nearPlayer_count = newPlayers.size();
@@ -382,7 +379,6 @@ void Sector::EnterSection(PlayerInfoPtr inpPlayer, EDirection inPlayerMoveDir)
 			// 현재 플레이어에게 other player 정보 send
 			inpPlayer->GetSession()->Send(stream);
 		}
-
 	}
 
 	// 섹터에 현재 플레이어 정보 ptr 추가
@@ -510,7 +506,6 @@ void Sector::LeaveSection(PlayerInfoPtr inpPlayer, EDirection inPlayerMoveDir)
 				newPlayers.push_back(item.second);
 			}
 		}
-
 		// 10명 단위로 끊어서 send
 		int start_index = 0;
 		size_t nearPlayer_count = newPlayers.size();
@@ -547,7 +542,6 @@ void Sector::LeaveSection(PlayerInfoPtr inpPlayer, EDirection inPlayerMoveDir)
 			inpPlayer->GetSession()->Send(stream);
 		}
 	}
-
 }
 
 // sector에서 아예 사라질 경우

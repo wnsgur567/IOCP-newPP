@@ -30,11 +30,8 @@ private:
 
 	//std::vector<SectorPtr> m_nearSector_vec;	
 	std::vector<std::vector<SectorPtr>> m_nearSector_vec;	// 좌상단부터 3*3
-
 	// NetGameObject id to info
-	std::unordered_map<uint64_t, PlayerInfoPtr> m_player_map;
-	// NPC...
-	// std::unordered_map<uint64_t , NpcInfoPtr> m_npc_map;
+	std::unordered_map<uint64_t, PlayerInfoPtr> m_player_map;	
 public:
 	Sector()
 		: IsAccesible(true), m_sector_id(0), m_left_top_pixel_position(), m_size(),
@@ -50,10 +47,10 @@ protected:
 	bool IsInSector(const Vector2& vec);
 	bool IsInSector(const Vector2Int& vec);
 	void GetNearPlayerInfos(std::vector<PlayerInfoPtr>& outVec);	
-public:
-	virtual void MoveInSection(PlayerInfoPtr);
-	virtual void EnterSection(PlayerInfoPtr,EDirection);
-	virtual void LeaveSection(PlayerInfoPtr, EDirection);
+public:	
+	virtual void MoveInSection(PlayerInfoPtr);				// section 내부에서 이동 시
+	virtual void EnterSection(PlayerInfoPtr,EDirection);	// 현재 section 에서 타 section으로 이동 시
+	virtual void LeaveSection(PlayerInfoPtr, EDirection);	// 
 	virtual void FirstEnterSection(PlayerInfoPtr);
 	virtual void DisapearSection(PlayerInfoPtr);
 	void SendAll(NetBase::OutputMemoryStreamPtr);

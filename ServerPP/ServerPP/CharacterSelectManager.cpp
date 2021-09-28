@@ -254,7 +254,6 @@ namespace CharacterSelect
 	{
 		// get selected character info from stream
 		CharacterInfoPtr pInfo = std::make_shared<CharacterInfo>();
-		//ISerializable* ptr = pInfo.get();
 		NetBase::ReadFromBinStream(inpStream, pInfo);	
 		inpSession->SetCharacterInfo(pInfo);		
 

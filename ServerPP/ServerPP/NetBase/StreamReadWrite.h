@@ -36,7 +36,7 @@ namespace NetBase
 #define WriteToStream(os, inData) size += NetBase::WriteToBinStream(os, inData)
 #define ReadFromStream(is, outData) size += NetBase::ReadFromBinStream(is, outData)
 	using byte = unsigned char;
-	
+
 #pragma region forward Declaration
 	template <class _Ty>
 	inline int32_t WriteToBinStream(NetBase::OutputMemoryStreamPtr os, const _Ty& v);
@@ -59,7 +59,8 @@ namespace NetBase
 #pragma region Write (Serialization)
 	// integral type
 	template<class _Ty>
-	inline typename std::enable_if<std::is_integral<_Ty>::value, int32_t>::type WriteToBinStreamImpl(NetBase::OutputMemoryStreamPtr os, const _Ty& v)
+	inline typename std::enable_if<std::is_integral<_Ty>::value, int32_t>::type
+		WriteToBinStreamImpl(NetBase::OutputMemoryStreamPtr os, const _Ty& v)
 	{
 		constexpr size_t write_size = sizeof(_Ty);
 
@@ -70,6 +71,9 @@ namespace NetBase
 
 		return static_cast<int32_t>(write_size);
 	}
+
+	
+	
 
 	// float 	
 	inline typename int32_t WriteToBinStreamImpl(NetBase::OutputMemoryStreamPtr os, const float_t& v)
@@ -103,7 +107,7 @@ namespace NetBase
 	// for string
 	// support  char ,wchar_t (2bytes) only
 	template<class _Ty>
-	inline int32_t WriteToBinStreamImpl(NetBase::OutputMemoryStreamPtr os, const typename std::basic_string<_Ty>& v)
+	inline int32_t WriteToBinStreamImpl(NetBase::OutputMemoryStreamPtr os, typename const std::basic_string<_Ty>& v)
 	{
 		int32_t write_size = 0;
 
@@ -344,11 +348,11 @@ namespace NetBase
 
 	// write for ISerializable Class Ptr 	
 	inline int32_t WriteToBinStreamImpl(
-		NetBase::OutputMemoryStreamPtr os,
-		ISerializable* class_ptr)
+		NetBase::OutputMemoryStreamPtr os, ISerializable* class_ptr)
 	{
 		return class_ptr->Serialize(os);
 	}
+
 	inline int32_t WriteToBinStreamImpl(
 		NetBase::OutputMemoryStreamPtr os,
 		ISerializablePtr class_ptr
@@ -356,6 +360,14 @@ namespace NetBase
 	{
 		return class_ptr->Serialize(os);
 	}
+
+	// Iserializable 을 상속받은 클래스의 참조 타입
+	template <typename _Serializable>
+	static inline typename std::enable_if< std::is_base_of<ISerializable, _Serializable>::value, int32_t>::type
+		WriteToBinStreamImpl(NetBase::OutputMemoryStreamPtr os,	const _Serializable& class_ref)
+	{
+		return class_ref.Serialize(os);
+	}	
 
 	// read for ISerializable Class Ptr
 	inline int32_t ReadFromBinStreamImpl(
@@ -370,7 +382,16 @@ namespace NetBase
 	{
 		return class_ptr->DeSerialize(is);
 	}
-	
+
+	// ISerializable 을 상속받는 클래스의 참조 타입
+	template <typename _Serializable>
+	inline typename std::enable_if< std::is_base_of<ISerializable, _Serializable>::value, int32_t>::type
+		ReadFromBinStreamImpl(NetBase::InputMemoryStreamPtr is,
+			_Serializable& class_ref)
+	{
+		return class_ref.DeSerialize(is);
+	}
+
 
 	// 바이너리 스트림으로 _Ty 타입을 직렬화하는 함수입니다
 	template <class _Ty>

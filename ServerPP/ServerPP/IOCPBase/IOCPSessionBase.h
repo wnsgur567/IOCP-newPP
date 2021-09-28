@@ -16,9 +16,9 @@ namespace IOCP_Base
 		NetBase::SocketAddress m_addr;
 		NetBase::TCPSocketPtr m_pSock;
 
-		pid_t m_newSendID;
-		pid_t m_newRecvID;
-		NetBase::RecvPacketPtr m_pRecvPacket;
+		pid_t m_newSendID;	// send packet id check
+		pid_t m_newRecvID;	// recv packet id check
+		NetBase::RecvPacketPtr m_pRecvPacket;	
 		std::queue<NetBase::SendPacketPtr> m_sendPacketQueue;
 		MyBase::CriticalSection m_cs;	// critical_section for sendqueue
 

@@ -12,7 +12,7 @@ uint64_t NetGameObject::GetNetID() const
     return m_net_id;
 }
 
-int NetGameObject::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+int NetGameObject::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 {
     int size = 0;
     WriteToStream(out_stream, m_net_id);

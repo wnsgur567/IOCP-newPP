@@ -58,6 +58,9 @@
     <Filter Include="13_Dungeon">
       <UniqueIdentifier>{163ab9aa-c223-4907-a3f3-d26e345602cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99_PartySystem">
+      <UniqueIdentifier>{7f55973b-fb71-478f-8b16-265b2db49f8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -173,6 +176,12 @@
     </ClCompile>
     <ClCompile Include="NetGameObjectManager.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerPartyManager.cpp">
+      <Filter>99_PartySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerPartyInfo.cpp">
+      <Filter>99_PartySystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +331,12 @@
     </ClInclude>
     <ClInclude Include="NetGameObjectManager.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerPartyInfo.h">
+      <Filter>99_PartySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerPartyManager.h">
+      <Filter>99_PartySystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

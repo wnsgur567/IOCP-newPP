@@ -7,13 +7,12 @@ PlayerInfo::PlayerInfo()
 	
 }
 
-int PlayerInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
-{
+int PlayerInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
+{ 
 	int size = 0;
 	size += NetGameObject::Serialize(out_stream);
 	WriteToStream(out_stream, m_character_info);
-	ISerializable* pos = &m_posisition;
-	WriteToStream(out_stream, pos);
+	WriteToStream(out_stream, m_posisition);
 	return size;
 }
 
@@ -21,9 +20,8 @@ int PlayerInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 {
 	int size = 0;
 	size += NetGameObject::DeSerialize(in_stream);
-	ReadFromStream(in_stream, m_character_info);
-	ISerializable* pos = &m_posisition;
-	ReadFromStream(in_stream, pos);
+	ReadFromStream(in_stream, m_character_info);	
+	ReadFromStream(in_stream, m_posisition);
 	return size;
 }
 

@@ -9,19 +9,19 @@ namespace Village
 		// set this village infomation
 		m_village_name = L"TestVillage";
 		m_player_view_range = 200;
-		m_grid_size.x = 8;
-		m_grid_size.y = 3;
+		m_grid_pos.x = 8;
+		m_grid_pos.y = 3;
 		m_sector_size.x = 224;
 		m_sector_size.y = 140;
 		m_pixel_size.x = 224 * 8;
 		m_pixel_size.y = 140 * 3;
 
 		// set sectors infomation
-		m_sectors.resize(m_grid_size.x);
-		for (size_t i = 0; i < m_grid_size.x; i++)
+		m_sectors.resize(m_grid_pos.x);
+		for (size_t i = 0; i < m_grid_pos.x; i++)
 		{
-			m_sectors[i].reserve(m_grid_size.y);
-			for (size_t j = 0; j < m_grid_size.y; j++)
+			m_sectors[i].reserve(m_grid_pos.y);
+			for (size_t j = 0; j < m_grid_pos.y; j++)
 			{
 				SectorPtr pSector = std::make_shared<Sector>();
 				pSector->Initialize(

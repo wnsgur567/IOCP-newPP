@@ -44,7 +44,7 @@ namespace Sign
 		return (ID < other.ID);
 	}
 	
-	int SignInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+	int SignInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 	{
 		int size = 0;
 		WriteToStream(out_stream, ID);

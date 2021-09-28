@@ -1,11 +1,11 @@
 #include "IOCPNet_RootHeader.h"
 
-int Vector3::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+int Vector3::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 {
 	int size = 0;
-	WriteToStream(out_stream, x);
-	WriteToStream(out_stream, y);
-	WriteToStream(out_stream, z);
+	size += NetBase::WriteToBinStream(out_stream, x);
+	size += NetBase::WriteToBinStream(out_stream, y);
+	size += NetBase::WriteToBinStream(out_stream, z);	
 	return size;
 }
 

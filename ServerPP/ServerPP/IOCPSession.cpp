@@ -53,7 +53,7 @@ bool IOCPSession::Send(NetBase::OutputMemoryStreamPtr pStream)
 	// critical_section
 	MyBase::AutoLocker locker(&m_cs);
 
-	// stream 회수
+	// send packet pool 에서 가져오기
 	auto pSendPacket = NetBase::PacketManager::sInstance->GetSendPacketFromPool();
 
 	//
@@ -90,24 +90,17 @@ bool IOCPSession::OnCompleteRecv()
 	printf("recv_id : (%lu, %lu)\n", packet_id, m_newRecvID);
 #endif // __DEBUG
 
-	if (packet_id < m_newRecvID)
-	{	// 이미 처리 완료된 중복 패킷 폐기
+	// 이미 처리 완료된 중복 패킷 폐기
+	if (packet_id < m_newRecvID++)
 		return true;
-	}
-
-	++m_newRecvID;
-
-	/*--------- data process     ----------*/
+	//data process
 	m_current_state->OnRecvCompleted(pStream);
-	/*--------- data process end ----------*/
 
-	m_pRecvPacket->Clear();
 	// recv 날려놓기
-	if (false == IOCP_Base::IOCPNetworkManager::sInstance->RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))
-	{
+	m_pRecvPacket->Clear();
+	if (false == IOCP_Base::IOCPNetworkManager::sInstance->
+		RecvAsync(m_pSock->GetSock(), m_pRecvPacket, shared_from_this()))	
 		return false;
-	}
-
 	return true;
 }
 

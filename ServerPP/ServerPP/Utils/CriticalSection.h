@@ -22,9 +22,11 @@ namespace MyBase
 
 	class AutoLocker
 	{
+		bool isUnlocked;
 		CriticalSection* m_pCs;
 	public:
 		AutoLocker(CriticalSection* pCs);
 		~AutoLocker();
+		void ManualUnlock();
 	};
 }

@@ -1,6 +1,6 @@
 #include "IOCPNet_RootHeader.h"
 
-int Vector2::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+int Vector2::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 {
 	int size = 0;
 	WriteToStream(out_stream,x);
@@ -16,7 +16,7 @@ int Vector2::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 	return size;
 }
 
-int Vector2Int::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
+int Vector2Int::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 {
 	int size = 0;
 	WriteToStream(out_stream, x);
@@ -24,7 +24,7 @@ int Vector2Int::Serialize(NetBase::OutputMemoryStreamPtr out_stream)
 	return size;
 }
 
-int Vector2Int::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
+int Vector2Int::DeSerialize(NetBase::InputMemoryStreamPtr in_stream) 
 {
 	int size = 0;
 	ReadFromStream(in_stream, x);

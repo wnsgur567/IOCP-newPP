@@ -12,7 +12,7 @@ public:
 		:character_id(), user_id(), character_type(), character_name() {}
 	void SetInfo(uint64_t id, uint64_t user_id, uint32_t char_type, std::wstring& char_name);
 	// ISerializable을(를) 통해 상속됨
-	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) const override;
 	virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 
 	bool operator==(const CharacterInfo& other)

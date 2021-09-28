@@ -24,7 +24,7 @@ namespace Village
 		std::wstring m_village_name;
 
 		uint32_t m_player_view_range;	// 현재 맵에서 player 의 시야 범위 , radius
-		Vector2Int m_grid_size;
+		Vector2Int m_grid_pos;			// 2d 배열에서의 index 위치
 		Vector2Int m_sector_size;		// sector 의 크기
 		Vector2Int m_pixel_size;		// 현재 맵의 픽셀 기준 크기
 
@@ -34,7 +34,7 @@ namespace Village
 		std::unordered_map<uint64_t, PlayerInfoPtr> m_IdToPlayer_map;
 	public:
 		VillageInfoBase() :
-			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_size(), m_sector_size(), m_pixel_size(),
+			m_village_id(0), m_village_name(), m_player_view_range(0), m_grid_pos(), m_sector_size(), m_pixel_size(),
 			m_IdToPlayer_map() {}
 		~VillageInfoBase() { }
 		virtual void Initialize() = 0;
@@ -49,7 +49,7 @@ namespace Village
 		virtual void OnPlayerRegisted(PlayerInfoPtr) = 0;		// player 가 현재 village 에 등록된 이후 처리할 것
 		virtual void BeforePlayerDelete(PlayerInfoPtr) = 0;		// player 가 현재 village 에서 제외되기 전 처리할 것
 	public:
-		virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+		virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) const override;
 		virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 
 		template <typename _Ty>

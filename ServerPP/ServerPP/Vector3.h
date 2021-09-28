@@ -10,7 +10,8 @@ public:
 	Vector3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
 
 	// ISerializable을(를) 통해 상속됨
-	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) override;
+	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) const override;
 	virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 };
+using Vector3Ptr = std::shared_ptr<Vector3>;
 

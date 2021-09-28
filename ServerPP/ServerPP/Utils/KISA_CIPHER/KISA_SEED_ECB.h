@@ -27,12 +27,10 @@ namespace NetCipher
 		BYTE* pbData, 				// [in,out]	data to be encrypted
 		_DWORD* pdwRoundKey			// [in]			round keys for encryption
 	);
-
 	void SEED_Decrypt(		/* decryption function */
 		BYTE* pbData, 				// [in,out]	data to be decrypted
 		_DWORD* pdwRoundKey			// [in]			round keys for decryption
 	);
-
 	void SEED_KeySchedKey(		/* key scheduling function */
 		_DWORD* pdwRoundKey, 		// [out]		round keys for encryption or decryption
 		BYTE* pbUserKey				// [in]			secret user key 

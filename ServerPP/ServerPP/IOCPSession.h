@@ -18,26 +18,21 @@ public:
 
 	class ClientState
 	{
-
 	protected:
 		std::weak_ptr<IOCPSession> m_ownerPtr;
 	public:
-		ClientState(IOCPSessionPtr inpOwnerSession)
-			: m_ownerPtr(inpOwnerSession)
-		{	}
-
-		// input read 시 protocol 부분 부터 읽음
+		ClientState(IOCPSessionPtr inpOwnerSession) : m_ownerPtr(inpOwnerSession) {	}
+		// Client로부터 요청이 들어온 data Recv 완료 이후 호출
 		virtual void OnRecvCompleted(NetBase::InputMemoryStreamPtr) = 0;
+		// Server에서 Client에게 data Send 완료 이후 호출
 		virtual void OnSendCompleted() = 0;
-
 		// 첫 세션 생성 시 state 를 생성하면서 필요한 초기화 작업
 		virtual void OnInitilzed() = 0;
 		// 다른 state에서 자신의 state 로 변경되었을 때 할 작업
 		virtual void OnChangedToThis() = 0;
 	};
+
 	using ClientStatePtr = std::shared_ptr<ClientState>;
-
-
 protected:
 	friend class ClientState;
 	ClientStatePtr m_current_state;	// 현재 state

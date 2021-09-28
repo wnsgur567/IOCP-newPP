@@ -38,8 +38,8 @@ using ResultSize_t = __int32;
 #include "CharacterSelectManager.h"
 #include "CharacterSelectState.h"
 
-
-
+#include "PlayerPartyInfo.h"
+#include "PlayerPartyManager.h"
 
 
 #include "VillageManager.h"

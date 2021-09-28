@@ -158,10 +158,9 @@ namespace Sign
 		/// Read from Input Stream
 		// get data from recv stream
 		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
-		pInfo->Flush();
-		ISerializable* ptr = pInfo.get();
+		pInfo->Flush();	
 		// get id and pw from stream
-		NetBase::ReadFromBinStream(inpStream, ptr);
+		NetBase::ReadFromBinStream(inpStream, pInfo);
 
 
 		EProtocol protocol;
@@ -228,12 +227,11 @@ namespace Sign
 	{	// 회원 탈퇴 process
 
 		/// Read from Input Stream
-	// get data from recv stream
-		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
+		// get data from recv stream
+		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();		
 		pInfo->Flush();
-		ISerializable* ptr = pInfo.get();
 		// get id and pw from stream
-		NetBase::ReadFromBinStream(inpStream, ptr);
+		NetBase::ReadFromBinStream(inpStream, pInfo);
 
 		EProtocol protocol;
 		EResult result;
@@ -319,22 +317,21 @@ namespace Sign
 		/// Read from Input Stream
 		// get data from recv stream
 		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
-		pInfo->Flush();
-		ISerializable* ptr = pInfo.get();
+		pInfo->Flush();		
 		// get id and pw from stream
-		NetBase::ReadFromBinStream(inpStream, ptr);
+		NetBase::ReadFromBinStream(inpStream, pInfo);
 
 		EProtocol protocol;
 		EResult result;
 		std::wstring msg;
 
-		// db 정보 읽기
+		// SQL 정보 읽기
 		SignInfoPtr getInfo;
 		LoadInfo(pInfo->ID, getInfo);
 
-
+		// 읽어온 정보 확인
 		if (nullptr == getInfo)
-		{	// id not exist
+		{	// sign in fail, id not exist
 			protocol = EProtocol::SignIn;
 			result = EResult::NotExistID;
 			msg = ResultMSG::NotExistIDMsg;
@@ -347,7 +344,7 @@ namespace Sign
 			inpSession->SetUserID(getInfo->sign_id);
 			printf("sign id : %llu\n", getInfo->sign_id);
 
-			// 로그인 시키기
+			// 셔션 정보를 로그인 된 상태로 업데이트
 			inpSession->SetSign(true);
 		}
 		else
@@ -363,20 +360,14 @@ namespace Sign
 		wprintf(L" msg : %ws\n", msg.c_str());
 #endif // __DEBUG
 
-		// get new send stream
+		// 풀링된 stream을 매니저로부터 가져오기
 		auto pOutputStream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-
-		// write result to send stream(only data part)
-		// sendpacket is composed with (size + id + data)
 
 		int write_size = 0;
 		/// Write to Output Stream
-		// sign data = protocol + result + msg len + msg
-		// write protocol	
-		write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);
-		// write result
+		// sign data = protocol + result + msg len + msg		
+		write_size += NetBase::WriteToBinStream(pOutputStream, (ProtocolSize_t)protocol);	
 		write_size += NetBase::WriteToBinStream(pOutputStream, (ResultSize_t)result);
-		// write result msg
 		write_size += NetBase::WriteToBinStream(pOutputStream, msg);
 		/// write end		
 
@@ -397,10 +388,9 @@ namespace Sign
 		/// Read from Input Stream
 		// get data from recv stream
 		Sign::SignInfoPtr pInfo = std::make_shared<Sign::SignInfo>();
-		pInfo->Flush();
-		ISerializable* ptr = pInfo.get();
+		pInfo->Flush();		
 		// get id and pw from stream
-		NetBase::ReadFromBinStream(inpStream, ptr);
+		NetBase::ReadFromBinStream(inpStream, pInfo);
 
 		EProtocol protocol;
 		EResult result;

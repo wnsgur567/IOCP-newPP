@@ -146,7 +146,7 @@ namespace IOCP_Base
 			}
 			return  NetBase::PacketBase::EPacketState::InComplete;
 		}
-		printf("%d bytes is sended\ n", inpSendPacket->m_sendbytes);
+		printf("%d bytes is sended\n", inpSendPacket->m_sendbytes);
 
 		return  NetBase::PacketBase::EPacketState::Completed;
 	}
@@ -177,7 +177,6 @@ namespace IOCP_Base
 					// retval : false / transferred = 0
 					// 정상 종료 시
 					// retval : true / trnasferred = 0
-
 					if (retval == 0)
 					{	// error
 						DWORD temp1, temp2;
@@ -185,8 +184,7 @@ namespace IOCP_Base
 							&overlapped->overlapped,
 							&temp1, FALSE, &temp2);
 						NetBase::SocketUtil::ReportError("WSAGetOverlappedResult()");
-					}
-					// ....
+					}				
 					throw std::exception("session end");
 				}
 
@@ -195,8 +193,6 @@ namespace IOCP_Base
 				case  NetBase::OverlappedEx::EOverlappedType::Accept:
 				{
 					NetBase::AcceptPacketPtr pAcceptPacket = std::static_pointer_cast<NetBase::AcceptPacket>(pPacket.lock());
-
-					// OnAccept
 					IOCPNetworkManager::sInstance->OnAccepted(pAcceptPacket);
 				}
 				break;
@@ -227,13 +223,11 @@ namespace IOCP_Base
 			catch (const std::exception& e)
 			{
 				printf("throw : %s\n", e.what());
-
 				// OnDiscnnected
 				IOCPNetworkManager::sInstance->OnDisconnected(pointer);
 				overlapped->pointer = nullptr;
 			}
 		}
-
 		return 0;
 	}
 
