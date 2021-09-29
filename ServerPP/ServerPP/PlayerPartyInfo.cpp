@@ -32,6 +32,6 @@ int PlayerPartyInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 // ... 받을 일 없음
 int PlayerPartyInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
 {
-	static_assert(true, "do not use\n");
+	assert("do not use\n");
 	return 0;
 }

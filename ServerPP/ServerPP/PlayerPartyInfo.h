@@ -14,18 +14,48 @@ class PlayerPartyInfo : public ISerializable
 	int m_cur_playercount;		// 파티 현재 인원 수
 
 	PlayerInfoPtr m_owner;		// 파티장
-	int m_owner_index;
-	std::vector<PlayerInfoPtr> m_player_vec;	// 파티원 관리 벡터
+	int m_owner_index;			// 아래 vector 에서 파티장의 index
+
+	std::vector<PlayerInfoPtr> m_player_vec;	// 파티원 관리 벡터, nullptr 인 item 이 있을 수 있음
 public:
 	uint32_t GetID() const { return m_party_id; }
 	std::wstring GetName() const { return m_name; }
 	int GetMaxCapacity() const { return m_max_playercount; }
 	int GetPlayerCount() const { return m_cur_playercount; }
+private:
+	// m_player_vec 에서 빈 공간을 좌측부터 검색하여 빈 index를 return
+	int GetEmptySpace()
+	{
+		for (int i = 0; i < m_max_playercount; i++)
+		{
+			if (m_player_vec[i] == nullptr)
+				return i;
+		}
+		return m_max_playercount;
+	}
+
+	// 해당 플레이어를 현재 파티에서 제거함
+	void RemovePlayer(PlayerInfoPtr inpPlayer)
+	{
+		for (auto& item : m_player_vec)
+		{
+			if (item == inpPlayer)
+			{
+				item = nullptr;
+				return;
+			}
+		}
+	}
+
+	void SetOwner(int index)
+	{
+		m_owner = m_player_vec[index];
+		m_owner_index = index;
+	}
 protected:
 	PlayerPartyInfo() : m_party_id(0U), m_name(), m_max_playercount(0), m_cur_playercount(0),
 		m_owner(nullptr), m_owner_index(0), m_player_vec() {}
 	void Initialize(uint32_t inPartyID, PlayerInfoPtr creater, std::wstring inParty_name, int inMax_capacity);
-
 public:
 	static PlayerPartyInfoPtr Create(uint32_t inPartyID, PlayerInfoPtr creater, std::wstring inParty_name, int inMax_capacity) {
 		PlayerPartyInfo* newInfo = new PlayerPartyInfo();
@@ -33,41 +63,82 @@ public:
 		retPtr.reset(newInfo);
 		retPtr->Initialize(inPartyID, creater, inParty_name, inMax_capacity);
 		return retPtr;
-	}	
+	}
 public:
-	// 파티 신청 프로세스
-	void RequestToParticipate(PlayerInfoPtr inRequester)
+	// 현재 파티원이 없는 경우
+	bool IsEmpty() const
 	{
-		// 요청한 사람의 캐릭터 정보를 파티장에게 전송		
-		auto charInfo = inRequester->GetCharacterInfo();
+		if (m_cur_playercount <= 0)
+			return true;
+		return false;
+	}
+	// 현재 파티인원이 다 찬 경우 true
+	bool IsFull() const
+	{
+		if (m_max_playercount == m_cur_playercount)
+			return true;
+		return false;
+	}
+	// 해당 플레이어가 방장인경우 true
+	bool IsOwner(PlayerInfoPtr inpPlayer) const
+	{
+		if (m_owner == inpPlayer)
+			return true;
+		return false;
+	}
 
-	}
-	// 파티로 참여하는 프로세스
-	void Participate(PlayerInfoPtr requester)
+	// player 를 파티에 추가
+	// 호출 전 full 체크 필수
+	// 참가된 위치(index)를 return
+	int Participate(PlayerInfoPtr requester)
 	{
-		// 파티 가입을 방장이 수락한 경우
-		// 신청자를 파티에 가입시키고 
-		// 기존 파티원에게는 requester의 정보를
-		// requester 에게는 기존 파티원의 정보를 전송
+		++m_cur_playercount;
+		auto index = GetEmptySpace();
+		m_player_vec[index] = requester;
+		return index;
 	}
-	// 파티에서 나가는 프로세스
-	void Exit(PlayerInfoPtr requester)
-	{
-		// 파티에서 퇴장하는 경우
-		// 방장이라면 권한을 양도하는 기능 추가
-		// 파티원들에게 퇴장 정보를 전송
 
-		// 파티 인원수가 0명이 되면 해당 파티를 파괴
-	}
-	// 파티장이 파티원을 강퇴시키는 프로세스
-	void Kick(PlayerInfoPtr p)
+	// player를 파티에서 제거
+	// 방장이 바뀐경우 새로운 방장의 index (0~3)
+	// 방장이 바뀌지 않았다면 -1
+	int Exit(PlayerInfoPtr requester)
 	{
-		// 방장이 특정 파티원을 강퇴시킴
-	}
-	// 파티장의 권한을 타인에게 양도하는 프로세스
-	void TransferPartyOwner(PlayerInfoPtr p)
-	{
+		// player를 현재 파티에서 제거
+		RemovePlayer(requester);
 
+		// 퇴장 인원이 방장인지 확인
+		if (IsOwner(requester))
+		{	// 방장인 경우
+			// 새로운 방장을 검색 , 남아있는 인원 중 가장 좌측의 player를 새로운 방장으로
+			for (int i = 0; i < m_max_playercount; i++)
+			{	// 새로운 방장!
+				if (requester == m_player_vec[i])
+				{
+					SetOwner(i);
+					return i;
+				}
+			}
+		}
+		// 방장이 변경되지 않음
+		return -1;
+	}
+
+	// 파티장이 특정 파티원을 강퇴시킴
+	// 0~3 index
+	void Kick(int index)
+	{
+		m_player_vec[index] = nullptr;
+	}
+
+	// 파티장의 권한을 타인에게 양도
+	// 양도된 파티원의 Player Info를 return
+	PlayerInfoPtr TransferPartyOwner(int index)
+	{
+		if (m_player_vec[index] != nullptr)
+		{
+			m_owner = m_player_vec[index];
+			return m_owner;
+		}
 	}
 
 	// ISerializable을(를) 통해 상속됨
