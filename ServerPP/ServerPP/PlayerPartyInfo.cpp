@@ -20,18 +20,18 @@ void PlayerPartyInfo::Initialize(uint32_t inPartyID, PlayerInfoPtr creater, std:
 int PlayerPartyInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 {
 	int size = 0;
-	NetBase::WriteToBinStream(out_stream, m_party_id);
-	NetBase::WriteToBinStream(out_stream, m_name);
-	NetBase::WriteToBinStream(out_stream, m_cur_playercount);
-	NetBase::WriteToBinStream(out_stream, m_max_playercount);
-	NetBase::WriteToBinStream(out_stream, m_owner_index);
-	NetBase::WriteToBinStream(out_stream, m_player_vec);
-	return 0;
+	size += NetBase::WriteToBinStream(out_stream, m_party_id);
+	size += NetBase::WriteToBinStream(out_stream, m_name);
+	size += NetBase::WriteToBinStream(out_stream, m_cur_playercount);
+	size += NetBase::WriteToBinStream(out_stream, m_max_playercount);
+	size += NetBase::WriteToBinStream(out_stream, m_owner_index);
+	size += NetBase::WriteToBinStream(out_stream, m_player_vec);
+	return size;
 }
 
 // ... 받을 일 없음
 int PlayerPartyInfo::DeSerialize(NetBase::InputMemoryStreamPtr in_stream)
-{	
+{
 	static_assert(true, "do not use\n");
 	return 0;
 }

@@ -3,6 +3,8 @@ class PlayerPartyInfo;
 using PlayerPartyInfoPtr = std::shared_ptr<PlayerPartyInfo>;
 class PlayerPartyInfo : public ISerializable
 {
+	friend class PlayerPartyManager;
+
 	// 하나의 파티에 수용 가능한 최대 인원 수
 	constexpr static int MAX_CONSTRAINT = 4;
 
@@ -31,7 +33,7 @@ public:
 		retPtr.reset(newInfo);
 		retPtr->Initialize(inPartyID, creater, inParty_name, inMax_capacity);
 		return retPtr;
-	}
+	}	
 public:
 	// 파티 신청 프로세스
 	void RequestToParticipate(PlayerInfoPtr inRequester)
