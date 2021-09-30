@@ -30,12 +30,22 @@ public:
 	virtual int Serialize(NetBase::OutputMemoryStreamPtr out_stream) const override;
 	virtual int DeSerialize(NetBase::InputMemoryStreamPtr in_stream) override;
 
-
-
 	// NetGameObject을(를) 통해 상속됨
 	virtual void OnCreated() override;
 	virtual void BeforeDestroy() override;
 
+	// player의 Network ID 값이 일치하고
+	// player가 현재 선택한 character의 ID 값이 일치하면
+	// true
+	bool operator==(const PlayerInfo& other) {
+		if (other.GetNetID() == this->GetNetID() &&
+			other.m_character_info->character_id == this->m_character_info->character_id)
+			return true;		
+		return false;
+	}
+	bool operator!=(const PlayerInfo& other) {
+		return !(this->operator==(other));
+	}
 };
 using PlayerInfoPtr = std::shared_ptr<PlayerInfo>;
 

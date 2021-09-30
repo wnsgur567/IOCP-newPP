@@ -29,10 +29,10 @@ namespace Sign
 			None = 0,
 
 			// flags...
-			SignIn = 1 << 0,
-			SignOut = 1 << 1,
-			SignUp = 1 << 2,
-			DeleteAccount = 1 << 3,
+			SignIn = 1ULL << 0,
+			SignOut = 1ULL << 1,
+			SignUp = 1ULL << 2,
+			DeleteAccount = 1ULL << 3,
 		};
 
 		enum class EResult : ResultSize_t

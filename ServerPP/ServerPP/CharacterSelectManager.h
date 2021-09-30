@@ -11,9 +11,9 @@ namespace CharacterSelect
 		{
 			None = 0,
 
-			AllCharacterInfo = 1 << 0,
-			CharacterSelect = 1 << 1,
-			SignOut = 1 << 2,
+			AllCharacterInfo = 1ULL << 0,
+			CharacterSelect = 1ULL << 1,
+			SignOut = 1ULL << 2,
 		};
 
 		enum class EResult : ResultSize_t

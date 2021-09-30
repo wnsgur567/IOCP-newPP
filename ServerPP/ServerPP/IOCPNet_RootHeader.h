@@ -4,8 +4,8 @@
 
 #include "IOCPBase/IOCPBase_RootHeader.h"
 #include <unordered_map>
-using ProtocolSize_t = __int64;
-using ResultSize_t = __int32;
+using ProtocolSize_t = uint64_t;
+using ResultSize_t = uint32_t;
 
 #include "NetGameObject.h"
 #include "NetGameObjectManager.h"

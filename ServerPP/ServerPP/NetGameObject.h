@@ -9,7 +9,8 @@ public:
 	{
 		None,
 
-		Player = 1
+		PlayerCharacter,
+		Monster
 	};
 private:
 	uint64_t m_net_id;		// 게임 세계에 첫 생성 시 부여되는 고유 id

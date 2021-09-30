@@ -25,7 +25,14 @@ int PlayerPartyInfo::Serialize(NetBase::OutputMemoryStreamPtr out_stream) const
 	size += NetBase::WriteToBinStream(out_stream, m_cur_playercount);
 	size += NetBase::WriteToBinStream(out_stream, m_max_playercount);
 	size += NetBase::WriteToBinStream(out_stream, m_owner_index);
-	size += NetBase::WriteToBinStream(out_stream, m_player_vec);
+	// player 위치 index + player정보
+	for (int i = 0; i < m_max_playercount; i++)
+	{
+		if (m_player_vec[i] != nullptr) {
+			size += NetBase::WriteToBinStream(out_stream, i);				//	index
+			size += NetBase::WriteToBinStream(out_stream, m_player_vec[i]);	//	player info
+		}
+	}
 	return size;
 }
 

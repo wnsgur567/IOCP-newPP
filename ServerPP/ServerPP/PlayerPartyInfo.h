@@ -46,10 +46,10 @@ private:
 			}
 		}
 	}
-
-	void SetOwner(int index)
+	// 해당 위치의 player를 방장으로 셋팅
+	void SetOwner(PlayerInfoPtr inpPlayer, int index)
 	{
-		m_owner = m_player_vec[index];
+		m_owner = inpPlayer;
 		m_owner_index = index;
 	}
 protected:
@@ -99,9 +99,9 @@ public:
 	}
 
 	// player를 파티에서 제거
-	// 방장이 바뀐경우 새로운 방장의 index (0~3)
-	// 방장이 바뀌지 않았다면 -1
-	int Exit(PlayerInfoPtr requester)
+	// 방장이 바뀐경우 새로운 방장의 playerinfo
+	// 방장이 바뀌지 않았다면 nullptr
+	PlayerInfoPtr Exit(PlayerInfoPtr requester)
 	{
 		// player를 현재 파티에서 제거
 		RemovePlayer(requester);
@@ -114,31 +114,35 @@ public:
 			{	// 새로운 방장!
 				if (requester == m_player_vec[i])
 				{
-					SetOwner(i);
-					return i;
+					SetOwner(m_player_vec[i], i);
+					return m_player_vec[i];
 				}
 			}
 		}
 		// 방장이 변경되지 않음
-		return -1;
+		return nullptr;
 	}
 
 	// 파티장이 특정 파티원을 강퇴시킴
-	// 0~3 index
-	void Kick(int index)
+	bool Kick(PlayerInfoPtr inpinfo)
 	{
-		m_player_vec[index] = nullptr;
+		for (auto& item : m_player_vec) {
+			if (item != nullptr && item == inpinfo)
+			{
+				--m_cur_playercount;
+				item = nullptr;
+			}
+		}
 	}
 
-	// 파티장의 권한을 타인에게 양도
-	// 양도된 파티원의 Player Info를 return
-	PlayerInfoPtr TransferPartyOwner(int index)
+	// 파티장의 권한을 타인에게 양도	
+	void TransferPartyOwner(PlayerInfoPtr inpinfo)
 	{
-		if (m_player_vec[index] != nullptr)
+		for (int i = 0; i < m_max_playercount; i++)
 		{
-			m_owner = m_player_vec[index];
-			return m_owner;
-		}
+			if (m_player_vec[i] != nullptr && m_player_vec[i] == inpinfo)
+				SetOwner(inpinfo, i);
+		}		
 	}
 
 	// ISerializable을(를) 통해 상속됨

@@ -30,7 +30,7 @@ private:
 
 	//std::vector<SectorPtr> m_nearSector_vec;	
 	std::vector<std::vector<SectorPtr>> m_nearSector_vec;	// аб╩С╢э╨нем 3*3
-	// NetGameObject id to info
+	// NetGameObject id to info in sector
 	std::unordered_map<uint64_t, PlayerInfoPtr> m_player_map;	
 public:
 	Sector()

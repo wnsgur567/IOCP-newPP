@@ -574,31 +574,34 @@ void Sector::SendAllExceptOne(NetBase::OutputMemoryStreamPtr inpStream, uint64_t
 {
 	std::vector<PlayerInfoPtr> players;
 	GetNearPlayerInfos(players);
-
-	for (auto& item : m_player_map)
-	{
-		if (item.first == net_id)
-			continue;
-
-		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-		(*sendstream) = (*inpStream);	// copy
-		auto current_session = item.second->GetSession();
-
-#ifdef __DEBUG
-		// DEBUG 모드에서의 Dummy player 일 경우 session 할당 안되있음
-		if (current_session != nullptr)
-			current_session->Send(sendstream);
-		else
-		{
-			NetBase::PacketManager::sInstance->RetrieveSendStream(sendstream);
-		}
-#else
-		current_session->Send(sendstream);
-#endif
-		}
+		
+//	for (auto& item : m_player_map)
+//	{
+//		if (item.first == net_id)
+//			continue;
+//
+//		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+//		(*sendstream) = (*inpStream);	// copy
+//		auto current_session = item.second->GetSession();
+//
+//#ifdef __DEBUG
+//		// DEBUG 모드에서의 Dummy player 일 경우 session 할당 안되있음
+//		if (current_session != nullptr)
+//			current_session->Send(sendstream);
+//		else
+//		{
+//			NetBase::PacketManager::sInstance->RetrieveSendStream(sendstream);
+//		}
+//#else
+//		current_session->Send(sendstream);
+//#endif
+//		}
 
 	for (auto& item : players)
 	{
+		if (item->GetNetID() == net_id)
+			continue;
+		
 		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 		(*sendstream) = (*inpStream);	// copy
 		auto current_session = item->GetSession();
@@ -625,24 +628,24 @@ void Sector::SendAll(NetBase::OutputMemoryStreamPtr inpStream)
 	std::vector<PlayerInfoPtr> players;
 	GetNearPlayerInfos(players);
 
-	for (auto& item : m_player_map)
-	{
-		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-		(*sendstream) = (*inpStream);	// copy
-		auto current_session = item.second->GetSession();
-
-#ifdef __DEBUG
-		// DEBUG 모드에서의 Dummy player 일 경우 session 할당 안되있음
-		if (current_session != nullptr)
-			current_session->Send(sendstream);
-		else
-		{
-			NetBase::PacketManager::sInstance->RetrieveSendStream(sendstream);
-		}
-#else
-		current_session->Send(sendstream);
-#endif
-		}
+//	for (auto& item : m_player_map)
+//	{
+//		auto sendstream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+//		(*sendstream) = (*inpStream);	// copy
+//		auto current_session = item.second->GetSession();
+//
+//#ifdef __DEBUG
+//		// DEBUG 모드에서의 Dummy player 일 경우 session 할당 안되있음
+//		if (current_session != nullptr)
+//			current_session->Send(sendstream);
+//		else
+//		{
+//			NetBase::PacketManager::sInstance->RetrieveSendStream(sendstream);
+//		}
+//#else
+//		current_session->Send(sendstream);
+//#endif
+//		}
 
 	for (auto& item : players)
 	{

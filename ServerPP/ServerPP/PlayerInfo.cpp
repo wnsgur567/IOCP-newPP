@@ -1,7 +1,7 @@
 #include "IOCPNet_RootHeader.h"
 
 PlayerInfo::PlayerInfo()
-	: NetGameObject(NetGameObject::ENetGameObjectType::Player),
+	: NetGameObject(NetGameObject::ENetGameObjectType::PlayerCharacter),
 	m_character_info(nullptr), m_posisition(), m_pOwnerSession()
 {
 	
