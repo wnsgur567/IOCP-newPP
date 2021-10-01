@@ -3,8 +3,10 @@
 class VillageState : public IOCPSession::ClientState
 {
 private:
+	using EPartyProtocol = PlayerPartyManager::EProtocol;
 	using ESectorProtocol = SectorManager::EProtocol;		
 	using EProtocol = Village::VillageManager::EProtocol;
+
 	using EResult = Village::VillageManager::EResult;
 	EResult m_current_result;
 
@@ -20,6 +22,7 @@ public:
 	virtual void OnChangedToThis() override;
 	void GetProtocol(ProtocolSize_t, EProtocol&);
 	void GetProtocol(ProtocolSize_t, ESectorProtocol&);
+	void GetProtocol(ProtocolSize_t, EPartyProtocol&);
 	
 
 	// 제자리 행동

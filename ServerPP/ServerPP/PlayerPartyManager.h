@@ -1,6 +1,6 @@
 #pragma once
 
-class PlayerPartyManager : MyBase::Singleton<PlayerPartyManager>
+class PlayerPartyManager : public MyBase::Singleton<PlayerPartyManager>
 {
 	friend class Singleton;
 public:
@@ -14,9 +14,9 @@ public:
 
 		NewParticipant = 1ULL << 32,		// 새로운 파티 참가자, 기존 파티원에게 보낼때만
 
-		Exit = 1ULL << 33,				// 자신이 파티에서 나감
-		Kick = 1ULL << 34,				// 파티장이 파티에서 강퇴
-		TransferOwner = 1ULL << 35,		// 파티장 위임
+		Exit = 1ULL << 33,					// 자신이 파티에서 나감
+		Kick = 1ULL << 34,					// 파티장이 파티에서 강퇴
+		TransferOwner = 1ULL << 35,			// 파티장 위임
 
 		AllPartyInfo = 1ULL << 36,			// 모든 파티 정보
 	};
@@ -39,7 +39,11 @@ public:
 
 		NotExistParty = 1U << 8,			// 존재하지 않는 파티
 	};
-
+public:
+	// class 초기화
+	virtual bool Initialize(LPVOID) noexcept;
+	// class 정리
+	virtual void Finalize() noexcept;
 private:
 	uint32_t m_newPartyID;
 	std::unordered_map<uint32_t, PlayerPartyInfoPtr> m_party_map;
@@ -56,15 +60,21 @@ private:
 	}
 public:
 	// 새로운 파티를 생성
-	void CreateParty(NetBase::OutputMemoryStreamPtr& outpStreams, PlayerInfoPtr inpPlayer,
-		std::wstring inParty_name, int inMax_capacity)
+	void CreateParty(NetBase::OutputMemoryStreamPtr& outpStreams, NetBase::InputMemoryStreamPtr inpStream, PlayerInfoPtr inpPlayer)
 	{
+		// stream 분석
+		// party name + max player count
+		std::wstring party_name;
+		int max_capacity;
+		NetBase::ReadFromBinStream(inpStream, party_name);
+		NetBase::ReadFromBinStream(inpStream, max_capacity);
+
 		// lock
 		MyBase::AutoLocker lock(&m_cs);
 
 		// 새로운 방 생성 및 초기화
 		int party_id = m_newPartyID++;
-		auto newParty = PlayerPartyInfo::Create(party_id, inpPlayer, inParty_name, inMax_capacity);
+		auto newParty = PlayerPartyInfo::Create(party_id, inpPlayer, party_name, max_capacity);
 		m_party_map.insert({ party_id,newParty });
 
 		// lock free

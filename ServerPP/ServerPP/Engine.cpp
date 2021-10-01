@@ -16,49 +16,62 @@ bool Engine::Initialize(LPVOID args) noexcept
 
 	// base initilize
 	IOCP_Base::EngineBase<Engine, IOCPSession>::Initialize(args);
+	
+	{	// SQL 
+		SQL::SQLManager::InitArgs sqlArgs;
+		sqlArgs.ip = "49.1.218.29";
+		sqlArgs.host_name = "root";
+		sqlArgs.host_password = "1234";
+		sqlArgs.db_name = "sign";
+		sqlArgs.port = 3306;
+		if (false == SQL::SQLManager::StaticInit())
+			return false;
+		SQL::SQLManager::sInstance->Initialize(&sqlArgs);
+	}	// SQL end
+	
+	
+	{	// Secotr Manager
+		if (false == SectorManager::StaticInit())
+			return false;
+		SectorManager::sInstance->Initialize(nullptr);
+	}	// Sector Manager end
+	
 
-	// SQL 
-	SQL::SQLManager::InitArgs sqlArgs;
-	sqlArgs.ip = "49.1.218.29";
-	sqlArgs.host_name = "root";
-	sqlArgs.host_password = "1234";
-	sqlArgs.db_name = "sign";
-	sqlArgs.port = 3306;
-	if (false == SQL::SQLManager::StaticInit())
-		return false;
-	SQL::SQLManager::sInstance->Initialize(&sqlArgs);
-	// SQL end
+	
+	{	// NetGameObject Manager
+		if (false == NetGameObjectManager::StaticInit())
+			return false;
+		NetGameObjectManager::sInstance->Initialize(nullptr);
+	}	// NetGameObject Manager end
+	
+	
+	{	// Sign Manager
+		if (false == Sign::SignManager::StaticInit())
+			return false;
+		Sign::SignManager::sInstance->Initialize(nullptr);
+	}	// Sign Manager end
+	
+	
+	{	// character select manager
+		if (false == CharacterSelect::CharacterSelectManager::StaticInit())
+			return false;
+		CharacterSelect::CharacterSelectManager::sInstance->Initialize(nullptr);
+	}	// character select manager end
+	
 
-	// Secotr Manager
-	if (false == SectorManager::StaticInit())
-		return false;
-	SectorManager::sInstance->Initialize(nullptr);
-	// Sector Manager end
+	{	// party manager
+		if (false == PlayerPartyManager::StaticInit())
+			return false;
+		PlayerPartyManager::sInstance->Initialize(nullptr);
+	}	// party manager end
 
-	// NetGameObject Manager
-	if (false == NetGameObjectManager::StaticInit())
-		return false;
-	NetGameObjectManager::sInstance->Initialize(nullptr);
-	// NetGameObject Manager end
-
-	// Sign Manager
-	if (false == Sign::SignManager::StaticInit())
-		return false;
-	Sign::SignManager::sInstance->Initialize(nullptr);
-	// Sign Manager end
-
-	// character select manager
-	if (false == CharacterSelect::CharacterSelectManager::StaticInit())
-		return false;
-	CharacterSelect::CharacterSelectManager::sInstance->Initialize(nullptr);
-	// character select manager end
-
-
-	// village manager
-	if (false == Village::VillageManager::StaticInit())
-		return false;
-	Village::VillageManager::sInstance->Initialize(nullptr);
-	// village manager end
+	
+	{	// village manager
+		if (false == Village::VillageManager::StaticInit())
+			return false;
+		Village::VillageManager::sInstance->Initialize(nullptr);
+	}	// village manager end
+	
 
 #ifdef  __DEBUG
 	printf("----- Engine::Initialize() Complete -----\n");

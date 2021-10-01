@@ -5,50 +5,98 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 #ifdef __DEBUG
 	printf("---VillageState OnRecvCompleted Process...\n");
 #endif // __DEBUG
+	auto owner = m_ownerPtr.lock();
 
 	ProtocolSize_t raw_protocol;
 	NetBase::ReadFromBinStream(inpStream, raw_protocol);
 	//inpStream->Read(&raw_protocol, sizeof(ProtocolSize_t));
 
+	// village protocol 처리 분기
 	EProtocol protocol;
 	GetProtocol(raw_protocol, protocol);
-	ESectorProtocol sector_protocol;
-	GetProtocol(raw_protocol, sector_protocol);
-
 	switch (protocol)
 	{
 	case EProtocol::EnterVillage:
-	{
-		auto owner = m_ownerPtr.lock();
+	{		
 		Village::VillageManager::sInstance->VillageEnterProcess(inpStream, owner);
 	}
 	break;
 	case EProtocol::ExitVillage:
-	{
-		auto owner = m_ownerPtr.lock();
+	{		
 		Village::VillageManager::sInstance->VillageExitProcess(inpStream, owner);
 	}
 	break;
 	}
 
+	// sector protocol 처리 분기
+	ESectorProtocol sector_protocol;
+	GetProtocol(raw_protocol, sector_protocol);
 	switch (sector_protocol)
 	{
 	case ESectorProtocol::PlayerMoveAndAction:
-	{
-		auto owner = m_ownerPtr.lock();
+	{		
 		Village::VillageManager::sInstance->VillageExitProcess(inpStream, owner);
 	}
 	break;
 	case ESectorProtocol::PlayerAction:
-	{
-		auto owner = m_ownerPtr.lock();
+	{		
 		Village::VillageManager::sInstance->VillageActionProcess(inpStream, owner);
 	}
 	break;
 	case ESectorProtocol::PlayerMove:
-	{
-		auto owner = m_ownerPtr.lock();
+	{		
 		Village::VillageManager::sInstance->VillageMoveProcess(inpStream, owner);
+	}
+	break;
+	}
+
+	// party protocol 처리 분기
+	EPartyProtocol party_protocol;
+	GetProtocol(raw_protocol, party_protocol);
+	switch (party_protocol)
+	{
+	case EPartyProtocol::CreateParty:
+	{	// 파티 생성 프로세스 
+		NetBase::OutputMemoryStreamPtr outpSream;
+		PlayerPartyManager::sInstance->CreateParty(outpSream, inpStream, owner->m_player);
+		// 파티 생성 결과를 전송
+		owner->Send(outpSream);
+	}
+	break;
+	case EPartyProtocol::RequestParticipate:
+	{
+
+	}
+	break;
+	case EPartyProtocol::NewParticipant:
+	{
+
+	}
+	break;
+	case EPartyProtocol::Exit:
+	{
+
+	}
+	break;
+	case EPartyProtocol::Kick:
+	{
+
+	}
+	break;
+	case EPartyProtocol::TransferOwner:
+	{
+
+	}
+	break;
+	case EPartyProtocol::AllPartyInfo:
+	{	// 서버에 생성되어있는 모든 파티 정보를 전송
+		std::vector<NetBase::OutputMemoryStreamPtr> outpStreamVec;
+		PlayerPartyManager::sInstance->SendALLPartyList(outpStreamVec);
+		// 파티 정보 전송
+		for (auto& item : outpStreamVec)
+		{
+			owner->Send(item);
+		}
 	}
 	break;
 	}
@@ -74,6 +122,7 @@ void VillageState::OnChangedToThis()
 	m_current_result = Village::VillageManager::sInstance->StateChangedProcess(owner);
 }
 
+// Village protocol 추출하기
 void VillageState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 {
 
@@ -88,9 +137,10 @@ void VillageState::GetProtocol(ProtocolSize_t inOrigin, EProtocol& outProtocol)
 		return;
 	}
 
-	
+
 }
 
+// Sector 프로토콜 추출하기
 void VillageState::GetProtocol(ProtocolSize_t inOrigin, ESectorProtocol& outProtocol)
 {
 	if ((ProtocolSize_t)ESectorProtocol::PlayerMove & inOrigin)
@@ -108,10 +158,51 @@ void VillageState::GetProtocol(ProtocolSize_t inOrigin, ESectorProtocol& outProt
 		outProtocol = ESectorProtocol::PlayerAction;
 		return;
 	}
-
-
-	
 }
+
+// Party 프로토콜 추출하기
+void VillageState::GetProtocol(ProtocolSize_t inOrigin, EPartyProtocol& outProtocol)
+{
+	if ((ProtocolSize_t)EPartyProtocol::AllPartyInfo & inOrigin)
+	{
+		outProtocol = EPartyProtocol::AllPartyInfo;
+		return;
+	}
+
+	if ((ProtocolSize_t)EPartyProtocol::CreateParty & inOrigin)
+	{
+		outProtocol = EPartyProtocol::CreateParty;
+		return;
+	}
+	if ((ProtocolSize_t)EPartyProtocol::Exit & inOrigin)
+	{
+		outProtocol = EPartyProtocol::Exit;
+		return;
+	}
+	if ((ProtocolSize_t)EPartyProtocol::Kick & inOrigin)
+	{
+		outProtocol = EPartyProtocol::Kick;
+		return;
+	}
+	if ((ProtocolSize_t)EPartyProtocol::NewParticipant & inOrigin)
+	{
+		outProtocol = EPartyProtocol::NewParticipant;
+		return;
+	}
+	if ((ProtocolSize_t)EPartyProtocol::RequestParticipate & inOrigin)
+	{
+		outProtocol = EPartyProtocol::RequestParticipate;
+		return;
+	}
+	if ((ProtocolSize_t)EPartyProtocol::TransferOwner & inOrigin)
+	{
+		outProtocol = EPartyProtocol::TransferOwner;
+		return;
+	}
+}
+
+
+
 
 void VillageState::HandleAction(NetBase::InputMemoryStreamPtr inpStream, NetBase::OutputMemoryStreamPtr& outpStream)
 {
