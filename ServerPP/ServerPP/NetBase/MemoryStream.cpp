@@ -1,4 +1,5 @@
 #include "MemoryStream.h"
+#include <algorithm>
 
 namespace NetBase
 {

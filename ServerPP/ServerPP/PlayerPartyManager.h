@@ -84,7 +84,7 @@ public:
 		// Protocol(CreateParty) + Result(PartyCreated) + PartyInfo
 		int write_size = 0;
 		auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-		write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)PlayerPartyManager::EProtocol::RequestParticipate);
+		write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)PlayerPartyManager::EProtocol::CreateParty);
 		write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::PartyCreated);
 		write_size += NetBase::WriteToBinStream(stream, newParty);
 
@@ -106,7 +106,8 @@ public:
 
 		// lock
 		MyBase::AutoLocker lock(&m_cs);
-		std::vector<PlayerPartyInfoPtr> m_party_vec(m_party_map.size());
+		std::vector<PlayerPartyInfoPtr> m_party_vec;
+		m_party_vec.reserve(m_party_map.size());
 		for (auto& item : m_party_map)
 		{
 			m_party_vec.push_back(item.second);
@@ -133,7 +134,8 @@ public:
 			// data 를 stream에 쓰기
 			// protocol + vector size + party player vector content
 			write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::AllPartyInfo);
-			write_size += NetBase::WriteToBinStream(stream, cur_count);
+			write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::None);
+			write_size += NetBase::WriteToBinStream(stream, static_cast<int>(cur_count));
 			for (size_t i = 0; i < cur_count; i++)
 			{
 				write_size += NetBase::WriteToBinStream(stream, m_party_vec[cur_index++]);
