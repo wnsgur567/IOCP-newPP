@@ -15,6 +15,9 @@ using ResultSize_t = uint32_t;
 #include "CharacterInfo.h"
 #include "PlayerInfo.h"
 
+#include "PlayerPartyInfo.h"
+#include "PlayerPartyManager.h"
+
 #include "Sector.h"
 #include "SectorManager.h"
 
@@ -38,8 +41,7 @@ using ResultSize_t = uint32_t;
 #include "CharacterSelectManager.h"
 #include "CharacterSelectState.h"
 
-#include "PlayerPartyInfo.h"
-#include "PlayerPartyManager.h"
+
 
 
 #include "VillageManager.h"

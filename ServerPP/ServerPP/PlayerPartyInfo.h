@@ -105,6 +105,7 @@ public:
 	{
 		// player를 현재 파티에서 제거
 		RemovePlayer(requester);
+		--m_cur_playercount;
 
 		// 퇴장 인원이 방장인지 확인
 		if (IsOwner(requester))
@@ -142,7 +143,7 @@ public:
 		{
 			if (m_player_vec[i] != nullptr && m_player_vec[i] == inpinfo)
 				SetOwner(inpinfo, i);
-		}		
+		}
 	}
 
 	// ISerializable을(를) 통해 상속됨

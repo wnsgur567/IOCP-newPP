@@ -17,12 +17,12 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 	switch (protocol)
 	{
 	case EProtocol::EnterVillage:
-	{		
+	{
 		Village::VillageManager::sInstance->VillageEnterProcess(inpStream, owner);
 	}
 	break;
 	case EProtocol::ExitVillage:
-	{		
+	{
 		Village::VillageManager::sInstance->VillageExitProcess(inpStream, owner);
 	}
 	break;
@@ -34,17 +34,17 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 	switch (sector_protocol)
 	{
 	case ESectorProtocol::PlayerMoveAndAction:
-	{		
+	{
 		Village::VillageManager::sInstance->VillageExitProcess(inpStream, owner);
 	}
 	break;
 	case ESectorProtocol::PlayerAction:
-	{		
+	{
 		Village::VillageManager::sInstance->VillageActionProcess(inpStream, owner);
 	}
 	break;
 	case ESectorProtocol::PlayerMove:
-	{		
+	{
 		Village::VillageManager::sInstance->VillageMoveProcess(inpStream, owner);
 	}
 	break;
@@ -75,7 +75,22 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 	break;
 	case EPartyProtocol::Exit:
 	{
+		std::vector<NetBase::OutputMemoryStreamPtr> streamsToOtherPlayers;
+		std::vector<IOCP_Base::IOCPSessionBasePtr> otherPlayersSession;
+		NetBase::OutputMemoryStreamPtr streamToExitPlayer;
+		IOCP_Base::IOCPSessionBasePtr exitPlayerSession;
 
+		PlayerPartyManager::sInstance->ExitPlayer(
+			streamsToOtherPlayers,
+			otherPlayersSession,
+			streamToExitPlayer,
+			exitPlayerSession,
+			inpStream,
+			owner->m_player);
+
+		for (size_t i = 0; i < streamsToOtherPlayers.size(); i++)
+			otherPlayersSession[i]->Send(streamsToOtherPlayers[i]);
+		exitPlayerSession->Send(streamToExitPlayer);
 	}
 	break;
 	case EPartyProtocol::Kick:
@@ -211,7 +226,7 @@ void VillageState::HandleAction(NetBase::InputMemoryStreamPtr inpStream, NetBase
 
 void VillageState::HandleMove(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&)
 {
-
+	
 
 }
 

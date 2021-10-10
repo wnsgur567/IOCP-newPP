@@ -49,6 +49,7 @@ protected:
 	uint64_t m_session_id;	// session이 생성될 때 부여되는 고유 id
 	uint64_t m_user_id;		// id pw 에 대응되는 user 고유 id	
 	PlayerInfoPtr m_player;	// character 선택 후 선택된 캐릭터의 정보들
+	PlayerPartyInfoPtr m_party;
 	Village::VillageInfoBasePtr m_village;	// 
 public:
 	void SetSign(bool b) { m_isSigned = b; }

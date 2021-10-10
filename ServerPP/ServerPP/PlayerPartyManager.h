@@ -27,17 +27,18 @@ public:
 
 		PartyCreated = 1UL << 0,			// 파티 생성 완료
 
-		RequestChecking = 1UL << 1,		// 파티 참가 신청 완료,
+		RequestChecking = 1UL << 1,			// 파티 참가 신청 완료,
 		RequestAccept = 1UL << 2,			// 파티 참가 신청을 파티장이 수락
 		RequestReject = 1UL << 3,			// 파티 참가 신청을 파티장이 거부
 
 		ExitComplete = 1UL << 4,			// 파티 퇴장 완료
 		ExitCompleteOther = 1UL << 5,		// 파티원 중 한명이 파티를 퇴장
 
-		Kicked = 1U << 6,				// 강퇴 당함
-		KickedOther = 1U << 7,			// 파티원 중 한명이 강퇴당함				
+		Kicked = 1U << 6,					// 강퇴 당함
+		KickedOther = 1U << 7,				// 파티원 중 한명이 강퇴당함				
 
-		NotExistParty = 1U << 8,			// 존재하지 않는 파티
+		NotExistParty = 1U << 8,			// 파티가 존재하지 않음
+		SuccessAllPartyInfo = 1U << 9,		// 모든 파티 정보 검색 성공
 	};
 public:
 	// class 초기화
@@ -117,34 +118,48 @@ public:
 
 		// 한번에 최대 10개의 파티 정보를 보내기
 		size_t total_count = m_party_vec.size();
-		int cur_index = 0;
-		while (total_count)
-		{
-			size_t cur_count;
 
-			// 이번 사이클에 보낼 양 결정
-			(total_count > 10) ? (cur_count = 10) : (cur_count = total_count);
-			total_count -= cur_count;
-
+		if (total_count == 0)
+		{	// 아무 파티도 없는 경우
 			// send stream 가져오기
 			auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 
-			int write_size = 0;
+			NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::AllPartyInfo);
+			NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::NotExistParty);
 
-			// data 를 stream에 쓰기
-			// protocol + vector size + party player vector content
-			write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::AllPartyInfo);
-			write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::None);
-			write_size += NetBase::WriteToBinStream(stream, static_cast<int>(cur_count));
-			for (size_t i = 0; i < cur_count; i++)
-			{
-				write_size += NetBase::WriteToBinStream(stream, m_party_vec[cur_index++]);
-			}
-#ifdef __DEBUG	
-			printf("PartyManager SendALLPartyList write to stream : %dbytes\n", write_size);
-#endif
-			// out stream 셋팅
 			outpStreamVector.push_back(stream);
+		}
+		else
+		{	// 파티가 존재하면
+			int cur_index = 0;
+			while (total_count)
+			{
+				size_t cur_count;
+
+				// 이번 사이클에 보낼 양 결정
+				(total_count > 10) ? (cur_count = 10) : (cur_count = total_count);
+				total_count -= cur_count;
+
+				// send stream 가져오기
+				auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+
+				int write_size = 0;
+
+				// data 를 stream에 쓰기
+				// protocol + vector size + party player vector content
+				write_size += NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::AllPartyInfo);
+				write_size += NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::SuccessAllPartyInfo);
+				write_size += NetBase::WriteToBinStream(stream, static_cast<int>(cur_count));
+				for (size_t i = 0; i < cur_count; i++)
+				{
+					write_size += NetBase::WriteToBinStream(stream, m_party_vec[cur_index++]);
+				}
+#ifdef __DEBUG	
+				printf("PartyManager SendALLPartyList write to stream : %dbytes\n", write_size);
+#endif
+				// out stream 셋팅
+				outpStreamVector.push_back(stream);
+			}
 		}
 	}
 
@@ -274,12 +289,17 @@ public:
 		std::vector<IOCP_Base::IOCPSessionBasePtr>& outpExistingPlayerSessions,		// 위에 대응하는 session pointer
 		NetBase::OutputMemoryStreamPtr& outpStreamToExitPlayer,		// 파티에서 퇴장한 player에게 보낼 stream
 		IOCP_Base::IOCPSessionBasePtr& outpExitPlayerSession,		// 위에 대응하는 session pointer
-		PlayerInfoPtr inpInfo, uint32_t inParty_id)
+		NetBase::InputMemoryStreamPtr inpStream, PlayerInfoPtr inpInfo
+	)
 	{
 		outpStreamExistingPlayers.clear();
 		outpExistingPlayerSessions.clear();
 		outpStreamToExitPlayer = nullptr;
 		outpExitPlayerSession = nullptr;
+
+		// stream 분석
+		uint32_t inParty_id;
+		NetBase::ReadFromBinStream(inpStream, inParty_id);
 
 		// lock
 		MyBase::AutoLocker lock(&m_cs);
@@ -302,6 +322,13 @@ public:
 				outpExitPlayerSession = inpInfo->GetSession();
 			}
 
+			if (iter->second->IsEmpty())
+			{	// 남아있는 파티원이 없는 경우
+				// 파티정보를 제거함
+
+				m_party_map.erase(iter);
+			}
+			else
 			{	// 남아있는 파티원들에게 퇴장을 알림
 
 				// protocol 작성		
