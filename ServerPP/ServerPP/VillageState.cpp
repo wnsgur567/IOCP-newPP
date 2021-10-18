@@ -65,7 +65,37 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 	break;
 	case EPartyProtocol::RequestParticipate:
 	{
+		// 파티장의 session, stream
+		NetBase::OutputMemoryStreamPtr outpStream;
+		IOCP_Base::IOCPSessionBasePtr party_owner_session;
+		// 현재 신청한 사람의 플레이어 정보
+		PlayerInfoPtr volunteer_info = owner->GetPlayerInfo();
+		PlayerPartyManager::sInstance->RequestParticipate(outpStream, party_owner_session, inpStream, volunteer_info);
 
+		// 파티장에게 요청 데이터를 전송
+		if (nullptr != party_owner_session)
+		{
+			party_owner_session->Send(outpStream);
+		}
+	}
+	break;
+	case EPartyProtocol::RequestReply:
+	{
+		using Result_t = PlayerPartyManager::EResult;
+		uint32_t raw_result;
+		NetBase::ReadFromBinStream(inpStream, raw_result);
+		Result_t result = (Result_t)raw_result;
+		
+		if (result == Result_t::RequestAccept)
+		{
+			PlayerPartyManager::sInstance->AcceptPlayer();
+		}
+		else if (result == Result_t::RequestReject)
+		{
+			PlayerPartyManager::sInstance->AcceptPlayer();
+		}
+
+		// send 처리
 	}
 	break;
 	case EPartyProtocol::NewParticipant:
@@ -209,6 +239,11 @@ void VillageState::GetProtocol(ProtocolSize_t inOrigin, EPartyProtocol& outProto
 		outProtocol = EPartyProtocol::RequestParticipate;
 		return;
 	}
+	if ((ProtocolSize_t)EPartyProtocol::RequestReply & inOrigin)
+	{
+		outProtocol = EPartyProtocol::RequestReply;
+		return;
+	}
 	if ((ProtocolSize_t)EPartyProtocol::TransferOwner & inOrigin)
 	{
 		outProtocol = EPartyProtocol::TransferOwner;
@@ -226,7 +261,7 @@ void VillageState::HandleAction(NetBase::InputMemoryStreamPtr inpStream, NetBase
 
 void VillageState::HandleMove(NetBase::InputMemoryStreamPtr, NetBase::OutputMemoryStreamPtr&)
 {
-	
+
 
 }
 

@@ -11,14 +11,15 @@ public:
 
 		CreateParty = 1ULL << 30,			// 파티 생성		 , Result 있음
 		RequestParticipate = 1ULL << 31,	// 파티 참가 요청 , Result 있음
+		RequestReply = 1ULL << 32,
 
-		NewParticipant = 1ULL << 32,		// 새로운 파티 참가자, 기존 파티원에게 보낼때만
+		NewParticipant = 1ULL << 33,		// 새로운 파티 참가자, 기존 파티원에게 보낼때만
 
-		Exit = 1ULL << 33,					// 자신이 파티에서 나감
-		Kick = 1ULL << 34,					// 파티장이 파티에서 강퇴
-		TransferOwner = 1ULL << 35,			// 파티장 위임
+		Exit = 1ULL << 34,					// 자신이 파티에서 나감
+		Kick = 1ULL << 35,					// 파티장이 파티에서 강퇴
+		TransferOwner = 1ULL << 36,			// 파티장 위임
 
-		AllPartyInfo = 1ULL << 36,			// 모든 파티 정보
+		AllPartyInfo = 1ULL << 37,			// 모든 파티 정보
 	};
 
 	enum class EResult : ResultSize_t
@@ -27,7 +28,7 @@ public:
 
 		PartyCreated = 1UL << 0,			// 파티 생성 완료
 
-		RequestChecking = 1UL << 1,			// 파티 참가 신청 완료,
+		RequestChecking = 1UL << 1,			// 파티 참가 신청 완료, 파티장에게 신청자의 정보를 보낼 때
 		RequestAccept = 1UL << 2,			// 파티 참가 신청을 파티장이 수락
 		RequestReject = 1UL << 3,			// 파티 참가 신청을 파티장이 거부
 
@@ -166,22 +167,31 @@ public:
 	// 파티 신청 프로세스
 	// 신청한 player의 characterinfo 를 party owner 에게 전송할 데이터를 처리
 	void RequestParticipate(
-		NetBase::OutputMemoryStreamPtr outpStreamToOwner
-		, PlayerInfoPtr inVolunteer, uint32_t inParty_id)
+		NetBase::OutputMemoryStreamPtr& outpStreamToOwner,
+		IOCP_Base::IOCPSessionBasePtr& outpPartyOwnerSession,
+		NetBase::InputMemoryStreamPtr inpStream, PlayerInfoPtr inVolunteer)
 	{
 		outpStreamToOwner = nullptr;
+		outpPartyOwnerSession = nullptr;
+
+		// 파티 신청한 파티의 id
+		uint32_t party_id;
+		NetBase::ReadFromBinStream(inpStream, party_id);
 
 		// lock
 		MyBase::AutoLocker lock(&m_cs);
 
 		// is exist party ?
-		auto iter = m_party_map.find(inParty_id);
+		auto iter = m_party_map.find(party_id);
 		if (iter != m_party_map.end())
 		{	// exist
 			// 해당 파티의 인원수를 확인
 			if (iter->second->IsFull())
 				return;
 
+			// 파티장의 session
+			outpPartyOwnerSession = iter->second->m_owner->GetSession();
+			// 파티장에게 보낼 stream 작성
 			outpStreamToOwner = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 			// protocol + result + volunteer's player info
 			int write_size = 0;
@@ -191,16 +201,19 @@ public:
 		}
 		else
 		{	// 이미 사라진 파티인 경우
-			outpStreamToOwner = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-			// protocol + result 
-			int write_size = 0;
-			write_size += NetBase::WriteToBinStream(outpStreamToOwner, (ProtocolSize_t)EProtocol::RequestParticipate);
-			write_size += NetBase::WriteToBinStream(outpStreamToOwner, (ResultSize_t)EResult::NotExistParty);
+			//outpStreamToOwner = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
+			//// protocol + result 
+			//int write_size = 0;
+			//write_size += NetBase::WriteToBinStream(outpStreamToOwner, (ProtocolSize_t)EProtocol::RequestParticipate);
+			//write_size += NetBase::WriteToBinStream(outpStreamToOwner, (ResultSize_t)EResult::NotExistParty);
 		}
 
 		// lock free
 		lock.ManualUnlock();
 	}
+
+
+	
 
 	// 파티장이 파티 신청을 수락했을 때의 프로세스
 	// 1. 신청한 Player에게 파티원들의 정보를 전송
@@ -209,14 +222,18 @@ public:
 	void AcceptPlayer(
 		std::vector<IOCP_Base::IOCPSessionBasePtr>& outpExistingPlayerSessions,		// 기존에 존재하던 파티원들의 session
 		std::vector<NetBase::OutputMemoryStreamPtr>& outpStreamToExistingPlayer,	// 기존에 존재하는 파티원들에게 보낼 stream
-		IOCP_Base::IOCPSessionBasePtr& outpVolunteerSession,										// 신청한 player의 session
+		IOCP_Base::IOCPSessionBasePtr& outpVolunteerSession,						// 신청한 player의 session
 		NetBase::OutputMemoryStreamPtr& outpStreamToVolunteer,						// 신청한 player에게 보낼 stream
-		PlayerInfoPtr inVolunteer, uint32_t inParty_id)
+		NetBase::InputMemoryStreamPtr inpStream,
+		uint32_t inParty_id)
 	{
 		outpExistingPlayerSessions.clear();
 		outpStreamToExistingPlayer.clear();
 		outpVolunteerSession = nullptr;
 		outpStreamToVolunteer = nullptr;
+
+		PlayerInfoPtr volunteer;
+		NetBase::ReadFromBinStream(inpStream, volunteer);
 
 		// lock
 		MyBase::AutoLocker lock(&m_cs);
@@ -237,14 +254,14 @@ public:
 				NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::RequestAccept);
 				NetBase::WriteToBinStream(stream, party_info);
 
-				outpVolunteerSession = inVolunteer->GetSession();
+				outpVolunteerSession = volunteer->GetSession();
 				outpStreamToVolunteer = stream;
 			}	//// 참가자에게 보낼 stream 작성 end
 
 
 			// 파티에 참가시켜 파티정보 최신화
 			// 참가자의 위치 index
-			int volunteer_index = party_info->Participate(inVolunteer);
+			int volunteer_index = party_info->Participate(volunteer);
 
 			{	//// 기존 파티원들에게 보낼 stream 작성
 				for (auto& item : party_info->m_player_vec)
@@ -256,7 +273,7 @@ public:
 						auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
 						NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::NewParticipant);
 						NetBase::WriteToBinStream(stream, volunteer_index);
-						NetBase::WriteToBinStream(stream, inVolunteer);
+						NetBase::WriteToBinStream(stream, volunteer);
 
 						// out param 셋팅
 						outpExistingPlayerSessions.push_back(item->GetSession());
