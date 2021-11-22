@@ -18,6 +18,8 @@ namespace NetBase
 			Accept,
 			Recv,
 			Send,
+
+			SQL
 		};
 
 		WSAOVERLAPPED overlapped;
@@ -155,6 +157,22 @@ namespace NetBase
 	public:
 		static SendPacketPtr Create(packetSize_t inStreamCapacity);
 		void Packing(packetId_t inID, OutputMemoryStreamPtr inStream);
+	};
+
+
+	class SQLPacket;
+	using SQLPacketPtr = std::shared_ptr<SQLPacket>;
+	class SQLPacket : public PacketBase
+	{	
+	public:
+		std::string query;
+		SQL::SQLManager::queryResult_t query_result;
+	private:
+		SQLPacket();
+	public:
+		static SQLPacketPtr Create();
+		// PacketBase을(를) 통해 상속됨
+		virtual void Clear() override;
 	};
 
 }

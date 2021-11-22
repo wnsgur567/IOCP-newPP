@@ -102,7 +102,7 @@ namespace NetBase
 		m_sizeflag = true;
 		m_recvbytes = 0;
 		m_target_recvbytes = 0;
-		
+
 		m_pStream->Clear();
 		m_overlappedEx.flush();
 	}
@@ -172,7 +172,7 @@ namespace NetBase
 	// memory copy from instream to sendpacket's stream
 	void SendPacket::Packing(packetId_t id, OutputMemoryStreamPtr inStream)
 	{
-		
+
 #ifdef __CIPHER_ON
 		// data encryption
 		// ret bits 는 패딩 비트가 포함된 크기임
@@ -195,5 +195,21 @@ namespace NetBase
 
 		// bytes setting
 		m_target_sendbytes = total_size + sizeof(packetSize_t);
+	}
+
+
+	SQLPacket::SQLPacket()
+		: PacketBase(OverlappedEx::EOverlappedType::SQL), query()
+	{
+	}
+	SQLPacketPtr SQLPacket::Create()
+	{
+		SQLPacketPtr pThis(new SQLPacket());	
+		pThis->m_overlappedEx.pPacket = pThis;
+		return pThis;
+	}
+	void SQLPacket::Clear()
+	{
+		query.clear();
 	}
 }

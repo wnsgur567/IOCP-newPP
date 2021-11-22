@@ -18,6 +18,8 @@ namespace IOCP_Base
 		if (m_pHcp.get() == nullptr)
 			return false;
 
+
+
 		// parent init
 		if (false == NetworkManagerServer::Initialize(arg))
 			return false;

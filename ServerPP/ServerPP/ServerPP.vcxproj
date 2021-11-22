@@ -153,6 +153,7 @@
     <ClCompile Include="IOCPBase\IOCPNetworkManager.cpp" />
     <ClCompile Include="IOCPBase\IOCPSessionBase.cpp" />
     <ClCompile Include="IOCPBase\IOCPSessionManager.cpp" />
+    <ClCompile Include="IOCPBase\SQLManagerEx.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="IOCPSession.cpp" />
     <ClCompile Include="NetBase\StreamReadWrite.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="IOCPBase\IOCPSessionBase.h" />
     <ClInclude Include="IOCPBase\IOCPSessionManager.h" />
     <ClInclude Include="IOCPBase\NetworkManagerServer.h" />
+    <ClInclude Include="IOCPBase\SQLManagerEx.h" />
     <ClInclude Include="IOCPNet_RootHeader.h" />
     <ClInclude Include="IOCPSession.h" />
     <ClInclude Include="NetBase\StreamReadWrite.h" />
@@ -253,6 +255,7 @@
     <ClInclude Include="Utils\MySQL\SQLManager.h" />
     <ClInclude Include="Utils\Singleton.h" />
     <ClInclude Include="Utils\StringUtil.h" />
+    <ClInclude Include="Utils\ThreadSafeQueue.h" />
     <ClInclude Include="Utils\TryCatchFinally.h" />
     <ClInclude Include="Vector2.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

@@ -17,16 +17,16 @@ bool Engine::Initialize(LPVOID args) noexcept
 	// base initilize
 	IOCP_Base::EngineBase<Engine, IOCPSession>::Initialize(args);
 	
-	{	// SQL 
+	{	// SQL Ex
 		SQL::SQLManager::InitArgs sqlArgs;
 		sqlArgs.ip = "49.1.218.29";
 		sqlArgs.host_name = "root";
 		sqlArgs.host_password = "1234";
 		sqlArgs.db_name = "sign";
 		sqlArgs.port = 3306;
-		if (false == SQL::SQLManager::StaticInit())
+		if (false == SQLManagerEx::StaticInit())
 			return false;
-		SQL::SQLManager::sInstance->Initialize(&sqlArgs);
+		SQLManagerEx::sInstance->Initialize(&sqlArgs);
 	}	// SQL end
 	
 	

@@ -26,12 +26,6 @@ namespace SQL
 		}
 	};
 
-	// query 요청할 때 필요한 variables
-	class SQLQueryData
-	{
-		std::string sql;
-	};
-
 	class SQLManager : public MyBase::Singleton<SQLManager>
 	{
 		friend class Singleton;
@@ -47,18 +41,13 @@ namespace SQL
 			std::string host_password;
 			std::string db_name;
 			unsigned int port = 3306;
-		};
-
-	private:
-		bool m_bLoop;
-		std::mutex m_lock;
-		std::condition_variable m_cv;
-		std::queue<SQLQueryData> m_queryQ;
+		};	
+		
 	private:
 		InitArgs m_args;
 		MYSQL m_conn;
 		MYSQL* m_handle;		// sql handle	
-
+	protected:
 		SQLManager() : m_args(), m_conn(), m_handle(nullptr) {}
 	public:
 
@@ -74,8 +63,6 @@ namespace SQL
 			queryResult_t& outVec);
 
 		void Query(const char* inQuery);
-		void Query(const std::string& inQuery);
-	public:
-		static DWORD WINAPI DBThread(LPVOID arg);
+		void Query(const std::string& inQuery);	
 	};
 }

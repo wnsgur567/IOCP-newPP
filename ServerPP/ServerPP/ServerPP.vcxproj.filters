@@ -183,6 +183,9 @@
     <ClCompile Include="PlayerPartyInfo.cpp">
       <Filter>99_PartySystem</Filter>
     </ClCompile>
+    <ClCompile Include="IOCPBase\SQLManagerEx.cpp">
+      <Filter>02_IOCPBase\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="All.h">
@@ -337,6 +340,12 @@
     </ClInclude>
     <ClInclude Include="PlayerPartyManager.h">
       <Filter>99_PartySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ThreadSafeQueue.h">
+      <Filter>00_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPBase\SQLManagerEx.h">
+      <Filter>02_IOCPBase\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

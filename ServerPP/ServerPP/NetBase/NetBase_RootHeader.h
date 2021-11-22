@@ -27,6 +27,7 @@ using HandlePtr = std::shared_ptr<HANDLE>;
 #include "SocketUtil.h"
 
 #include "MemoryStream.h"
+#include "../Utils/MySQL/SQLManager.h"
 #include "Packet.h"
 #include "../Utils/Singleton.h"
 #include "PacketManager.h"
