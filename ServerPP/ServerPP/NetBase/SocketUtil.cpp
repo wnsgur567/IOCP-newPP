@@ -59,7 +59,7 @@ namespace NetBase
 
 		HandlePtr hcpPtr;
 		hcpPtr = std::make_shared<HANDLE>(hcp);
-			
+
 		if (*hcpPtr == nullptr)
 			return nullptr;
 
@@ -69,7 +69,8 @@ namespace NetBase
 		// (CPU 개수 * 2)개의 작업자 스레드 생성
 		HANDLE hThread;
 		for (int i = 0; i < (int)si.dwNumberOfProcessors * 2; i++) {
-			hThread = CreateThread(NULL, 0, inWorkThreadPtr, *hcpPtr, 0, NULL);
+			// DB thread 한개 돌릴 예정
+			hThread = CreateThread(NULL, 0, inWorkThreadPtr, *hcpPtr, si.dwNumberOfProcessors - 1, NULL);
 			if (hThread == NULL)
 				return nullptr;
 			outWorkerThreads.push_back(std::make_shared<HANDLE>(hThread));

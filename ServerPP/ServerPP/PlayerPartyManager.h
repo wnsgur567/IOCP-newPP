@@ -213,7 +213,7 @@ public:
 	}
 
 
-	
+
 
 	// 파티장이 파티 신청을 수락했을 때의 프로세스
 	// 1. 신청한 Player에게 파티원들의 정보를 전송
@@ -235,6 +235,7 @@ public:
 		PlayerInfoPtr volunteer;
 		NetBase::ReadFromBinStream(inpStream, volunteer);
 
+
 		// lock
 		MyBase::AutoLocker lock(&m_cs);
 
@@ -250,7 +251,7 @@ public:
 			{	//// 참가자에게 보낼 stream 작성
 				// protocol + result + party owner index + index1 + playerinfo 1 + index2 + playerinfo2 ...
 				auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-				NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::RequestParticipate);
+				NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::RequestReply);
 				NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::RequestAccept);
 				NetBase::WriteToBinStream(stream, party_info);
 
@@ -288,15 +289,22 @@ public:
 	}
 
 	// 파티장이 파티를 거부했을 때의 프로세스
-	void RejectPlayer(NetBase::OutputMemoryStreamPtr& outpStreamToVolunteer, PlayerInfoPtr inVolunteer)
+	void RejectPlayer(NetBase::OutputMemoryStreamPtr& outpStreamToVolunteer, 
+		IOCP_Base::IOCPSessionBasePtr outpVolunteerSession,
+		NetBase::InputMemoryStreamPtr inpStream)
 	{
 		outpStreamToVolunteer = nullptr;
+		outpVolunteerSession = nullptr;
+
+		PlayerInfoPtr volunteer_info;
+		NetBase::ReadFromBinStream(inpStream, volunteer_info);
 
 		// protocol + result 
 		auto stream = NetBase::PacketManager::sInstance->GetSendStreamFromPool();
-		NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::RequestParticipate);
+		NetBase::WriteToBinStream(stream, (ProtocolSize_t)EProtocol::RequestReply);
 		NetBase::WriteToBinStream(stream, (ResultSize_t)EResult::RequestReject);
 
+		outpVolunteerSession = volunteer_info->GetSession();
 		outpStreamToVolunteer = stream;
 	}
 

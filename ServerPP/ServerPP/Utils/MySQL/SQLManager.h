@@ -8,19 +8,28 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <condition_variable>
+#include <queue>
 
 #include "../Singleton.h"
 #include "../TryCatchFinally.h"
 
 namespace SQL
 {
+	// exception
 	class SQLQueryException : public std::exception
 	{
-		public:
+	public:
 		const char* what() const noexcept override
 		{
 			return "No Available Query";
 		}
+	};
+
+	// query 요청할 때 필요한 variables
+	class SQLQueryData
+	{
+		std::string sql;
 	};
 
 	class SQLManager : public MyBase::Singleton<SQLManager>
@@ -40,6 +49,11 @@ namespace SQL
 			unsigned int port = 3306;
 		};
 
+	private:
+		bool m_bLoop;
+		std::mutex m_lock;
+		std::condition_variable m_cv;
+		std::queue<SQLQueryData> m_queryQ;
 	private:
 		InitArgs m_args;
 		MYSQL m_conn;
@@ -61,5 +75,7 @@ namespace SQL
 
 		void Query(const char* inQuery);
 		void Query(const std::string& inQuery);
+	public:
+		static DWORD WINAPI DBThread(LPVOID arg);
 	};
 }

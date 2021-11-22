@@ -1,5 +1,6 @@
 #include "SQLManager.h"
 
+
 Implementation_sInstance(SQL::SQLManager);
 
 namespace SQL
@@ -139,5 +140,18 @@ namespace SQL
 	void SQLManager::Query(const std::string& inQuery)
 	{
 		Query(inQuery.c_str());
+	}
+
+	DWORD __stdcall SQLManager::DBThread(LPVOID arg)
+	{
+
+		while (SQLManager::sInstance->m_bLoop)
+		{
+			std::unique_lock lk(SQLManager::sInstance->m_lock);
+			SQLManager::sInstance->m_cv.wait(lk);
+
+			lk.unlock();
+		}
+		return 0;
 	}
 }

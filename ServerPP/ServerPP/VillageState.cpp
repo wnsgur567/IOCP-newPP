@@ -85,14 +85,39 @@ void VillageState::OnRecvCompleted(NetBase::InputMemoryStreamPtr inpStream)
 		uint32_t raw_result;
 		NetBase::ReadFromBinStream(inpStream, raw_result);
 		Result_t result = (Result_t)raw_result;
-		
+
+		// 가입 수락
 		if (result == Result_t::RequestAccept)
 		{
-			PlayerPartyManager::sInstance->AcceptPlayer();
+			std::vector<IOCP_Base::IOCPSessionBasePtr> outpExistingPlayerSessions;
+			std::vector<NetBase::OutputMemoryStreamPtr> outpStreamToExistingPlayer;
+			IOCP_Base::IOCPSessionBasePtr outpVolunteerSession;
+			NetBase::OutputMemoryStreamPtr outpStreamToVolunteer;
+
+			auto party_info = owner->GetPartyInfo();
+
+			PlayerPartyManager::sInstance->AcceptPlayer(
+				outpExistingPlayerSessions,
+				outpStreamToExistingPlayer,
+				outpVolunteerSession,
+				outpStreamToVolunteer,
+				inpStream,
+				party_info->GetID());
+
+			for (size_t i = 0; i < outpExistingPlayerSessions.size(); i++)
+			{
+				outpExistingPlayerSessions[i]->Send(outpStreamToExistingPlayer[i]);
+			}
+			outpVolunteerSession->Send(outpStreamToVolunteer);
 		}
+		// 가입 거부
 		else if (result == Result_t::RequestReject)
 		{
-			PlayerPartyManager::sInstance->AcceptPlayer();
+			IOCP_Base::IOCPSessionBasePtr outpVolunteerSession;
+			NetBase::OutputMemoryStreamPtr outpStream;
+			PlayerPartyManager::sInstance->RejectPlayer(outpStream, outpVolunteerSession, inpStream);
+
+			outpVolunteerSession->Send(outpStream);
 		}
 
 		// send 처리
